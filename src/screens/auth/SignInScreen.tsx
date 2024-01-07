@@ -21,10 +21,10 @@ export class SignInScreen extends Component<{}, any> {
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.then((result: any) => {
-				console.log(result);
+				console.log("Success2 = " + result);
 			})
 			.catch((result: any) => {
-				console.log(result);
+				console.log("Fail2 = " + result);
 			});
 	}
 
@@ -32,7 +32,7 @@ export class SignInScreen extends Component<{}, any> {
 		return (
 			<View>
 				<TextInput
-					placeholder="email"
+					placeholder="Email"
 					inputMode="email"
 					textContentType="emailAddress"
 					onChangeText={(email) => {
@@ -40,9 +40,8 @@ export class SignInScreen extends Component<{}, any> {
 					}}
 				/>
 				<TextInput
-					placeholder="password"
+					placeholder="Password"
 					secureTextEntry={true}
-					textContentType="newPassword"
 					onChangeText={(password) => {
 						this.setState({ password });
 					}}

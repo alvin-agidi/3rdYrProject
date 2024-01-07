@@ -5,9 +5,20 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
-import LandingScreen from "./src/components/screens/auth/LandingScreen";
-import RegisterScreen from "./src/components/screens/auth/RegisterScreen";
-import SignInScreen from "./src/components/screens/auth/SignInScreen";
+import LandingScreen from "./src/screens/auth/LandingScreen";
+import RegisterScreen from "./src/screens/auth/RegisterScreen";
+import SignInScreen from "./src/screens/auth/SignInScreen";
+import { Provider } from "react-redux";
+import { applyMiddleware } from "redux";
+import rootReducer from "./redux/reducers";
+import { configureStore, Tuple } from "@reduxjs/toolkit";
+import thunk from "redux-thunk";
+import MainScreen from "./src/screens/main/MainScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+const store = configureStore({
+	reducer: rootReducer,
+});
 
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
@@ -25,6 +36,9 @@ if (firebase.apps.length === 0) {
 }
 
 const Stack = createNativeStackNavigator();
+
+const Tab = createBottomTabNavigator();
+
 export class App extends Component<{}, any> {
 	constructor(props: any) {
 		super(props);
@@ -74,6 +88,18 @@ export class App extends Component<{}, any> {
 						/>
 					</Stack.Navigator>
 				</NavigationContainer>
+			);
+		} else {
+			return (
+				<Provider store={store}>
+					<Stack.Navigator initialRouteName="Main">
+						<Stack.Screen
+							name="Main"
+							component={MainScreen}
+							// options={{ headerShown: false }}
+						/>
+					</Stack.Navigator>
+				</Provider>
 			);
 		}
 	}

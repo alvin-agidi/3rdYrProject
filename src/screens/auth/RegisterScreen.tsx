@@ -26,12 +26,12 @@ export class RegisterScreen extends Component<{}, any> {
 				firebase
 					.firestore()
 					.collection("users")
-					.doc(firebase.auth().currentUser.uid)
+					.doc(firebase.auth().currentUser!.uid)
 					.set({ email, username });
-				console.log(result);
+				console.log("Success1 = " + result);
 			})
 			.catch((result: any) => {
-				console.log(result);
+				console.log("Fail1 = " + result);
 			});
 	}
 
@@ -39,14 +39,14 @@ export class RegisterScreen extends Component<{}, any> {
 		return (
 			<View>
 				<TextInput
-					placeholder="email"
+					placeholder="Email"
 					inputMode="email"
 					onChangeText={(email) => {
 						this.setState({ email });
 					}}
 				/>
 				<TextInput
-					placeholder="password"
+					placeholder="Password"
 					secureTextEntry={true}
 					textContentType="newPassword"
 					onChangeText={(password) => {
