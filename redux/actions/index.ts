@@ -6,7 +6,6 @@ import "firebase/compat/firestore";
 
 export function fetchUser() {
 	return (dispatch: any) => {
-		console.log(firebase.auth().currentUser!.uid);
 		firebase
 			.firestore()
 			.collection("users")
