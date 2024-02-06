@@ -8,13 +8,16 @@ import "firebase/compat/database";
 import LandingScreen from "./src/screens/auth/LandingScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import SignInScreen from "./src/screens/auth/SignInScreen";
+import MainScreen from "./src/screens/main/MainScreen";
+
 import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import rootReducer from "./redux/reducers";
 import { configureStore, Tuple } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
-import MainScreen from "./src/screens/main/MainScreen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import FeedScreen from "./src/screens/main/FeedScreen";
+import CameraScreen from "./src/screens/main/CameraScreen";
+import ProfileScreen from "./src/screens/main/ProfileScreen";
 
 const store = configureStore({
 	reducer: rootReducer,
@@ -36,8 +39,6 @@ if (firebase.apps.length === 0) {
 }
 
 const Stack = createNativeStackNavigator();
-
-const Tab = createBottomTabNavigator();
 
 export class App extends Component<{}, any> {
 	constructor(props: any) {
@@ -70,7 +71,7 @@ export class App extends Component<{}, any> {
 		} else if (!signedIn) {
 			return (
 				<NavigationContainer>
-					<Stack.Navigator initialRouteName="Landing">
+					<Stack.Navigator initialRouteName="LandingScreen">
 						<Stack.Screen
 							name="Landing"
 							component={LandingScreen}
@@ -92,13 +93,30 @@ export class App extends Component<{}, any> {
 		} else {
 			return (
 				<Provider store={store}>
-					<Stack.Navigator initialRouteName="Main">
-						<Stack.Screen
-							name="Main"
-							component={MainScreen}
-							// options={{ headerShown: false }}
-						/>
-					</Stack.Navigator>
+					<NavigationContainer>
+						<Stack.Navigator initialRouteName="Main">
+							<Stack.Screen
+								name="Main"
+								component={MainScreen}
+								// options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="Feed"
+								component={FeedScreen}
+								// options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="Camera"
+								component={CameraScreen}
+								// options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="Profile"
+								component={ProfileScreen}
+								// options={{ headerShown: false }}
+							/>
+						</Stack.Navigator>
+					</NavigationContainer>
 				</Provider>
 			);
 		}
