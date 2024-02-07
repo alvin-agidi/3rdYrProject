@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, AsyncStorage } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import firebase from "firebase/compat/app";
@@ -9,15 +9,15 @@ import LandingScreen from "./src/screens/auth/LandingScreen";
 import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import SignInScreen from "./src/screens/auth/SignInScreen";
 import MainScreen from "./src/screens/main/MainScreen";
-
+import FeedScreen from "./src/screens/main/FeedScreen";
+import CameraScreen from "./src/screens/main/CameraScreen";
+import ProfileScreen from "./src/screens/main/ProfileScreen";
+import PublishPostScreen from "./src/screens/main/PublishPostScreen";
 import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import rootReducer from "./redux/reducers";
 import { configureStore, Tuple } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
-import FeedScreen from "./src/screens/main/FeedScreen";
-import CameraScreen from "./src/screens/main/CameraScreen";
-import ProfileScreen from "./src/screens/main/ProfileScreen";
 
 const store = configureStore({
 	reducer: rootReducer,
@@ -113,6 +113,11 @@ export class App extends Component<{}, any> {
 							<Stack.Screen
 								name="Profile"
 								component={ProfileScreen}
+								// options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="Publish Post"
+								component={PublishPostScreen}
 								// options={{ headerShown: false }}
 							/>
 						</Stack.Navigator>

@@ -1,20 +1,15 @@
 import { Camera, CameraType } from "expo-camera";
-import {
-	Button,
-	StyleSheet,
-	Text,
-	View,
-	SafeAreaView,
-	Image,
-} from "react-native";
+import { Button, StyleSheet, Text, SafeAreaView, Image } from "react-native";
 // import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
 import { Video, ResizeMode } from "expo-av";
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
+import { useNavigation } from "@react-navigation/core";
 
-export default function App() {
+export default function CameraScreen() {
+	const navigation = useNavigation();
 	let cameraRef = useRef();
 	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
 	const [isVideoMode, setVideoMode] = useState(true);
@@ -147,6 +142,12 @@ export default function App() {
 					<Button title="Save" onPress={saveVideo} />
 				) : undefined}
 				<Button title="Discard" onPress={() => setVideo(undefined)} />
+				<Button
+					title="Create post from this video"
+					onPress={() =>
+						navigation.navigate("Publish Post", { video })
+					}
+				/>
 			</SafeAreaView>
 		);
 	}
@@ -166,19 +167,19 @@ export default function App() {
 
 		return (
 			<SafeAreaView style={styles.container}>
-				<Image
-					style={styles.media}
-					source={{
-						// uri: "data:image/jpg;base64," + photo.base64,
-						uri: photo.uri,
-					}}
-				/>
+				<Image style={styles.media} source={{ uri: photo.uri }} />
 
 				<Button title="Share" onPress={sharePhoto} />
 				{hasMediaLibraryPermission ? (
 					<Button title="Save" onPress={savePhoto} />
 				) : undefined}
 				<Button title="Discard" onPress={() => setPhoto(undefined)} />
+				<Button
+					title="Create post from this photo"
+					onPress={() =>
+						navigation.navigate("Publish Post", { photo })
+					}
+				/>
 			</SafeAreaView>
 		);
 	}
@@ -212,7 +213,10 @@ export default function App() {
 				title={isVideoMode ? "Switch to photo" : "Switch to video"}
 				onPress={switchVideoMode}
 			/>
-			<Button title={"Pick from gallery"} onPress={pickMedia} />
+
+			{hasImagePickerPermission ? (
+				<Button title={"Pick from gallery"} onPress={pickMedia} />
+			) : undefined}
 		</SafeAreaView>
 	);
 }
