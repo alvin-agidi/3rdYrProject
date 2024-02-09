@@ -2,7 +2,7 @@ import { StyleSheet, View, Text } from "react-native";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser } from "../../../redux/actions";
+import { fetchUser, fetchUserPosts } from "../../../redux/actions";
 
 import EmptyScreen from "./EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -13,6 +13,7 @@ const Tab = createBottomTabNavigator();
 export class Main extends Component {
 	componentDidMount() {
 		this.props.fetchUser();
+		this.props.fetchUserPosts();
 	}
 
 	render() {
@@ -105,6 +106,6 @@ const mapStateToProps = (store) => ({
 });
 
 const mapDispatchProps = (dispatch) =>
-	bindActionCreators({ fetchUser }, dispatch);
+	bindActionCreators({ fetchUser, fetchUserPosts }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchProps)(Main);
