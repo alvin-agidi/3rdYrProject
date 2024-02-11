@@ -3,7 +3,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUser, fetchUserPosts } from "../../../redux/actions";
-
 import EmptyScreen from "./EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -42,7 +41,26 @@ export class Main extends Component {
 					options={{
 						tabBarIcon: ({ iconColour, iconSize }) => (
 							<Icon
-								name="home"
+								name="home-outline"
+								color={iconColour}
+								size={iconSize}
+							/>
+						),
+					}}
+				/>
+				<Tab.Screen
+					name="SearchTab"
+					component={EmptyScreen}
+					listeners={({ navigation }) => ({
+						tabPress: (event) => {
+							event.preventDefault();
+							navigation.navigate("Search");
+						},
+					})}
+					options={{
+						tabBarIcon: ({ iconColour, iconSize }) => (
+							<Icon
+								name="magnify"
 								color={iconColour}
 								size={iconSize}
 							/>
@@ -61,7 +79,7 @@ export class Main extends Component {
 					options={{
 						tabBarIcon: ({ iconColour, iconSize }) => (
 							<Icon
-								name="plus-box"
+								name="camera-plus-outline"
 								color={iconColour}
 								size={iconSize}
 							/>
@@ -80,7 +98,7 @@ export class Main extends Component {
 					options={{
 						tabBarIcon: ({ iconColour, iconSize }) => (
 							<Icon
-								name="account-circle"
+								name="account-outline"
 								color={iconColour}
 								size={iconSize}
 							/>

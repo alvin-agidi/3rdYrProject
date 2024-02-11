@@ -10,6 +10,7 @@ import RegisterScreen from "./src/screens/auth/RegisterScreen";
 import SignInScreen from "./src/screens/auth/SignInScreen";
 import MainScreen from "./src/screens/main/MainScreen";
 import FeedScreen from "./src/screens/main/FeedScreen";
+import SearchScreen from "./src/screens/main/SearchScreen";
 import CameraScreen from "./src/screens/main/CameraScreen";
 import ProfileScreen from "./src/screens/main/ProfileScreen";
 import PublishPostScreen from "./src/screens/main/PublishPostScreen";
@@ -103,6 +104,11 @@ export class App extends Component<{}, any> {
 							<Stack.Screen
 								name="Feed"
 								component={FeedScreen}
+								// options={{ headerShown: false }}
+							/>
+							<Stack.Screen
+								name="Search"
+								component={SearchScreen}
 								// options={{ headerShown: false }}
 							/>
 							<Stack.Screen
