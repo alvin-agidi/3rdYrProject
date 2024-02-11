@@ -3,10 +3,11 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { fetchUser, fetchUserPosts } from "../../../redux/actions";
-
 import EmptyScreen from "./EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
 const Tab = createBottomTabNavigator();
 
@@ -74,7 +75,9 @@ export class Main extends Component {
 					listeners={({ navigation }) => ({
 						tabPress: (event) => {
 							event.preventDefault();
-							navigation.navigate("Profile");
+							navigation.navigate("Profile", {
+								uid: firebase.auth().currentUser!.uid,
+							});
 						},
 					})}
 					options={{
