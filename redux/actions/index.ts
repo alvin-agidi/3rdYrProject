@@ -38,7 +38,7 @@ export function fetchUserPosts() {
 				let posts = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
-					const createdAt = data.createdAt.toDate();
+					const createdAt = data.createdAt.toDate().toISOString();
 					return { id, ...data, createdAt };
 				});
 				console.log(posts);
