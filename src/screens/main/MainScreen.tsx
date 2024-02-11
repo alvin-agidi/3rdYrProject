@@ -2,7 +2,11 @@ import { StyleSheet, View, Text } from "react-native";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { fetchUser, fetchUserPosts } from "../../../redux/actions";
+import {
+	fetchUser,
+	fetchUserPosts,
+	fetchFollowing,
+} from "../../../redux/actions";
 import EmptyScreen from "./EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -15,6 +19,7 @@ export class Main extends Component {
 	componentDidMount() {
 		this.props.fetchUser();
 		this.props.fetchUserPosts();
+		this.props.fetchFollowing();
 	}
 
 	render() {
@@ -113,17 +118,16 @@ export class Main extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f00",
 		alignItems: "center",
 		justifyContent: "center",
 	},
 });
 
-const mapStateToProps = (store) => ({
+const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 });
 
-const mapDispatchProps = (dispatch) =>
-	bindActionCreators({ fetchUser, fetchUserPosts }, dispatch);
+const mapDispatchProps = (dispatch: any) =>
+	bindActionCreators({ fetchUser, fetchUserPosts, fetchFollowing }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchProps)(Main);

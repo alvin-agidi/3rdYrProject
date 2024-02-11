@@ -6,9 +6,9 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
-function ProfileScreen(props) {
-	const [userPosts, setUserPosts] = useState([]);
-	const [user, setUser] = useState();
+function ProfileScreen(props: any) {
+	const [userPosts, setUserPosts] = useState<any>([]);
+	const [user, setUser] = useState<any>();
 	const [isFollowing, setIsFollowing] = useState(false);
 
 	useEffect(() => {
@@ -18,6 +18,11 @@ function ProfileScreen(props) {
 			setUser(currentUser);
 			setUserPosts(posts);
 		} else {
+			if (props.following.includes(props.route.params.uid)) {
+				setIsFollowing(true);
+			} else {
+				setIsFollowing(false);
+			}
 			firebase
 				.firestore()
 				.collection("users")
@@ -47,7 +52,7 @@ function ProfileScreen(props) {
 					setUserPosts(posts);
 				});
 		}
-	}, [props.route.params.uid]);
+	}, [props.route.params.uid, props.following]);
 
 	function toggleFollow() {
 		if (isFollowing) {
@@ -96,7 +101,7 @@ function ProfileScreen(props) {
 						onPress={() => {
 							toggleFollow();
 						}}
-						title={isFollowing ? "Unfollow" : "Follow"}
+						title={isFollowing ? "Following" : "Follow"}
 					/>
 				) : null}
 			</View>
@@ -139,9 +144,10 @@ const styles = StyleSheet.create({
 	},
 });
 
-const mapStateToProps = (store) => ({
+const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 	posts: store.userState.posts,
+	following: store.userState.following,
 });
 
 export default connect(mapStateToProps, null)(ProfileScreen);
