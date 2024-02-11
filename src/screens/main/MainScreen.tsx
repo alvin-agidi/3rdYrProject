@@ -41,11 +41,11 @@ export class Main extends Component {
 						},
 					})}
 					options={{
-						tabBarIcon: ({ iconColour, iconSize }) => (
+						tabBarIcon: ({ color, size }) => (
 							<Icon
 								name="home-outline"
-								color={iconColour}
-								size={iconSize}
+								color={color}
+								size={size}
 							/>
 						),
 					}}
@@ -60,12 +60,8 @@ export class Main extends Component {
 						},
 					})}
 					options={{
-						tabBarIcon: ({ iconColour, iconSize }) => (
-							<Icon
-								name="magnify"
-								color={iconColour}
-								size={iconSize}
-							/>
+						tabBarIcon: ({ color, size }) => (
+							<Icon name="magnify" color={color} size={size} />
 						),
 					}}
 				/>
@@ -79,11 +75,11 @@ export class Main extends Component {
 						},
 					})}
 					options={{
-						tabBarIcon: ({ iconColour, iconSize }) => (
+						tabBarIcon: ({ color, size }) => (
 							<Icon
 								name="camera-plus-outline"
-								color={iconColour}
-								size={iconSize}
+								color={color}
+								size={size}
 							/>
 						),
 					}}
@@ -100,11 +96,11 @@ export class Main extends Component {
 						},
 					})}
 					options={{
-						tabBarIcon: ({ iconColour, iconSize }) => (
+						tabBarIcon: ({ color, size }) => (
 							<Icon
 								name="account-outline"
-								color={iconColour}
-								size={iconSize}
+								color={color}
+								size={size}
 							/>
 						),
 					}}
