@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, FlatList } from "react-native";
+import { StyleSheet, View, Text, Image, FlatList, Button } from "react-native";
 import { Video } from "expo-av";
 import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
 function ProfileScreen(props) {
 	const [userPosts, setUserPosts] = useState([]);
 	const [user, setUser] = useState();
+	const [isFollowing, setIsFollowing] = useState(false);
 
 	useEffect(() => {
 		const { currentUser, posts } = props;
@@ -47,12 +49,56 @@ function ProfileScreen(props) {
 		}
 	}, [props.route.params.uid]);
 
+	function toggleFollow() {
+		if (isFollowing) {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(firebase.auth().currentUser!.uid)
+				.collection("following")
+				.doc(props.route.params.uid)
+				.delete();
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("followedBy")
+				.doc(firebase.auth().currentUser!.uid)
+				.delete();
+			setIsFollowing(false);
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(firebase.auth().currentUser!.uid)
+				.collection("following")
+				.doc(props.route.params.uid)
+				.set({});
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("followedBy")
+				.doc(firebase.auth().currentUser!.uid)
+				.set({});
+			setIsFollowing(true);
+		}
+	}
+
 	if (user === undefined) return <View />;
 	return (
 		<View style={styles.container}>
 			<View style={styles.infoContainer}>
 				<Text>{user.username}</Text>
 				<Text>{user.email}</Text>
+				{props.route.params.uid !== firebase.auth().currentUser!.uid ? (
+					<Button
+						onPress={() => {
+							toggleFollow();
+						}}
+						title={isFollowing ? "Unfollow" : "Follow"}
+					/>
+				) : null}
 			</View>
 			<View style={styles.galleryContainer}>
 				<FlatList
