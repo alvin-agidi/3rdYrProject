@@ -22,14 +22,14 @@ export default function PublishPost(props: any) {
 		const response = await fetch(uri);
 		const blob = await response.blob();
 		const childPath = `post/${
-			firebase.auth().currentUser.uid
+			firebase.auth().currentUser!.uid
 		}/${Math.random().toString(36)}`;
 		const task = firebase.storage().ref().child(childPath).put(blob);
 
-		const taskProgress = (snapshot) => {
+		const taskProgress = (snapshot: any) => {
 			console.log(`Transferred = ${snapshot.bytesTransferred}`);
 		};
-		const taskError = (error) => {
+		const taskError = (error: any) => {
 			console.log(error);
 		};
 		const taskCompleted = () => {
@@ -47,11 +47,11 @@ export default function PublishPost(props: any) {
 		);
 	}
 
-	function savePostData(downloadURL): void {
+	function savePostData(downloadURL: string): void {
 		firebase
 			.firestore()
 			.collection("posts")
-			.doc(firebase.auth().currentUser.uid)
+			.doc(firebase.auth().currentUser!.uid)
 			.collection("userPosts")
 			.add({
 				downloadURL,
@@ -72,7 +72,7 @@ export default function PublishPost(props: any) {
 					setCaption(caption);
 				}}
 			/>
-			<Button title="Publish" onPress={() => uploadImage()} />
+			<Button title="Publish" onPress={uploadImage} />
 		</View>
 	);
 }
