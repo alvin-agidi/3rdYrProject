@@ -12,11 +12,9 @@ function ProfileScreen(props: any) {
 	const [isFollowing, setIsFollowing] = useState(false);
 
 	useEffect(() => {
-		const { currentUser, posts } = props;
-
 		if (props.route.params.uid === firebase.auth().currentUser!.uid) {
-			setUser(currentUser);
-			setUserPosts(posts);
+			setUser(props.currentUser);
+			setUserPosts(props.posts);
 		} else {
 			if (props.following.includes(props.route.params.uid)) {
 				setIsFollowing(true);
@@ -90,6 +88,10 @@ function ProfileScreen(props: any) {
 		}
 	}
 
+	function signOut() {
+		firebase.auth().signOut();
+	}
+
 	if (user === undefined) return <View />;
 	return (
 		<View style={styles.container}>
@@ -98,12 +100,12 @@ function ProfileScreen(props: any) {
 				<Text>{user.email}</Text>
 				{props.route.params.uid !== firebase.auth().currentUser!.uid ? (
 					<Button
-						onPress={() => {
-							toggleFollow();
-						}}
+						onPress={toggleFollow}
 						title={isFollowing ? "Following" : "Follow"}
 					/>
-				) : null}
+				) : (
+					<Button onPress={signOut} title="Sign out" />
+				)}
 			</View>
 			<View style={styles.galleryContainer}>
 				<FlatList
