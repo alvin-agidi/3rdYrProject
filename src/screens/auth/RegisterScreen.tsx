@@ -28,7 +28,6 @@ export class RegisterScreen extends Component<{}, any> {
 					.collection("users")
 					.doc(firebase.auth().currentUser!.uid)
 					.set({ email, username });
-				console.log("Success1 = " + result);
 			})
 			.catch((result: any) => {
 				console.log("Fail1 = " + result);
@@ -60,7 +59,7 @@ export class RegisterScreen extends Component<{}, any> {
 					}}
 				/>
 
-				<Button title="Register" onPress={() => this.register()} />
+				<Button title="Register" onPress={this.register} />
 			</View>
 		);
 	}

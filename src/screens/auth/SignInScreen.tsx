@@ -20,9 +20,6 @@ export class SignInScreen extends Component<{}, any> {
 		firebase
 			.auth()
 			.signInWithEmailAndPassword(email, password)
-			.then((result: any) => {
-				console.log("Success2 = " + result);
-			})
 			.catch((result: any) => {
 				console.log("Fail2 = " + result);
 			});
@@ -47,7 +44,7 @@ export class SignInScreen extends Component<{}, any> {
 					}}
 				/>
 
-				<Button title="Sign in" onPress={() => this.signIn()} />
+				<Button title="Sign in" onPress={this.signIn} />
 			</View>
 		);
 	}
