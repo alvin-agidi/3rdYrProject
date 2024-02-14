@@ -17,7 +17,6 @@ function FeedScreen(props: any) {
 				// 	u && u.uid == uid;
 				// });
 				const user = props.users[0];
-				// console.log("user = " + user.username);
 				if (user != undefined) {
 					posts.push(...user.posts);
 				}

@@ -7,14 +7,14 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 function ProfileScreen(props: any) {
-	const [userPosts, setUserPosts] = useState<any>([]);
 	const [user, setUser] = useState<any>();
+	const [posts, setPosts] = useState<any>([]);
 	const [isFollowing, setIsFollowing] = useState(false);
 
 	useEffect(() => {
 		if (props.route.params.uid === firebase.auth().currentUser!.uid) {
 			setUser(props.currentUser);
-			setUserPosts(props.posts);
+			setPosts(props.posts);
 		} else {
 			if (props.following.includes(props.route.params.uid)) {
 				setIsFollowing(true);
@@ -35,9 +35,9 @@ function ProfileScreen(props: any) {
 				});
 			firebase
 				.firestore()
-				.collection("posts")
+				.collection("users")
 				.doc(props.route.params.uid)
-				.collection("userPosts")
+				.collection("posts")
 				.orderBy("createdAt", "asc")
 				.get()
 				.then((snapshot) => {
@@ -47,7 +47,7 @@ function ProfileScreen(props: any) {
 						const createdAt = data.createdAt.toDate().toISOString();
 						return { id, ...data, createdAt };
 					});
-					setUserPosts(posts);
+					setPosts(posts);
 				});
 		}
 	}, [props.route.params.uid, props.following]);
@@ -111,7 +111,7 @@ function ProfileScreen(props: any) {
 				<FlatList
 					horizontal={false}
 					numColumns={3}
-					data={userPosts}
+					data={posts}
 					renderItem={({ item }) => (
 						<View style={styles.imageContainer}>
 							<Image

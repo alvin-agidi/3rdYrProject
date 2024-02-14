@@ -42,9 +42,9 @@ export function fetchUserPosts() {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
-			.collection("posts")
+			.collection("users")
 			.doc(firebase.auth().currentUser!.uid)
-			.collection("userPosts")
+			.collection("posts")
 			.orderBy("createdAt", "asc")
 			.get()
 			.then((snapshot) => {
@@ -112,9 +112,9 @@ export function fetchFollowingPosts(uid: string) {
 	return (dispatch: any, getState: any) => {
 		firebase
 			.firestore()
-			.collection("posts")
+			.collection("users")
 			.doc(uid)
-			.collection("userPosts")
+			.collection("posts")
 			.orderBy("createdAt", "asc")
 			.get()
 			.then((snapshot: any) => {
@@ -122,7 +122,6 @@ export function fetchFollowingPosts(uid: string) {
 				const user = getState().usersState.users.find(
 					(u: any) => u !== undefined && u.uid == uid
 				);
-				// if (user != undefined) {
 				let posts = snapshot.docs.map((doc: any) => {
 					const id = doc.id;
 					const data = doc.data();
@@ -134,9 +133,6 @@ export function fetchFollowingPosts(uid: string) {
 					posts,
 					uid,
 				});
-				// } else {
-				// 	console.log("user undefined");
-				// }
 			});
 	};
 }

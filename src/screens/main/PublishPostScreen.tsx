@@ -50,9 +50,9 @@ export default function PublishPost(props: any) {
 	function savePostData(downloadURL: string): void {
 		firebase
 			.firestore()
-			.collection("posts")
+			.collection("users")
 			.doc(firebase.auth().currentUser!.uid)
-			.collection("userPosts")
+			.collection("posts")
 			.add({
 				downloadURL,
 				caption,
