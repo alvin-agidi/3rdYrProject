@@ -1,5 +1,6 @@
 import firebase from "firebase/compat/app";
 import {
+	CLEAR_DATA,
 	FOLLOWING_STATE_CHANGE,
 	USERS_DATA_STATE_CHANGE,
 	USERS_POSTS_STATE_CHANGE,
@@ -9,6 +10,12 @@ import {
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
+
+export function clearData() {
+	return (dispatch: any) => {
+		dispatch({ type: CLEAR_DATA });
+	};
+}
 
 export function fetchUser() {
 	return (dispatch: any) => {

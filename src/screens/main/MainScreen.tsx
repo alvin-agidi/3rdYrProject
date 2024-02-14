@@ -6,6 +6,7 @@ import {
 	fetchUser,
 	fetchUserPosts,
 	fetchFollowing,
+	clearData,
 } from "../../../redux/actions";
 import EmptyScreen from "./EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -17,6 +18,7 @@ const Tab = createBottomTabNavigator();
 
 export class Main extends Component {
 	componentDidMount() {
+		this.props.clearData();
 		this.props.fetchUser();
 		this.props.fetchUserPosts();
 		this.props.fetchFollowing();
@@ -33,7 +35,7 @@ export class Main extends Component {
 		}
 		return (
 			<Tab.Navigator
-				initialRouteName="FeedTab"
+				initialRouteName="Feed"
 				screenOptions={{ tabBarShowLabel: false }}
 			>
 				<Tab.Screen
@@ -128,6 +130,9 @@ const mapStateToProps = (store: any) => ({
 });
 
 const mapDispatchProps = (dispatch: any) =>
-	bindActionCreators({ fetchUser, fetchUserPosts, fetchFollowing }, dispatch);
+	bindActionCreators(
+		{ fetchUser, fetchUserPosts, fetchFollowing, clearData },
+		dispatch
+	);
 
 export default connect(mapStateToProps, mapDispatchProps)(Main);
