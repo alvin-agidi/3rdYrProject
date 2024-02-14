@@ -94,7 +94,6 @@ export default function CameraScreen() {
 			quality: 1,
 		}).then((media: any) => {
 			if (!media.canceled) {
-				console.log(media);
 				if (media.assets[0].type == "image") {
 					setPhoto(media.assets[0]);
 				} else {

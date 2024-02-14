@@ -27,13 +27,13 @@ export class Main extends Component {
 		if (currentUser == undefined) {
 			return (
 				<View style={styles.container}>
-					<Text>User is not signed in.</Text>
+					<Text>Signing in...</Text>
 				</View>
 			);
 		}
 		return (
 			<Tab.Navigator
-				initialRouteName="Feed"
+				initialRouteName="FeedTab"
 				screenOptions={{ tabBarShowLabel: false }}
 			>
 				<Tab.Screen
