@@ -19,8 +19,7 @@ export default function CameraScreen() {
 		useState();
 	const [hasImagePickerPermission, setHasImagePickerPermission] = useState();
 	const [isRecording, setIsRecording] = useState(false);
-	const [video, setVideo] = useState();
-	const [photo, setPhoto] = useState();
+	const [media, setMedia] = useState();
 
 	useEffect(() => {
 		(async () => {
@@ -64,7 +63,7 @@ export default function CameraScreen() {
 		};
 
 		cameraRef.current.recordAsync(options).then((recordedVideo: any) => {
-			setVideo(recordedVideo);
+			setMedia(recordedVideo);
 			setIsRecording(false);
 		});
 	}
@@ -82,7 +81,7 @@ export default function CameraScreen() {
 		};
 
 		cameraRef.current.takePictureAsync(options).then((newPhoto: any) => {
-			setPhoto(newPhoto);
+			setMedia(newPhoto);
 		});
 	}
 
@@ -94,11 +93,7 @@ export default function CameraScreen() {
 			quality: 1,
 		}).then((media: any) => {
 			if (!media.canceled) {
-				if (media.assets[0].type == "image") {
-					setPhoto(media.assets[0]);
-				} else {
-					setVideo(media.assets[0]);
-				}
+				setMedia(media.assets[0]);
 			}
 		});
 	}
@@ -113,70 +108,44 @@ export default function CameraScreen() {
 		setVideoMode((mode) => (mode ? false : true));
 	}
 
-	if (video) {
-		function shareVideo(): void {
-			shareAsync(video.uri).then(() => {
-				setVideo(undefined);
-			});
-		}
-
-		function saveVideo(): void {
-			MediaLibrary.saveToLibraryAsync(video.uri).then(() => {
-				setVideo(undefined);
-			});
-		}
-
-		return (
-			<SafeAreaView style={styles.container}>
-				<Video
-					style={styles.media}
-					source={{ uri: video.uri }}
-					useNativeControls
-					resizeMode={ResizeMode.CONTAIN}
-					isLooping
-				/>
-
-				<Button title="Share" onPress={shareVideo} />
-				{hasMediaLibraryPermission ? (
-					<Button title="Save" onPress={saveVideo} />
-				) : undefined}
-				<Button title="Discard" onPress={() => setVideo(undefined)} />
-				<Button
-					title="Create post from this video"
-					onPress={() =>
-						navigation.navigate("Publish Post", { video })
-					}
-				/>
-			</SafeAreaView>
-		);
+	function shareMedia(): void {
+		shareAsync(media.uri).then(() => {
+			setMedia(undefined);
+		});
 	}
 
-	if (photo) {
-		function sharePhoto(): void {
-			shareAsync(photo.uri).then(() => {
-				setPhoto(undefined);
-			});
-		}
+	function saveMedia(): void {
+		MediaLibrary.saveToLibraryAsync(media.uri).then(() => {
+			setMedia(undefined);
+		});
+	}
 
-		function savePhoto(): void {
-			MediaLibrary.saveToLibraryAsync(photo.uri).then(() => {
-				setPhoto(undefined);
-			});
-		}
-
+	if (media) {
 		return (
 			<SafeAreaView style={styles.container}>
-				<Image style={styles.media} source={{ uri: photo.uri }} />
-
-				<Button title="Share" onPress={sharePhoto} />
+				{isVideoMode ? (
+					<Video
+						style={styles.media}
+						source={{ uri: media.uri }}
+						useNativeControls
+						resizeMode={ResizeMode.CONTAIN}
+						isLooping
+					/>
+				) : (
+					<Image style={styles.media} source={{ uri: media.uri }} />
+				)}
+				<Button title="Share" onPress={shareMedia} />
 				{hasMediaLibraryPermission ? (
-					<Button title="Save" onPress={savePhoto} />
+					<Button title="Save" onPress={saveMedia} />
 				) : undefined}
-				<Button title="Discard" onPress={() => setPhoto(undefined)} />
+				<Button title="Discard" onPress={() => setMedia(undefined)} />
 				<Button
-					title="Create post from this photo"
+					title="Create post"
 					onPress={() =>
-						navigation.navigate("Publish Post", { photo })
+						navigation.navigate("Publish Post", {
+							media,
+							isVideo: isVideoMode,
+						})
 					}
 				/>
 			</SafeAreaView>

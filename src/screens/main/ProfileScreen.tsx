@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import * as VideoThumbnails from "expo-video-thumbnails";
 
 function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
@@ -45,12 +46,29 @@ function ProfileScreen(props: any) {
 						const id = doc.id;
 						const data = doc.data();
 						const createdAt = data.createdAt.toDate().toISOString();
-						return { id, ...data, createdAt };
+						return { id, ...data, createdAt, thumbnailURL: "" };
 					});
 					setPosts(posts);
 				});
 		}
-	}, [props.route.params.uid, props.following]);
+
+		const generateThumbnail = async (mediaURL: string) => {
+			const uri = (
+				await VideoThumbnails.getThumbnailAsync(mediaURL, {
+					time: 500,
+				})
+			).uri;
+			return uri;
+		};
+
+		posts.forEach((post: any) => {
+			if (post.isVideo && !post.thumbnailURI) {
+				generateThumbnail(post.mediaURL).then((uri) => {
+					post.thumbnailURI = uri;
+				});
+			}
+		});
+	}, [props.route.params.uid, props.following, posts]);
 
 	function toggleFollow() {
 		if (isFollowing) {
@@ -115,7 +133,11 @@ function ProfileScreen(props: any) {
 					renderItem={({ item }) => (
 						<View style={styles.imageContainer}>
 							<Image
-								source={{ uri: item.downloadURL }}
+								source={{
+									uri: item.isVideo
+										? item.thumbnailURI
+										: item.mediaURL,
+								}}
 								style={styles.image}
 							/>
 						</View>

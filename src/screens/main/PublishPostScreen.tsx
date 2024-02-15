@@ -10,20 +10,15 @@ export default function PublishPost(props: any) {
 	const navigation = useNavigation();
 	const [caption, setCaption] = useState("");
 
-	let uri: string = "";
+	const isVideo = props.route.params.isVideo;
+	const mediaUri = props.route.params.media.uri;
 
-	if (props.route.params.video) {
-		uri = props.route.params.video.uri;
-	} else {
-		uri = props.route.params.photo.uri;
-	}
-
-	async function uploadImage(): Promise<void> {
-		const response = await fetch(uri);
+	async function uploadMedia(): Promise<void> {
+		const response = await fetch(mediaUri);
 		const blob = await response.blob();
-		const childPath = `post/${
+		const childPath = `${
 			firebase.auth().currentUser!.uid
-		}/${Math.random().toString(36)}`;
+		}/posts/${Math.random().toString(36)}`;
 		const task = firebase.storage().ref().child(childPath).put(blob);
 
 		const taskProgress = (snapshot: any) => {
@@ -33,9 +28,8 @@ export default function PublishPost(props: any) {
 			console.log(error);
 		};
 		const taskCompleted = () => {
-			task.snapshot.ref.getDownloadURL().then((downloadURL) => {
+			task.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
 				savePostData(downloadURL);
-				console.log(downloadURL);
 			});
 		};
 
@@ -47,14 +41,15 @@ export default function PublishPost(props: any) {
 		);
 	}
 
-	function savePostData(downloadURL: string): void {
+	function savePostData(mediaURL: string): void {
 		firebase
 			.firestore()
 			.collection("users")
 			.doc(firebase.auth().currentUser!.uid)
 			.collection("posts")
 			.add({
-				downloadURL,
+				mediaURL,
+				isVideo,
 				caption,
 				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			})
@@ -65,14 +60,14 @@ export default function PublishPost(props: any) {
 
 	return (
 		<View>
-			<Image source={{ uri: uri }} />
+			<Image source={{ uri: mediaUri }} />
 			<TextInput
 				placeholder="Write a caption..."
 				onChangeText={(caption) => {
 					setCaption(caption);
 				}}
 			/>
-			<Button title="Publish" onPress={uploadImage} />
+			<Button title="Publish" onPress={uploadMedia} />
 		</View>
 	);
 }
