@@ -39,7 +39,7 @@ function ProfileScreen(props: any) {
 				.collection("users")
 				.doc(props.route.params.uid)
 				.collection("posts")
-				.orderBy("createdAt", "asc")
+				.orderBy("createdAt", "desc")
 				.get()
 				.then((snapshot) => {
 					let posts = snapshot.docs.map((doc) => {

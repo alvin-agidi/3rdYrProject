@@ -26,7 +26,6 @@ export function fetchUser() {
 			.get()
 			.then((snapshot) => {
 				if (snapshot.exists) {
-					console.log("Success3 = " + snapshot.data());
 					dispatch({
 						type: USER_STATE_CHANGE,
 						currentUser: snapshot.data(),
@@ -45,7 +44,7 @@ export function fetchUserPosts() {
 			.collection("users")
 			.doc(firebase.auth().currentUser!.uid)
 			.collection("posts")
-			.orderBy("createdAt", "asc")
+			.orderBy("createdAt", "desc")
 			.get()
 			.then((snapshot) => {
 				let posts = snapshot.docs.map((doc) => {
@@ -115,7 +114,7 @@ export function fetchFollowingPosts(uid: string) {
 			.collection("users")
 			.doc(uid)
 			.collection("posts")
-			.orderBy("createdAt", "asc")
+			.orderBy("createdAt", "desc")
 			.get()
 			.then((snapshot: any) => {
 				const uid = snapshot.docs[0].ref.path.split("/")[1];

@@ -14,9 +14,10 @@ import { useNavigation } from "@react-navigation/core";
 
 export default function SearchScreen() {
 	const navigation = useNavigation();
-	const [users, setUsers] = useState([]);
+	const [users, setUsers] = useState<any>([]);
 
 	function fetchUsers(queryString: string): void {
+		if (!queryString) return setUsers([]);
 		firebase
 			.firestore()
 			.collection("users")
