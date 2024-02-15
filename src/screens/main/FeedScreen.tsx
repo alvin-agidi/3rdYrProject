@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Image, FlatList, Button } from "react-native";
-import { Video } from "expo-av";
+import { Video, ResizeMode } from "expo-av";
 import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -36,10 +36,20 @@ function FeedScreen(props: any) {
 				data={posts}
 				renderItem={({ item }) => (
 					<View style={styles.postContainer}>
-						<Image
-							source={{ uri: item.downloadURL }}
-							style={styles.image}
-						/>
+						{item.isVideo ? (
+							<Video
+								style={styles.media}
+								source={{ uri: item.mediaURL }}
+								resizeMode={ResizeMode.CONTAIN}
+								shouldPlay
+								isLooping
+							/>
+						) : (
+							<Image
+								style={styles.media}
+								source={{ uri: item.mediaURL }}
+							/>
+						)}
 						<Text>{item.user.username}</Text>
 						<Text>{item.caption}</Text>
 					</View>
@@ -58,7 +68,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		margin: 0,
 	},
-	image: {
+	media: {
 		flex: 1,
 		aspectRatio: 1 / 1,
 	},
