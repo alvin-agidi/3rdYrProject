@@ -10,11 +10,14 @@ function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
 	const [isFollowing, setIsFollowing] = useState<any>(false);
-	const isCurrentUser =
-		props.route.params.uid !== firebase.auth().currentUser!.uid;
+	console.log(props.route.params.uid);
 
 	useEffect(() => {
-		function getUser() {
+		setPosts([]);
+		const isCurrentUser =
+			props.route.params.uid === firebase.auth().currentUser!.uid;
+
+		function getUser(): void {
 			if (isCurrentUser) {
 				setUser(props.currentUser);
 			} else {
@@ -91,7 +94,7 @@ function ProfileScreen(props: any) {
 				setPosts(tempPosts);
 			});
 		});
-	}, [props.following, props.route.params.uid]);
+	}, [props.route.params.uid]);
 
 	function toggleFollow() {
 		if (isFollowing) {

@@ -81,13 +81,8 @@ export class App extends Component<{}, any> {
 						<Stack.Screen
 							name="Register"
 							component={RegisterScreen}
-							// options={{ headerShown: false }}
 						/>
-						<Stack.Screen
-							name="Sign In"
-							component={SignInScreen}
-							// options={{ headerShown: false }}
-						/>
+						<Stack.Screen name="Sign In" component={SignInScreen} />
 					</Stack.Navigator>
 				</NavigationContainer>
 			);
@@ -100,15 +95,6 @@ export class App extends Component<{}, any> {
 								name="Main"
 								component={MainScreen}
 								options={{ headerShown: false }}
-							/>
-							<Stack.Screen name="Feed" component={FeedScreen} />
-							<Stack.Screen
-								name="Search"
-								component={SearchScreen}
-							/>
-							<Stack.Screen
-								name="Camera"
-								component={CameraScreen}
 							/>
 							<Stack.Screen
 								name="Profile"

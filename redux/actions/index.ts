@@ -124,7 +124,7 @@ export function fetchFollowingPosts(uid: string) {
 				let posts = snapshot.docs.map((doc: any) => {
 					const id = doc.id;
 					const data = doc.data();
-					const createdAt = data.createdAt.toDate().toISOString();
+					const createdAt = data.createdAt.toDate().toLocaleString();
 					return { id, ...data, createdAt, user };
 				});
 				dispatch({

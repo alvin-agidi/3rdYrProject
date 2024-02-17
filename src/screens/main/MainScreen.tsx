@@ -45,12 +45,6 @@ export class Main extends Component {
 				<Tab.Screen
 					name="Feed"
 					component={FeedScreen}
-					// listeners={({ navigation }) => ({
-					// 	tabPress: (event) => {
-					// 		event.preventDefault();
-					// 		navigation.navigate("Feed");
-					// 	},
-					// })}
 					options={{
 						tabBarIcon: ({ color, size }) => (
 							<Icon
@@ -84,7 +78,7 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="Profile"
+					name="My Profile"
 					component={ProfileScreen}
 					initialParams={{ uid: firebase.auth().currentUser!.uid }}
 					options={{
