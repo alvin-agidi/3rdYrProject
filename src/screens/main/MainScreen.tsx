@@ -39,11 +39,11 @@ export class Main extends Component {
 		}
 		return (
 			<Tab.Navigator
-				initialRouteName="FeedTab"
+				initialRouteName="Feed"
 				screenOptions={{ tabBarShowLabel: false }}
 			>
 				<Tab.Screen
-					name="FeedTab"
+					name="Feed"
 					component={FeedScreen}
 					// listeners={({ navigation }) => ({
 					// 	tabPress: (event) => {
@@ -62,7 +62,7 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="SearchTab"
+					name="Search"
 					component={SearchScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
@@ -71,7 +71,7 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="CameraTab"
+					name="Camera"
 					component={CameraScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
@@ -84,7 +84,7 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="ProfileTab"
+					name="Profile"
 					component={ProfileScreen}
 					initialParams={{ uid: firebase.auth().currentUser!.uid }}
 					options={{

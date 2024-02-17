@@ -55,6 +55,9 @@ export default function PublishPost(props: any) {
 			})
 			.then(() => {
 				navigation.popToTop();
+				navigation.navigate("Profile", {
+					uid: firebase.auth().currentUser!.uid,
+				});
 			});
 	}
 
