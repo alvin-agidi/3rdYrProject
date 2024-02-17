@@ -5,36 +5,42 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import structuredClone from "@ungap/structured-clone";
 
 function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
-	const [isFollowing, setIsFollowing] = useState(false);
+	const [isFollowing, setIsFollowing] = useState<any>(false);
+	const isCurrentUser =
+		props.route.params.uid !== firebase.auth().currentUser!.uid;
 
 	useEffect(() => {
+		function getUser() {
+			if (isCurrentUser) {
+				setUser(props.currentUser);
+			} else {
+				if (props.following.includes(props.route.params.uid)) {
+					setIsFollowing(true);
+				}
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.get()
+					.then((snapshot) => {
+						if (snapshot.exists) {
+							setUser(snapshot.data());
+						} else {
+							console.log("User does not exist");
+						}
+					});
+			}
+		}
+
 		function getPosts(): Promise<any[]> {
 			return new Promise((resolve) => {
-				if (
-					props.route.params.uid !== firebase.auth().currentUser!.uid
-				) {
-					if (props.following.includes(props.route.params.uid)) {
-						setIsFollowing(true);
-					} else {
-						setIsFollowing(false);
-					}
-					firebase
-						.firestore()
-						.collection("users")
-						.doc(props.route.params.uid)
-						.get()
-						.then((snapshot) => {
-							if (snapshot.exists) {
-								setUser(snapshot.data());
-							} else {
-								console.log("User does not exist");
-							}
-						});
+				if (isCurrentUser) {
+					return resolve(props.posts);
+				} else {
 					firebase
 						.firestore()
 						.collection("users")
@@ -59,9 +65,6 @@ function ProfileScreen(props: any) {
 								})
 							);
 						});
-				} else {
-					setUser(props.currentUser);
-					return resolve(props.posts);
 				}
 			});
 		}
@@ -73,6 +76,8 @@ function ProfileScreen(props: any) {
 				post.thumbnailURI = thumbnail.uri;
 			});
 		}
+
+		getUser();
 
 		getPosts().then((tempPosts: any[]) => {
 			Promise.all(
