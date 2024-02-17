@@ -13,65 +13,78 @@ function ProfileScreen(props: any) {
 	const [isFollowing, setIsFollowing] = useState(false);
 
 	useEffect(() => {
-		var tempPosts: any[] = [];
-		if (props.route.params.uid === firebase.auth().currentUser!.uid) {
-			setUser(props.currentUser);
-			tempPosts = props.posts;
-			// tempPosts.forEach((post) => (post.thumbnailURI = ""));
-		} else {
-			if (props.following.includes(props.route.params.uid)) {
-				setIsFollowing(true);
-			} else {
-				setIsFollowing(false);
-			}
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.get()
-				.then((snapshot) => {
-					if (snapshot.exists) {
-						setUser(snapshot.data());
+		function getPosts(): Promise<any[]> {
+			return new Promise((resolve) => {
+				if (
+					props.route.params.uid !== firebase.auth().currentUser!.uid
+				) {
+					if (props.following.includes(props.route.params.uid)) {
+						setIsFollowing(true);
 					} else {
-						console.log("User does not exist");
+						setIsFollowing(false);
 					}
-				});
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.collection("posts")
-				.orderBy("createdAt", "desc")
-				.get()
-				.then((snapshot) => {
-					tempPosts = snapshot.docs.map((doc) => {
-						const id = doc.id;
-						const data = doc.data();
-						const createdAt = data.createdAt.toDate().toISOString();
-						return { id, ...data, createdAt, thumbnailURI: "" };
-					});
-				});
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(props.route.params.uid)
+						.get()
+						.then((snapshot) => {
+							if (snapshot.exists) {
+								setUser(snapshot.data());
+							} else {
+								console.log("User does not exist");
+							}
+						});
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(props.route.params.uid)
+						.collection("posts")
+						.orderBy("createdAt", "desc")
+						.get()
+						.then((snapshot) => {
+							return resolve(
+								snapshot.docs.map((doc) => {
+									const id = doc.id;
+									const data = doc.data();
+									const createdAt = data.createdAt
+										.toDate()
+										.toISOString();
+									return {
+										id,
+										...data,
+										createdAt,
+										thumbnailURI: "",
+									};
+								})
+							);
+						});
+				} else {
+					setUser(props.currentUser);
+					return resolve(props.posts);
+				}
+			});
 		}
-		// console.log(temp);
 
-		const generateThumbnail1 = (post: any) => {
+		function generateThumbnail(post: any) {
 			return VideoThumbnails.getThumbnailAsync(post.mediaURL, {
 				time: 100,
 			}).then((thumbnail) => {
 				post.thumbnailURI = thumbnail.uri;
 			});
-		};
+		}
 
-		Promise.all(
-			tempPosts.map((post) => {
-				if (post.isVideo && !post.thumbnailURI) {
-					return generateThumbnail1(post);
-				}
-				return post;
-			})
-		).then(() => {
-			// console.log(tempPosts.map((post) => post.thumbnailURI));
-			setPosts(tempPosts);
+		getPosts().then((tempPosts: any[]) => {
+			Promise.all(
+				tempPosts.map((post: any) => {
+					if (post.isVideo && !post.thumbnailURI) {
+						return generateThumbnail(post);
+					}
+					return post;
+				})
+			).then(() => {
+				setPosts(tempPosts);
+			});
 		});
 	}, [props.following, props.route.params.uid]);
 
