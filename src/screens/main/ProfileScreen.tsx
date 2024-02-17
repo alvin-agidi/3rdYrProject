@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Image, FlatList, Button } from "react-native";
-import { Video } from "expo-av";
 import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import * as VideoThumbnails from "expo-video-thumbnails";
+import structuredClone from "@ungap/structured-clone";
 
 function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
@@ -13,9 +13,11 @@ function ProfileScreen(props: any) {
 	const [isFollowing, setIsFollowing] = useState(false);
 
 	useEffect(() => {
+		var tempPosts: any[] = [];
 		if (props.route.params.uid === firebase.auth().currentUser!.uid) {
 			setUser(props.currentUser);
-			setPosts(props.posts);
+			tempPosts = props.posts;
+			// tempPosts.forEach((post) => (post.thumbnailURI = ""));
 		} else {
 			if (props.following.includes(props.route.params.uid)) {
 				setIsFollowing(true);
@@ -42,33 +44,36 @@ function ProfileScreen(props: any) {
 				.orderBy("createdAt", "desc")
 				.get()
 				.then((snapshot) => {
-					let posts = snapshot.docs.map((doc) => {
+					tempPosts = snapshot.docs.map((doc) => {
 						const id = doc.id;
 						const data = doc.data();
 						const createdAt = data.createdAt.toDate().toISOString();
-						return { id, ...data, createdAt, thumbnailURL: "" };
+						return { id, ...data, createdAt, thumbnailURI: "" };
 					});
-					setPosts(posts);
 				});
 		}
+		// console.log(temp);
 
-		const generateThumbnail = async (mediaURL: string) => {
-			const uri = (
-				await VideoThumbnails.getThumbnailAsync(mediaURL, {
-					time: 500,
-				})
-			).uri;
-			return uri;
+		const generateThumbnail1 = (post: any) => {
+			return VideoThumbnails.getThumbnailAsync(post.mediaURL, {
+				time: 100,
+			}).then((thumbnail) => {
+				post.thumbnailURI = thumbnail.uri;
+			});
 		};
 
-		posts.forEach((post: any) => {
-			if (post.isVideo && !post.thumbnailURI) {
-				generateThumbnail(post.mediaURL).then((uri) => {
-					post.thumbnailURI = uri;
-				});
-			}
+		Promise.all(
+			tempPosts.map((post) => {
+				if (post.isVideo && !post.thumbnailURI) {
+					return generateThumbnail1(post);
+				}
+				return post;
+			})
+		).then(() => {
+			// console.log(tempPosts.map((post) => post.thumbnailURI));
+			setPosts(tempPosts);
 		});
-	}, [props.route.params.uid, props.following, posts]);
+	}, [props.following, props.route.params.uid]);
 
 	function toggleFollow() {
 		if (isFollowing) {
@@ -125,25 +130,26 @@ function ProfileScreen(props: any) {
 					<Button onPress={signOut} title="Sign out" />
 				)}
 			</View>
-			<View style={styles.galleryContainer}>
-				<FlatList
-					horizontal={false}
-					numColumns={3}
-					data={posts}
-					renderItem={({ item }) => (
-						<View style={styles.imageContainer}>
-							<Image
-								source={{
-									uri: item.isVideo
-										? item.thumbnailURI
-										: item.mediaURL,
-								}}
-								style={styles.image}
-							/>
-						</View>
-					)}
-				/>
-			</View>
+			<FlatList
+				horizontal={false}
+				numColumns={3}
+				data={posts}
+				// extraData={tempPosts}
+				contentContainerStyle={{ gap: 2 }}
+				columnWrapperStyle={{ gap: 2 }}
+				renderItem={({ item }) => (
+					<View style={styles.imageContainer}>
+						<Image
+							source={{
+								uri: item.isVideo
+									? item.thumbnailURI
+									: item.mediaURL,
+							}}
+							style={styles.image}
+						/>
+					</View>
+				)}
+			/>
 		</View>
 	);
 }
@@ -158,6 +164,7 @@ const styles = StyleSheet.create({
 	},
 	galleryContainer: {
 		margin: 0,
+		gap: 10,
 	},
 	imageContainer: {
 		flex: 1 / 3,
