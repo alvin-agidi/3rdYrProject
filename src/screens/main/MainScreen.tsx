@@ -13,6 +13,10 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import SearchScreen from "./SearchScreen";
+import FeedScreen from "./FeedScreen";
+import CameraScreen from "./CameraScreen";
+import ProfileScreen from "./ProfileScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -35,18 +39,18 @@ export class Main extends Component {
 		}
 		return (
 			<Tab.Navigator
-				initialRouteName="Feed"
+				initialRouteName="FeedTab"
 				screenOptions={{ tabBarShowLabel: false }}
 			>
 				<Tab.Screen
 					name="FeedTab"
-					component={EmptyScreen}
-					listeners={({ navigation }) => ({
-						tabPress: (event) => {
-							event.preventDefault();
-							navigation.navigate("Feed");
-						},
-					})}
+					component={FeedScreen}
+					// listeners={({ navigation }) => ({
+					// 	tabPress: (event) => {
+					// 		event.preventDefault();
+					// 		navigation.navigate("Feed");
+					// 	},
+					// })}
 					options={{
 						tabBarIcon: ({ color, size }) => (
 							<Icon
@@ -59,13 +63,7 @@ export class Main extends Component {
 				/>
 				<Tab.Screen
 					name="SearchTab"
-					component={EmptyScreen}
-					listeners={({ navigation }) => ({
-						tabPress: (event) => {
-							event.preventDefault();
-							navigation.navigate("Search");
-						},
-					})}
+					component={SearchScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
 							<Icon name="magnify" color={color} size={size} />
@@ -74,13 +72,7 @@ export class Main extends Component {
 				/>
 				<Tab.Screen
 					name="CameraTab"
-					component={EmptyScreen}
-					listeners={({ navigation }) => ({
-						tabPress: (event) => {
-							event.preventDefault();
-							navigation.navigate("Camera");
-						},
-					})}
+					component={CameraScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
 							<Icon
@@ -93,15 +85,8 @@ export class Main extends Component {
 				/>
 				<Tab.Screen
 					name="ProfileTab"
-					component={EmptyScreen}
-					listeners={({ navigation }) => ({
-						tabPress: (event) => {
-							event.preventDefault();
-							navigation.navigate("Profile", {
-								uid: firebase.auth().currentUser!.uid,
-							});
-						},
-					})}
+					component={ProfileScreen}
+					initialParams={{ uid: firebase.auth().currentUser!.uid }}
 					options={{
 						tabBarIcon: ({ color, size }) => (
 							<Icon

@@ -99,32 +99,24 @@ export class App extends Component<{}, any> {
 							<Stack.Screen
 								name="Main"
 								component={MainScreen}
-								// options={{ headerShown: false }}
+								options={{ headerShown: false }}
 							/>
-							<Stack.Screen
-								name="Feed"
-								component={FeedScreen}
-								// options={{ headerShown: false }}
-							/>
+							<Stack.Screen name="Feed" component={FeedScreen} />
 							<Stack.Screen
 								name="Search"
 								component={SearchScreen}
-								// options={{ headerShown: false }}
 							/>
 							<Stack.Screen
 								name="Camera"
 								component={CameraScreen}
-								// options={{ headerShown: false }}
 							/>
 							<Stack.Screen
 								name="Profile"
 								component={ProfileScreen}
-								// options={{ headerShown: false }}
 							/>
 							<Stack.Screen
 								name="Publish Post"
 								component={PublishPostScreen}
-								// options={{ headerShown: false }}
 							/>
 						</Stack.Navigator>
 					</NavigationContainer>
