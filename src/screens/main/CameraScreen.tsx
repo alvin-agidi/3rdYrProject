@@ -1,14 +1,19 @@
 import { Camera, CameraType } from "expo-camera";
 import { Button, StyleSheet, Text, SafeAreaView, Image } from "react-native";
 // import { StatusBar } from "expo-status-bar";
-import { useEffect, useRef, useState } from "react";
+import { Component, useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
 import { Video, ResizeMode } from "expo-av";
 import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/core";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import PublishPostScreen from "./PublishPostScreen";
+import { connect } from "react-redux";
 
-export default function CameraScreen() {
+const Stack = createNativeStackNavigator();
+
+function CameraComponent() {
 	const navigation = useNavigation();
 	let cameraRef = useRef();
 	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
@@ -189,6 +194,20 @@ export default function CameraScreen() {
 	);
 }
 
+export class CameraScreen extends Component {
+	render() {
+		return (
+			<Stack.Navigator initialRouteName="Camera">
+				<Stack.Screen name="Camera" component={CameraComponent} />
+				<Stack.Screen
+					name="Publish Post"
+					component={PublishPostScreen}
+				/>
+			</Stack.Navigator>
+		);
+	}
+}
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -203,3 +222,12 @@ const styles = StyleSheet.create({
 		alignSelf: "stretch",
 	},
 });
+
+const mapStateToProps = (store: any) => ({
+	currentUser: store.userState.currentUser,
+	following: store.userState.following,
+	users: store.usersState.users,
+	usersLoaded: store.usersState.usersLoaded,
+});
+
+export default connect(mapStateToProps, null)(CameraScreen);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Component, useEffect, useState } from "react";
 import {
 	StyleSheet,
 	View,
@@ -10,8 +10,12 @@ import {
 import { Video, ResizeMode } from "expo-av";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/core";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ProfileScreen from "./ProfileScreen";
 
-function FeedScreen(props: any) {
+const Stack = createNativeStackNavigator();
+
+function Feed(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 
@@ -74,6 +78,20 @@ function FeedScreen(props: any) {
 			/>
 		</View>
 	);
+}
+
+export class FeedScreen extends Component {
+	render() {
+		return (
+			<Stack.Navigator initialRouteName="Feed">
+				<Stack.Screen
+					name="Feed"
+					children={(props) => <Feed {...props} {...this.props} />}
+				/>
+				<Stack.Screen name="Profile" component={ProfileScreen} />
+			</Stack.Navigator>
+		);
+	}
 }
 
 const styles = StyleSheet.create({

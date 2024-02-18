@@ -1,24 +1,16 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
-import LandingScreen from "./src/screens/auth/LandingScreen";
-import RegisterScreen from "./src/screens/auth/RegisterScreen";
-import SignInScreen from "./src/screens/auth/SignInScreen";
 import MainScreen from "./src/screens/main/MainScreen";
-import FeedScreen from "./src/screens/main/FeedScreen";
-import SearchScreen from "./src/screens/main/SearchScreen";
-import CameraScreen from "./src/screens/main/CameraScreen";
-import ProfileScreen from "./src/screens/main/ProfileScreen";
-import PublishPostScreen from "./src/screens/main/PublishPostScreen";
 import { Provider } from "react-redux";
 import { applyMiddleware } from "redux";
 import rootReducer from "./redux/reducers";
-import { configureStore, Tuple } from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
+import { LandingScreen } from "./src/screens/auth/LandingScreen";
 
 const store = configureStore({
 	reducer: rootReducer,
@@ -45,7 +37,6 @@ export class App extends Component<{}, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			loaded: false,
 			signedIn: false,
 		};
 	}
@@ -54,12 +45,10 @@ export class App extends Component<{}, any> {
 		firebase.auth().onAuthStateChanged((user) => {
 			if (!user) {
 				this.setState({
-					loaded: true,
 					signedIn: false,
 				});
 			} else {
 				this.setState({
-					loaded: true,
 					signedIn: true,
 				});
 			}
@@ -67,48 +56,20 @@ export class App extends Component<{}, any> {
 	}
 
 	render() {
-		const { loaded, signedIn } = this.state;
-		if (!loaded) {
-		} else if (!signedIn) {
+		if (!this.state.signedIn) {
 			return (
 				<NavigationContainer>
-					<Stack.Navigator initialRouteName="LandingScreen">
-						<Stack.Screen
-							name="Landing"
-							component={LandingScreen}
-							// options={{ headerShown: false }}
-						/>
-						<Stack.Screen
-							name="Register"
-							component={RegisterScreen}
-						/>
-						<Stack.Screen name="Sign In" component={SignInScreen} />
-					</Stack.Navigator>
+					<LandingScreen />
 				</NavigationContainer>
 			);
-		} else {
-			return (
-				<Provider store={store}>
-					<NavigationContainer>
-						<Stack.Navigator initialRouteName="Main">
-							<Stack.Screen
-								name="Main"
-								component={MainScreen}
-								options={{ headerShown: false }}
-							/>
-							<Stack.Screen
-								name="Profile"
-								component={ProfileScreen}
-							/>
-							<Stack.Screen
-								name="Publish Post"
-								component={PublishPostScreen}
-							/>
-						</Stack.Navigator>
-					</NavigationContainer>
-				</Provider>
-			);
 		}
+		return (
+			<Provider store={store}>
+				<NavigationContainer>
+					<MainScreen />
+				</NavigationContainer>
+			</Provider>
+		);
 	}
 }
 

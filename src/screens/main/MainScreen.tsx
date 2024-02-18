@@ -8,7 +8,6 @@ import {
 	fetchFollowing,
 	clearData,
 } from "../../../redux/actions";
-import EmptyScreen from "./EmptyScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
@@ -29,21 +28,13 @@ export class Main extends Component {
 	}
 
 	render() {
-		const { currentUser } = this.props;
-		if (currentUser == undefined) {
-			return (
-				<View style={styles.container}>
-					<Text>Signing in...</Text>
-				</View>
-			);
-		}
 		return (
 			<Tab.Navigator
-				initialRouteName="Feed"
-				screenOptions={{ tabBarShowLabel: false }}
+				initialRouteName="FeedScreen"
+				// screenOptions={{ tabBarShowLabel: false }}
 			>
 				<Tab.Screen
-					name="Feed"
+					name="FeedScreen"
 					component={FeedScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
@@ -53,19 +44,23 @@ export class Main extends Component {
 								size={size}
 							/>
 						),
+						tabBarLabel: "Feed",
+						headerShown: false,
 					}}
 				/>
 				<Tab.Screen
-					name="Search"
+					name="SearchScreen"
 					component={SearchScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
 							<Icon name="magnify" color={color} size={size} />
 						),
+						tabBarLabel: "Search",
+						headerShown: false,
 					}}
 				/>
 				<Tab.Screen
-					name="Camera"
+					name="CameraScreen"
 					component={CameraScreen}
 					options={{
 						tabBarIcon: ({ color, size }) => (
@@ -75,6 +70,8 @@ export class Main extends Component {
 								size={size}
 							/>
 						),
+						tabBarLabel: "Camera",
+						headerShown: false,
 					}}
 				/>
 				<Tab.Screen

@@ -64,5 +64,3 @@ export class RegisterScreen extends Component<{}, any> {
 		);
 	}
 }
-
-export default RegisterScreen;

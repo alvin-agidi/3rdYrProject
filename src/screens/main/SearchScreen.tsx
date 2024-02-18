@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Component, useState } from "react";
 import {
 	StyleSheet,
 	View,
@@ -11,8 +11,13 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import ProfileScreen from "./ProfileScreen";
+import { connect } from "react-redux";
 
-export default function SearchScreen() {
+const Stack = createNativeStackNavigator();
+
+function Search() {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any>([]);
 
@@ -37,7 +42,7 @@ export default function SearchScreen() {
 	return (
 		<View>
 			<TextInput
-				placeholder="Search for a user..."
+				placeholder="Search for a user"
 				onChangeText={(queryString) => fetchUsers(queryString)}
 			/>
 			<FlatList
@@ -63,6 +68,17 @@ export default function SearchScreen() {
 	);
 }
 
+export class SearchScreen extends Component {
+	render() {
+		return (
+			<Stack.Navigator initialRouteName="Search">
+				<Stack.Screen name="Search" component={Search} />
+				<Stack.Screen name="Profile" component={ProfileScreen} />
+			</Stack.Navigator>
+		);
+	}
+}
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -72,3 +88,12 @@ const styles = StyleSheet.create({
 		margin: 0,
 	},
 });
+
+const mapStateToProps = (store: any) => ({
+	currentUser: store.userState.currentUser,
+	following: store.userState.following,
+	users: store.usersState.users,
+	usersLoaded: store.usersState.usersLoaded,
+});
+
+export default connect(mapStateToProps, null)(SearchScreen);

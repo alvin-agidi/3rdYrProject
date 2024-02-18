@@ -10,7 +10,6 @@ function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
 	const [isFollowing, setIsFollowing] = useState<any>(false);
-	console.log(props.route.params.uid);
 
 	useEffect(() => {
 		setPosts([]);

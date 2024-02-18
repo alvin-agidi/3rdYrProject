@@ -49,5 +49,3 @@ export class SignInScreen extends Component<{}, any> {
 		);
 	}
 }
-
-export default SignInScreen;
