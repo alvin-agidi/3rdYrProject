@@ -22,7 +22,7 @@ export class RegisterScreen extends Component<{}, any> {
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
-			.then((result: any) => {
+			.then(() => {
 				firebase
 					.firestore()
 					.collection("users")
