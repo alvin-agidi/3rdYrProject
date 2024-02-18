@@ -1,4 +1,3 @@
-import { StyleSheet, View, Text } from "react-native";
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -6,6 +5,7 @@ import {
 	fetchUser,
 	fetchUserPosts,
 	fetchFollowing,
+	fetchFollowers,
 	clearData,
 } from "../../../redux/actions";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -22,9 +22,10 @@ const Tab = createBottomTabNavigator();
 export class Main extends Component {
 	componentDidMount() {
 		this.props.clearData();
-		this.props.fetchUser();
-		this.props.fetchUserPosts();
-		this.props.fetchFollowing();
+		this.props.fetchUser(firebase.auth().currentUser!.uid);
+		this.props.fetchUserPosts(firebase.auth().currentUser!.uid);
+		this.props.fetchFollowing(firebase.auth().currentUser!.uid);
+		this.props.fetchFollowers(firebase.auth().currentUser!.uid);
 	}
 
 	render() {
@@ -93,21 +94,18 @@ export class Main extends Component {
 	}
 }
 
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});
-
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 });
 
 const mapDispatchProps = (dispatch: any) =>
-	bindActionCreators(
-		{ fetchUser, fetchUserPosts, fetchFollowing, clearData },
+	bindActionCreators({
+			clearData,
+			fetchUser,
+			fetchUserPosts,
+			fetchFollowing,
+			fetchFollowers,
+		},
 		dispatch
 	);
 

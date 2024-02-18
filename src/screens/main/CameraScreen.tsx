@@ -15,7 +15,7 @@ const Stack = createNativeStackNavigator();
 
 function CameraComponent() {
 	const navigation = useNavigation();
-	let cameraRef = useRef();
+	var cameraRef = useRef();
 	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
 	const [isVideoMode, setVideoMode] = useState(true);
 	const [hasCameraPermission, setHasCameraPermission] = useState();
@@ -61,7 +61,7 @@ function CameraComponent() {
 
 	function startVideo(): void {
 		setIsRecording(true);
-		let options = {
+		var options = {
 			quality: "1080p",
 			maxDuration: 60,
 			mute: false,
@@ -79,7 +79,7 @@ function CameraComponent() {
 	}
 
 	function takePhoto(): void {
-		let options = {
+		var options = {
 			quality: 1,
 			base64: true,
 			exif: false,
@@ -226,6 +226,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 	following: store.userState.following,
+	followers: store.userState.followers,
 	users: store.usersState.users,
 	usersLoaded: store.usersState.usersLoaded,
 });

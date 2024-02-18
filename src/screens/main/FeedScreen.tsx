@@ -20,7 +20,7 @@ function Feed(props: any) {
 	const [posts, setPosts] = useState<any>([]);
 
 	useEffect(() => {
-		let posts: any = [];
+		var posts: any = [];
 		if (props.usersLoaded == props.following.length) {
 			for (const uid of props.following) {
 				const user = props.users.find((u: any) => u.uid == uid);
@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 	following: store.userState.following,
+	followers: store.userState.followers,
 	users: store.usersState.users,
 	usersLoaded: store.usersState.usersLoaded,
 });
