@@ -1,8 +1,10 @@
 import React, { Component } from "react";
-import { View, Button, TextInput } from "react-native";
+import { View, TextInput, Text, Pressable } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
+import styles from "../../styles";
+import { PressableButton } from "../../components/PressableButton";
 
 export class SignInScreen extends Component<{}, any> {
 	constructor(props: any) {
@@ -27,11 +29,12 @@ export class SignInScreen extends Component<{}, any> {
 
 	render() {
 		return (
-			<View>
+			<View style={styles.form}>
 				<TextInput
 					placeholder="Email"
 					inputMode="email"
 					textContentType="emailAddress"
+					style={styles.input}
 					onChangeText={(email) => {
 						this.setState({ email });
 					}}
@@ -39,12 +42,12 @@ export class SignInScreen extends Component<{}, any> {
 				<TextInput
 					placeholder="Password"
 					secureTextEntry={true}
+					style={styles.input}
 					onChangeText={(password) => {
 						this.setState({ password });
 					}}
 				/>
-
-				<Button title="Sign in" onPress={this.signIn} />
+				<PressableButton onPress={this.signIn} text="Sign In" />
 			</View>
 		);
 	}

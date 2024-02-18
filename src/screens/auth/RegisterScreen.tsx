@@ -1,17 +1,19 @@
 import React, { Component } from "react";
-import { View, Button, TextInput } from "react-native";
+import { View, TextInput, Pressable, Text } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
+import styles from "../../styles";
+import { PressableButton } from "../../components/PressableButton";
 
 export class RegisterScreen extends Component<{}, any> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
 			email: "",
-			password: "",
 			username: "",
+			password: "",
 		};
 
 		this.register = this.register.bind(this);
@@ -36,30 +38,33 @@ export class RegisterScreen extends Component<{}, any> {
 
 	render() {
 		return (
-			<View>
+			<View style={styles.form}>
 				<TextInput
 					placeholder="Email"
 					inputMode="email"
+					style={styles.input}
 					onChangeText={(email) => {
 						this.setState({ email });
+					}}
+				/>
+				<TextInput
+					placeholder="Username"
+					style={styles.input}
+					onChangeText={(username) => {
+						this.setState({ username });
 					}}
 				/>
 				<TextInput
 					placeholder="Password"
 					secureTextEntry={true}
 					textContentType="newPassword"
+					style={styles.input}
 					onChangeText={(password) => {
 						this.setState({ password });
 					}}
 				/>
-				<TextInput
-					placeholder="username"
-					onChangeText={(username) => {
-						this.setState({ username });
-					}}
-				/>
 
-				<Button title="Register" onPress={this.register} />
+				<PressableButton onPress={this.register} text="Register" />
 			</View>
 		);
 	}

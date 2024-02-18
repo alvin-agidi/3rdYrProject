@@ -1,23 +1,25 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { Text, View, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { SignInScreen } from "./SignInScreen";
 import { RegisterScreen } from "./RegisterScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import styles from "../../styles";
+import { PressableButton } from "../../components/PressableButton";
 
 const Stack = createNativeStackNavigator();
 
 function Landing() {
 	const navigation = useNavigation();
 	return (
-		<View style={styles.container}>
-			<Button
-				title="Register"
+		<View style={styles.form}>
+			<PressableButton
 				onPress={() => navigation.navigate("Register")}
+				text="Register"
 			/>
-			<Button
-				title="Sign in"
+			<PressableButton
 				onPress={() => navigation.navigate("Sign in")}
+				text="Sign in"
 			/>
 		</View>
 	);
@@ -34,12 +36,3 @@ export class LandingScreen extends Component {
 		);
 	}
 }
-
-const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		backgroundColor: "#fff",
-		alignItems: "center",
-		justifyContent: "center",
-	},
-});
