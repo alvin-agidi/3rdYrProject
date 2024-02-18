@@ -91,7 +91,6 @@ export function fetchFollowers(uid: string) {
 			.collection("followers")
 			.onSnapshot((snapshot) => {
 				var followers = snapshot.docs.map((doc) => doc.id);
-				console.log(followers);
 				dispatch({
 					type: FOLLOWERS_STATE_CHANGE,
 					followers,

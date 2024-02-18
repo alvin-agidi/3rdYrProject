@@ -50,6 +50,7 @@ function Feed(props: any) {
 								resizeMode={ResizeMode.CONTAIN}
 								shouldPlay
 								isLooping
+								isMuted
 							/>
 						) : (
 							<Image
