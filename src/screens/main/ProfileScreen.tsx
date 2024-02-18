@@ -9,6 +9,8 @@ import * as VideoThumbnails from "expo-video-thumbnails";
 function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
+	const [following, setFollowing] = useState<any>([]);
+	const [followers, setFollowers] = useState<any>([]);
 	const [isFollowing, setIsFollowing] = useState<any>(false);
 
 	useEffect(() => {
@@ -20,9 +22,6 @@ function ProfileScreen(props: any) {
 			if (isCurrentUser) {
 				setUser(props.currentUser);
 			} else {
-				if (props.following.includes(props.route.params.uid)) {
-					setIsFollowing(true);
-				}
 				firebase
 					.firestore()
 					.collection("users")
@@ -34,6 +33,38 @@ function ProfileScreen(props: any) {
 						} else {
 							console.log("User does not exist");
 						}
+					});
+			}
+		}
+
+		function getFollowing(): void {
+			if (isCurrentUser) {
+				setFollowing(props.following);
+			} else {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.collection("following")
+					.get()
+					.then((snapshot) => {
+						setFollowing(snapshot.docs.map((doc) => doc.id));
+					});
+			}
+		}
+
+		function getFollowers(): void {
+			if (isCurrentUser) {
+				setFollowers(props.followers);
+			} else {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.collection("followers")
+					.get()
+					.then((snapshot) => {
+						setFollowers(snapshot.docs.map((doc) => doc.id));
 					});
 			}
 		}
@@ -80,7 +111,8 @@ function ProfileScreen(props: any) {
 		}
 
 		getUser();
-
+		getFollowing();
+		getFollowers();
 		getPosts().then((tempPosts: any[]) => {
 			Promise.all(
 				tempPosts.map((post: any) => {
@@ -95,6 +127,52 @@ function ProfileScreen(props: any) {
 		});
 	}, [props.route.params.uid]);
 
+	useEffect(() => {
+		if (followers.includes(firebase.auth().currentUser!.uid)) {
+			setIsFollowing(true);
+		}
+	}, [followers]);
+
+	useEffect(() => {
+		const isCurrentUser =
+			props.route.params.uid === firebase.auth().currentUser!.uid;
+
+		function getFollowing(): void {
+			if (isCurrentUser) {
+				setFollowing(props.following);
+			} else {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.collection("following")
+					.get()
+					.then((snapshot) => {
+						setFollowing(snapshot.docs.map((doc) => doc.id));
+					});
+			}
+		}
+
+		function getFollowers(): void {
+			if (isCurrentUser) {
+				setFollowers(props.followers);
+			} else {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.collection("followers")
+					.get()
+					.then((snapshot) => {
+						setFollowers(snapshot.docs.map((doc) => doc.id));
+					});
+			}
+		}
+
+		getFollowing();
+		getFollowers();
+	}, [isFollowing, props.following, props.followers]);
+
 	function toggleFollow() {
 		if (isFollowing) {
 			firebase
@@ -108,7 +186,7 @@ function ProfileScreen(props: any) {
 				.firestore()
 				.collection("users")
 				.doc(props.route.params.uid)
-				.collection("followedBy")
+				.collection("followers")
 				.doc(firebase.auth().currentUser!.uid)
 				.delete();
 			setIsFollowing(false);
@@ -124,7 +202,7 @@ function ProfileScreen(props: any) {
 				.firestore()
 				.collection("users")
 				.doc(props.route.params.uid)
-				.collection("followedBy")
+				.collection("followers")
 				.doc(firebase.auth().currentUser!.uid)
 				.set({});
 			setIsFollowing(true);
@@ -137,10 +215,11 @@ function ProfileScreen(props: any) {
 
 	if (user === undefined) return <View />;
 	return (
-		<View style={styles.container}>
-			<View style={styles.infoContainer}>
-				<Text>{user.username}</Text>
-				<Text>{user.email}</Text>
+		<View style={styles.profile}>
+			<View style={styles.infoBox}>
+				<Text style={styles.username}>{user.username}</Text>
+				<Text style={styles.info}>{following.length} Following</Text>
+				<Text style={styles.info}>{followers.length} Followers</Text>
 				{props.route.params.uid !== firebase.auth().currentUser!.uid ? (
 					<Button
 						onPress={toggleFollow}
@@ -154,11 +233,10 @@ function ProfileScreen(props: any) {
 				horizontal={false}
 				numColumns={3}
 				data={posts}
-				// extraData={tempPosts}
 				contentContainerStyle={{ gap: 2 }}
 				columnWrapperStyle={{ gap: 2 }}
 				renderItem={({ item }) => (
-					<View style={styles.imageContainer}>
+					<View style={styles.imageBox}>
 						<Image
 							source={{
 								uri: item.isVideo
@@ -175,19 +253,22 @@ function ProfileScreen(props: any) {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	profile: {
 		flex: 1,
-		margin: 0,
-	},
-	infoContainer: {
-		margin: 0,
-	},
-	galleryContainer: {
-		margin: 0,
 		gap: 10,
 	},
-	imageContainer: {
+	infoBox: {
+		padding: 10,
+	},
+	gallery: {},
+	imageBox: {
 		flex: 1 / 3,
+	},
+	username: {
+		fontSize: 30,
+	},
+	info: {
+		fontSize: 20,
 	},
 	image: {
 		flex: 1,
@@ -199,6 +280,7 @@ const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 	posts: store.userState.posts,
 	following: store.userState.following,
+	followers: store.userState.followers,
 });
 
 export default connect(mapStateToProps, null)(ProfileScreen);

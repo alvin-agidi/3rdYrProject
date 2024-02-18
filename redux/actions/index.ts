@@ -1,6 +1,7 @@
 import firebase from "firebase/compat/app";
 import {
 	CLEAR_DATA,
+	FOLLOWERS_STATE_CHANGE,
 	FOLLOWING_STATE_CHANGE,
 	USERS_DATA_STATE_CHANGE,
 	USERS_POSTS_STATE_CHANGE,
@@ -17,12 +18,12 @@ export function clearData() {
 	};
 }
 
-export function fetchUser() {
+export function fetchUser(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
 			.collection("users")
-			.doc(firebase.auth().currentUser!.uid)
+			.doc(uid)
 			.get()
 			.then((snapshot) => {
 				if (snapshot.exists) {
@@ -37,17 +38,17 @@ export function fetchUser() {
 	};
 }
 
-export function fetchUserPosts() {
+export function fetchUserPosts(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
 			.collection("users")
-			.doc(firebase.auth().currentUser!.uid)
+			.doc(uid)
 			.collection("posts")
 			.orderBy("createdAt", "desc")
 			.get()
 			.then((snapshot) => {
-				let posts = snapshot.docs.map((doc) => {
+				var posts = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
 					const createdAt = data.createdAt.toDate().toISOString();
@@ -61,24 +62,40 @@ export function fetchUserPosts() {
 	};
 }
 
-export function fetchFollowing() {
+export function fetchFollowing(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
 			.collection("users")
-			.doc(firebase.auth().currentUser!.uid)
+			.doc(uid)
 			.collection("following")
 			.onSnapshot((snapshot) => {
-				let following = snapshot.docs.map((doc) => {
-					return doc.id;
-				});
+				var following = snapshot.docs.map((doc) => doc.id);
 				dispatch({
 					type: FOLLOWING_STATE_CHANGE,
 					following,
 				});
-				for (const uid of following) {
-					dispatch(fetchUserData(uid));
+				for (const id of following) {
+					dispatch(fetchUserData(id));
 				}
+			});
+	};
+}
+
+export function fetchFollowers(uid: string) {
+	return (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("followers")
+			.onSnapshot((snapshot) => {
+				var followers = snapshot.docs.map((doc) => doc.id);
+				console.log(followers);
+				dispatch({
+					type: FOLLOWERS_STATE_CHANGE,
+					followers,
+				});
 			});
 	};
 }
@@ -121,7 +138,7 @@ export function fetchFollowingPosts(uid: string) {
 				const user = getState().usersState.users.find(
 					(u: any) => u !== undefined && u.uid == uid
 				);
-				let posts = snapshot.docs.map((doc: any) => {
+				var posts = snapshot.docs.map((doc: any) => {
 					const id = doc.id;
 					const data = doc.data();
 					const createdAt = data.createdAt.toDate().toLocaleString();

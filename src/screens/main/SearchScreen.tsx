@@ -30,7 +30,7 @@ function Search() {
 			.where("username", "<=", queryString + "~")
 			.get()
 			.then((snapshot) => {
-				let users = snapshot.docs.map((doc) => {
+				var users = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
 					return { id, ...data };
@@ -94,6 +94,7 @@ const mapStateToProps = (store: any) => ({
 	following: store.userState.following,
 	users: store.usersState.users,
 	usersLoaded: store.usersState.usersLoaded,
+	followers: store.userState.followers,
 });
 
 export default connect(mapStateToProps, null)(SearchScreen);
