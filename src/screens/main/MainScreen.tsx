@@ -8,6 +8,7 @@ import {
 	fetchFollowers,
 	clearData,
 } from "../../../redux/actions";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
@@ -17,7 +18,8 @@ import FeedScreen from "./FeedScreen";
 import CameraScreen from "./CameraScreen";
 import ProfileScreen from "./ProfileScreen";
 
-const Tab = createBottomTabNavigator();
+// const Tab = createMaterialTopTabNavigator();
+const Tab2 = createBottomTabNavigator();
 
 export class Main extends Component {
 	componentDidMount() {
@@ -30,15 +32,28 @@ export class Main extends Component {
 
 	render() {
 		return (
-			<Tab.Navigator
+			<Tab2.Navigator
 				initialRouteName="FeedScreen"
-				// screenOptions={{ tabBarShowLabel: false }}
+				// tabBarPosition="bottom"
+				screenOptions={{
+					tabBarShowLabel: false,
+					// tabBarItemStyle: { width: 100 },
+					// lazy: true,
+					// tabBarStyle: {
+					// 	padding: 10,
+					// 	paddingLeft: 0,
+					// 	paddingRight: 0,
+					// },
+					// tabBarIndicatorStyle: {
+					// 	top: 0,
+					// },
+				}}
 			>
-				<Tab.Screen
+				<Tab2.Screen
 					name="FeedScreen"
 					component={FeedScreen}
 					options={{
-						tabBarIcon: ({ color, size }) => (
+						tabBarIcon: ({ color, size = 25 }) => (
 							<Icon
 								name="home-outline"
 								color={color}
@@ -49,22 +64,22 @@ export class Main extends Component {
 						headerShown: false,
 					}}
 				/>
-				<Tab.Screen
+				<Tab2.Screen
 					name="SearchScreen"
 					component={SearchScreen}
 					options={{
-						tabBarIcon: ({ color, size }) => (
+						tabBarIcon: ({ color, size = 25 }) => (
 							<Icon name="magnify" color={color} size={size} />
 						),
 						tabBarLabel: "Search",
 						headerShown: false,
 					}}
 				/>
-				<Tab.Screen
+				<Tab2.Screen
 					name="CameraScreen"
 					component={CameraScreen}
 					options={{
-						tabBarIcon: ({ color, size }) => (
+						tabBarIcon: ({ color, size = 25 }) => (
 							<Icon
 								name="camera-plus-outline"
 								color={color}
@@ -75,21 +90,22 @@ export class Main extends Component {
 						headerShown: false,
 					}}
 				/>
-				<Tab.Screen
+				<Tab2.Screen
 					name="My Profile"
 					component={ProfileScreen}
 					initialParams={{ uid: firebase.auth().currentUser!.uid }}
 					options={{
-						tabBarIcon: ({ color, size }) => (
+						tabBarIcon: ({ color, size = 25 }) => (
 							<Icon
 								name="account-outline"
 								color={color}
 								size={size}
 							/>
 						),
+						headerShown: true,
 					}}
 				/>
-			</Tab.Navigator>
+			</Tab2.Navigator>
 		);
 	}
 }
