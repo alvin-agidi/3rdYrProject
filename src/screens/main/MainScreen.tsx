@@ -21,11 +21,11 @@ const Tab = createBottomTabNavigator();
 
 export class Main extends Component {
 	componentDidMount() {
-		this.props.clearData();
-		this.props.fetchUser(firebase.auth().currentUser!.uid);
-		this.props.fetchUserPosts(firebase.auth().currentUser!.uid);
-		this.props.fetchFollowing(firebase.auth().currentUser!.uid);
-		this.props.fetchFollowers(firebase.auth().currentUser!.uid);
+		clearData();
+		fetchUser(firebase.auth().currentUser!.uid);
+		fetchUserPosts(firebase.auth().currentUser!.uid);
+		fetchFollowing(firebase.auth().currentUser!.uid);
+		fetchFollowers(firebase.auth().currentUser!.uid);
 	}
 
 	render() {
@@ -99,7 +99,8 @@ const mapStateToProps = (store: any) => ({
 });
 
 const mapDispatchProps = (dispatch: any) =>
-	bindActionCreators({
+	bindActionCreators(
+		{
 			clearData,
 			fetchUser,
 			fetchUserPosts,
