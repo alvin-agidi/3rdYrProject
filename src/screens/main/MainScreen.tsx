@@ -23,11 +23,11 @@ const Tab2 = createBottomTabNavigator();
 
 export class Main extends Component {
 	componentDidMount() {
-		clearData();
-		fetchUser(firebase.auth().currentUser!.uid);
-		fetchUserPosts(firebase.auth().currentUser!.uid);
-		fetchFollowing(firebase.auth().currentUser!.uid);
-		fetchFollowers(firebase.auth().currentUser!.uid);
+		this.props.clearData();
+		this.props.fetchUser(firebase.auth().currentUser!.uid);
+		this.props.fetchUserPosts(firebase.auth().currentUser!.uid);
+		this.props.fetchFollowing(firebase.auth().currentUser!.uid);
+		this.props.fetchFollowers(firebase.auth().currentUser!.uid);
 	}
 
 	render() {

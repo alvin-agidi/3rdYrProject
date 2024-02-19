@@ -34,7 +34,7 @@ export class SignInScreen extends Component<{}, any> {
 					placeholder="Email"
 					inputMode="email"
 					textContentType="emailAddress"
-					style={styles.input}
+					style={styles.textInput}
 					onChangeText={(email) => {
 						this.setState({ email });
 					}}
@@ -42,7 +42,7 @@ export class SignInScreen extends Component<{}, any> {
 				<TextInput
 					placeholder="Password"
 					secureTextEntry={true}
-					style={styles.input}
+					style={styles.textInput}
 					onChangeText={(password) => {
 						this.setState({ password });
 					}}

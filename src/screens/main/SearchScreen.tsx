@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "./ProfileScreen";
 import { connect } from "react-redux";
+import globalStyles from "../../styles";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,15 +41,17 @@ function Search() {
 	}
 
 	return (
-		<View>
+		<View style={styles.container}>
 			<TextInput
-				placeholder="Search for a user"
+				placeholder="Search users"
 				onChangeText={(queryString) => fetchUsers(queryString)}
+				style={globalStyles.textInput}
 			/>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
 				data={users}
+				style={styles.results}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
@@ -57,10 +60,7 @@ function Search() {
 							})
 						}
 					>
-						<Text style={styles.userContainer}>
-							{item.username}
-							{item.email}
-						</Text>
+						<Text style={styles.user}>{item.username}</Text>
 					</TouchableOpacity>
 				)}
 			/>
@@ -82,10 +82,15 @@ export class SearchScreen extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		margin: 0,
+		gap: 10,
+		padding: 10,
 	},
-	userContainer: {
-		margin: 0,
+	results: {
+		flex: 1,
+		gap: 10,
+	},
+	user: {
+		fontSize: 20,
 	},
 });
 

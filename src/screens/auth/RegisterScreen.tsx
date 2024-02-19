@@ -42,14 +42,14 @@ export class RegisterScreen extends Component<{}, any> {
 				<TextInput
 					placeholder="Email"
 					inputMode="email"
-					style={styles.input}
+					style={styles.textInput}
 					onChangeText={(email) => {
 						this.setState({ email });
 					}}
 				/>
 				<TextInput
 					placeholder="Username"
-					style={styles.input}
+					style={styles.textInput}
 					onChangeText={(username) => {
 						this.setState({ username });
 					}}
@@ -58,7 +58,7 @@ export class RegisterScreen extends Component<{}, any> {
 					placeholder="Password"
 					secureTextEntry={true}
 					textContentType="newPassword"
-					style={styles.input}
+					style={styles.textInput}
 					onChangeText={(password) => {
 						this.setState({ password });
 					}}

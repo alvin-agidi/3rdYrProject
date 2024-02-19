@@ -49,7 +49,6 @@ function Feed(props: any) {
 								source={{ uri: item.mediaURL }}
 								resizeMode={ResizeMode.CONTAIN}
 								shouldPlay
-								isLooping
 								isMuted
 							/>
 						) : (

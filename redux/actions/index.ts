@@ -7,7 +7,7 @@ import {
 	USERS_POSTS_STATE_CHANGE,
 	USER_POSTS_STATE_CHANGE,
 	USER_STATE_CHANGE,
-} from "../constants/index";
+} from "../constants";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";

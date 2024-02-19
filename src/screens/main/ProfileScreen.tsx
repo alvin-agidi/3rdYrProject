@@ -5,6 +5,8 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import * as VideoThumbnails from "expo-video-thumbnails";
+import globalStyles from "../../styles";
+import { PressableButton } from "../../components/PressableButton";
 
 function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
@@ -218,36 +220,38 @@ function ProfileScreen(props: any) {
 		<View style={styles.profile}>
 			<View style={styles.infoBox}>
 				<Text style={styles.username}>{user.username}</Text>
-				<Text style={styles.info}>{following.length} Following</Text>
-				<Text style={styles.info}>{followers.length} Followers</Text>
+				<Text style={styles.info}>{following.length} following</Text>
+				<Text style={styles.info}>{followers.length} followers</Text>
 				{props.route.params.uid !== firebase.auth().currentUser!.uid ? (
-					<Button
+					<PressableButton
 						onPress={toggleFollow}
-						title={isFollowing ? "Following" : "Follow"}
+						text={isFollowing ? "Following" : "Follow"}
 					/>
 				) : (
-					<Button onPress={signOut} title="Sign out" />
+					<PressableButton onPress={signOut} text="Sign out" />
 				)}
 			</View>
-			<FlatList
-				horizontal={false}
-				numColumns={3}
-				data={posts}
-				contentContainerStyle={{ gap: 2 }}
-				columnWrapperStyle={{ gap: 2 }}
-				renderItem={({ item }) => (
-					<View style={styles.imageBox}>
-						<Image
-							source={{
-								uri: item.isVideo
-									? item.thumbnailURI
-									: item.mediaURL,
-							}}
-							style={styles.image}
-						/>
-					</View>
-				)}
-			/>
+			<View style={styles.gallery}>
+				<FlatList
+					horizontal={false}
+					numColumns={3}
+					data={posts}
+					contentContainerStyle={{ gap: 2 }}
+					columnWrapperStyle={{ gap: 2 }}
+					renderItem={({ item }) => (
+						<View style={styles.imageBox}>
+							<Image
+								source={{
+									uri: item.isVideo
+										? item.thumbnailURI
+										: item.mediaURL,
+								}}
+								style={styles.image}
+							/>
+						</View>
+					)}
+				/>
+			</View>
 		</View>
 	);
 }
@@ -256,11 +260,12 @@ const styles = StyleSheet.create({
 	profile: {
 		flex: 1,
 		gap: 10,
-	},
-	infoBox: {
 		padding: 10,
 	},
-	gallery: {},
+	infoBox: {
+		gap: 5,
+	},
+	gallery: { borderRadius: 10, flex: 1, overflow: "hidden" },
 	imageBox: {
 		flex: 1 / 3,
 	},

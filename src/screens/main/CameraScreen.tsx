@@ -212,11 +212,9 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 	},
-
 	camera: {
 		flex: 1,
 	},
-
 	media: {
 		flex: 1,
 		alignSelf: "stretch",
