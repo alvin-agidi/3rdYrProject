@@ -7,7 +7,7 @@ export default StyleSheet.create({
 		gap: 10,
 		alignItems: "center",
 	},
-	input: {
+	textInput: {
 		padding: 5,
 		fontSize: 20,
 		borderRadius: 5,
@@ -18,6 +18,7 @@ export default StyleSheet.create({
 		borderRadius: 5,
 		padding: 10,
 		backgroundColor: "lightgrey",
+		alignItems: "center",
 	},
 	buttonText: {
 		fontSize: 20,
