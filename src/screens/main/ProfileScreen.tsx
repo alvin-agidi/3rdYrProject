@@ -262,9 +262,7 @@ const styles = StyleSheet.create({
 		gap: 10,
 		padding: 10,
 	},
-	infoBox: {
-		gap: 5,
-	},
+	infoBox: { gap: 5 },
 	gallery: { borderRadius: 10, flex: 1, overflow: "hidden" },
 	imageBox: {
 		flex: 1 / 3,
