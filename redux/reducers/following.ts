@@ -5,7 +5,7 @@ const initialState = {
 	followingLoaded: 0,
 };
 
-export const users = (state = initialState, action: any) => {
+export const followingState = (state = initialState, action: any) => {
 	switch (action.type) {
 		case FOLLOWING_POSTS_STATE_CHANGE:
 			return {

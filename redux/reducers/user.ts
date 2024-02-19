@@ -13,7 +13,7 @@ const initialState = {
 	followers: [],
 };
 
-export const user = (state = initialState, action: any) => {
+export const userState = (state = initialState, action: any) => {
 	switch (action.type) {
 		case USER_STATE_CHANGE:
 			return {

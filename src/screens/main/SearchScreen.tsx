@@ -98,9 +98,8 @@ const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 	following: store.userState.following,
 	followers: store.userState.followers,
-	users: store.usersState.users,
-	followingLoaded: store.usersState.followingLoaded,
-	followingPosts: store.usersState.followingPosts,
+	followingLoaded: store.followingState.followingLoaded,
+	followingPosts: store.followingState.followingPosts,
 });
 
 export default connect(mapStateToProps, null)(SearchScreen);

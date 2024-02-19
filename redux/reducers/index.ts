@@ -1,7 +1,10 @@
 import { combineReducers } from "redux";
-import { user } from "./user";
-import { users } from "./following";
+import { userState } from "./user";
+import { followingState } from "./following";
 
-const reducer = combineReducers({ userState: user, usersState: users });
+const reducer = combineReducers({
+	userState,
+	followingState,
+});
 
 export default reducer;

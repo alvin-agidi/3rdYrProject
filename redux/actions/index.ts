@@ -119,13 +119,14 @@ export function fetchFollowingUserPosts(uid: string) {
 				const uid = snapshot.docs[0].ref.path.split("/")[1];
 				fetchFollowingUser(uid).then((user) => {
 					var posts = snapshot.docs.map((doc: any) => {
-						const id = doc.id;
 						const data = doc.data();
+						const id = doc.id;
 						const createdAt = data.createdAt
 							.toDate()
 							.toLocaleString();
-						return { id, ...data, createdAt, user };
+						return { ...data, id, createdAt, user };
 					});
+					// console.log(posts);
 					dispatch({
 						type: FOLLOWING_POSTS_STATE_CHANGE,
 						posts,
