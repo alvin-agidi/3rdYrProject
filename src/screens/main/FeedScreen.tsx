@@ -12,6 +12,10 @@ import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "./ProfileScreen";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import { PressableButton } from "../../components/PressableButton";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +31,30 @@ function Feed(props: any) {
 			setPosts(props.followingPosts);
 		}
 	}, [props.followingLoaded]);
+
+	function toggleLike(userID: string, postID: string, isLiked: boolean) {
+		if (isLiked) {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(userID)
+				.collection("posts")
+				.doc(postID)
+				.collection("likes")
+				.doc(firebase.auth().currentUser!.uid)
+				.delete();
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(userID)
+				.collection("posts")
+				.doc(postID)
+				.collection("likes")
+				.doc(firebase.auth().currentUser!.uid)
+				.set({});
+		}
+	}
 
 	return (
 		<View style={styles.feed}>
@@ -63,8 +91,21 @@ function Feed(props: any) {
 								<Text style={styles.postUsername}>
 									{item.user.username}
 								</Text>
+								<PressableButton
+									text={item.isLiked ? "Unlike" : "Like"}
+									onPress={() => {
+										toggleLike(
+											item.user.uid,
+											item.id,
+											item.isLiked
+										);
+									}}
+								/>
 							</TouchableOpacity>
-							<Text>{item.likes} likes</Text>
+							<Text>
+								{item.likes.length} like
+								{item.likes.length != 1 ? "s" : ""}
+							</Text>
 							<Text>{item.caption}</Text>
 							<Text>{item.createdAt}</Text>
 						</View>
@@ -108,6 +149,7 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		backgroundColor: "white",
 		padding: 15,
+		flexDirection: "row",
 	},
 	postInfo: {
 		paddingLeft: 15,

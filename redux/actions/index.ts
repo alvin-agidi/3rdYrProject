@@ -108,30 +108,62 @@ async function fetchFollowingUser(uid: string) {
 }
 
 export function fetchFollowingUserPosts(uid: string) {
-	return (dispatch: any, getState: any) => {
+	return (dispatch: any) => {
 		firebase
 			.firestore()
 			.collection("users")
 			.doc(uid)
 			.collection("posts")
-			.get()
-			.then(async (snapshot: any) => {
-				const uid = snapshot.docs[0].ref.path.split("/")[1];
-				fetchFollowingUser(uid).then((user) => {
+			.onSnapshot((snapshot: any) => {
+				const userID = snapshot.docs[0].ref.path.split("/")[1];
+				fetchFollowingUser(userID).then((user) => {
 					var posts = snapshot.docs.map((doc: any) => {
 						const data = doc.data();
-						const id = doc.id;
+						const postID = doc.id;
 						const createdAt = data.createdAt
 							.toDate()
 							.toLocaleString();
-						return { ...data, id, createdAt, user };
+						return {
+							...data,
+							postID,
+							createdAt,
+							user,
+						};
 					});
-					// console.log(posts);
-					dispatch({
-						type: FOLLOWING_POSTS_STATE_CHANGE,
-						posts,
+					Promise.all(
+						posts.map((post: any) =>
+							fetchPostLikes(post.user.uid, post.postID).then(
+								(likes) => {
+									post.likes = likes;
+									post.isLiked = likes.includes(
+										firebase.auth().currentUser!.uid
+									);
+								}
+							)
+						)
+					).then(() => {
+						dispatch({
+							type: FOLLOWING_POSTS_STATE_CHANGE,
+							posts,
+						});
 					});
 				});
 			});
 	};
+}
+
+function fetchPostLikes(userID: string, postID: string): Promise<string[]> {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(userID)
+			.collection("posts")
+			.doc(postID)
+			.collection("likes")
+			.get()
+			.then((snapshot) => {
+				return resolve(snapshot.docs.map((doc) => doc.id));
+			});
+	});
 }
