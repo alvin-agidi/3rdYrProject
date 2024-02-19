@@ -8,7 +8,7 @@ import {
 	fetchFollowers,
 	clearData,
 } from "../../../redux/actions";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+// import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
