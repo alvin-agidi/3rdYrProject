@@ -9,7 +9,7 @@ export default StyleSheet.create({
 	},
 	textInput: {
 		padding: 5,
-		fontSize: 20,
+		fontSize: 18,
 		borderRadius: 5,
 		backgroundColor: "lightgrey",
 		width: "100%",
@@ -19,8 +19,9 @@ export default StyleSheet.create({
 		padding: 10,
 		backgroundColor: "lightgrey",
 		alignItems: "center",
+		width: "auto",
 	},
 	buttonText: {
-		fontSize: 20,
+		fontSize: 15,
 	},
 });
