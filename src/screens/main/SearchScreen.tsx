@@ -97,9 +97,10 @@ const styles = StyleSheet.create({
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
 	following: store.userState.following,
-	users: store.usersState.users,
-	usersLoaded: store.usersState.usersLoaded,
 	followers: store.userState.followers,
+	users: store.usersState.users,
+	followingLoaded: store.usersState.followingLoaded,
+	followingPosts: store.usersState.followingPosts,
 });
 
 export default connect(mapStateToProps, null)(SearchScreen);

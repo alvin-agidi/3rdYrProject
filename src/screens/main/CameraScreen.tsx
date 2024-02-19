@@ -1,6 +1,5 @@
-import { Camera, CameraType } from "expo-camera";
+import { Camera, CameraType, AutoFocus } from "expo-camera";
 import { Button, StyleSheet, Text, SafeAreaView, Image } from "react-native";
-// import { StatusBar } from "expo-status-bar";
 import { Component, useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
 import { Video, ResizeMode } from "expo-av";
@@ -18,11 +17,13 @@ function CameraComponent() {
 	var cameraRef = useRef();
 	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
 	const [isVideoMode, setVideoMode] = useState(true);
-	const [hasCameraPermission, setHasCameraPermission] = useState();
-	const [hasMicrophonePermission, setHasMicrophonePermission] = useState();
+	const [hasCameraPermission, setHasCameraPermission] = useState(false);
+	const [hasMicrophonePermission, setHasMicrophonePermission] =
+		useState(false);
 	const [hasMediaLibraryPermission, setHasMediaLibraryPermission] =
-		useState();
-	const [hasImagePickerPermission, setHasImagePickerPermission] = useState();
+		useState(false);
+	const [hasImagePickerPermission, setHasImagePickerPermission] =
+		useState(false);
 	const [isRecording, setIsRecording] = useState(false);
 	const [media, setMedia] = useState();
 
@@ -163,7 +164,7 @@ function CameraComponent() {
 				style={styles.camera}
 				ref={cameraRef}
 				type={cameraDirection}
-				autoFocus={Camera.Constants.AutoFocus.on}
+				autoFocus={AutoFocus.on}
 			/>
 
 			{isVideoMode ? (
@@ -226,7 +227,8 @@ const mapStateToProps = (store: any) => ({
 	following: store.userState.following,
 	followers: store.userState.followers,
 	users: store.usersState.users,
-	usersLoaded: store.usersState.usersLoaded,
+	followingLoaded: store.usersState.followingLoaded,
+	followingPosts: store.usersState.followingPosts,
 });
 
 export default connect(mapStateToProps, null)(CameraScreen);

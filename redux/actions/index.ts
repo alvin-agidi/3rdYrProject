@@ -4,7 +4,7 @@ import {
 	FOLLOWERS_STATE_CHANGE,
 	FOLLOWING_STATE_CHANGE,
 	USERS_DATA_STATE_CHANGE,
-	USERS_POSTS_STATE_CHANGE,
+	FOLLOWING_POSTS_STATE_CHANGE,
 	USER_POSTS_STATE_CHANGE,
 	USER_STATE_CHANGE,
 } from "../constants";
@@ -62,26 +62,6 @@ export function fetchUserPosts(uid: string) {
 	};
 }
 
-export function fetchFollowing(uid: string) {
-	return (dispatch: any) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.doc(uid)
-			.collection("following")
-			.onSnapshot((snapshot) => {
-				var following = snapshot.docs.map((doc) => doc.id);
-				dispatch({
-					type: FOLLOWING_STATE_CHANGE,
-					following,
-				});
-				for (const id of following) {
-					dispatch(fetchUserData(id));
-				}
-			});
-	};
-}
-
 export function fetchFollowers(uid: string) {
 	return (dispatch: any) => {
 		firebase
@@ -99,54 +79,58 @@ export function fetchFollowers(uid: string) {
 	};
 }
 
-export function fetchUserData(uid: string) {
-	return (dispatch: any, getState: any) => {
-		const found = getState().usersState.users.some(
-			(u: any) => u !== undefined && u.uid === uid
-		);
-		if (!found) {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(uid)
-				.get()
-				.then((snapshot) => {
-					if (snapshot.exists) {
-						dispatch({
-							type: USERS_DATA_STATE_CHANGE,
-							user: { ...snapshot.data(), uid, posts: [] },
-						});
-						dispatch(fetchFollowingPosts(uid));
-					}
+export function fetchFollowing(uid: string) {
+	return (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("following")
+			.onSnapshot((snapshot) => {
+				var following = snapshot.docs.map((doc) => doc.id);
+				dispatch({
+					type: FOLLOWING_STATE_CHANGE,
+					following,
 				});
-		}
+				for (const id of following) {
+					dispatch(fetchFollowingUserPosts(id));
+				}
+			});
 	};
 }
 
-export function fetchFollowingPosts(uid: string) {
+async function fetchFollowingUser(uid: string) {
+	const snapshot = await firebase
+		.firestore()
+		.collection("users")
+		.doc(uid)
+		.get();
+	return { uid, ...snapshot.data() };
+}
+
+export function fetchFollowingUserPosts(uid: string) {
 	return (dispatch: any, getState: any) => {
 		firebase
 			.firestore()
 			.collection("users")
 			.doc(uid)
 			.collection("posts")
-			.orderBy("createdAt", "desc")
 			.get()
-			.then((snapshot: any) => {
+			.then(async (snapshot: any) => {
 				const uid = snapshot.docs[0].ref.path.split("/")[1];
-				const user = getState().usersState.users.find(
-					(u: any) => u !== undefined && u.uid == uid
-				);
-				var posts = snapshot.docs.map((doc: any) => {
-					const id = doc.id;
-					const data = doc.data();
-					const createdAt = data.createdAt.toDate().toLocaleString();
-					return { id, ...data, createdAt, user };
-				});
-				dispatch({
-					type: USERS_POSTS_STATE_CHANGE,
-					posts,
-					uid,
+				fetchFollowingUser(uid).then((user) => {
+					var posts = snapshot.docs.map((doc: any) => {
+						const id = doc.id;
+						const data = doc.data();
+						const createdAt = data.createdAt
+							.toDate()
+							.toLocaleString();
+						return { id, ...data, createdAt, user };
+					});
+					dispatch({
+						type: FOLLOWING_POSTS_STATE_CHANGE,
+						posts,
+					});
 				});
 			});
 	};

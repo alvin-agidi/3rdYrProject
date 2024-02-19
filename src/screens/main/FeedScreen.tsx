@@ -20,20 +20,13 @@ function Feed(props: any) {
 	const [posts, setPosts] = useState<any>([]);
 
 	useEffect(() => {
-		var posts: any = [];
-		if (props.usersLoaded == props.following.length) {
-			for (const uid of props.following) {
-				const user = props.users.find((u: any) => u.uid == uid);
-				if (user != undefined) {
-					posts.push(...user.posts);
-				}
-			}
-			posts.sort((x: any, y: any) => {
+		if (props.followingLoaded === props.following.length) {
+			props.followingPosts.sort((x: any, y: any) => {
 				return x.createdAt - y.createdAt;
 			});
-			setPosts(posts);
+			setPosts(props.followingPosts);
 		}
-	}, [props.usersLoaded]);
+	}, [props.followingLoaded]);
 
 	return (
 		<View style={styles.container}>
@@ -122,7 +115,8 @@ const mapStateToProps = (store: any) => ({
 	following: store.userState.following,
 	followers: store.userState.followers,
 	users: store.usersState.users,
-	usersLoaded: store.usersState.usersLoaded,
+	followingLoaded: store.usersState.followingLoaded,
+	followingPosts: store.usersState.followingPosts,
 });
 
 export default connect(mapStateToProps, null)(FeedScreen);
