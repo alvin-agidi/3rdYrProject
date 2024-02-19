@@ -269,6 +269,7 @@ const styles = StyleSheet.create({
 	},
 	username: {
 		fontSize: 30,
+		fontWeight: "bold",
 	},
 	info: {
 		fontSize: 20,

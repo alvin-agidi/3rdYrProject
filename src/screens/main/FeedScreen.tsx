@@ -29,10 +29,11 @@ function Feed(props: any) {
 	}, [props.followingLoaded]);
 
 	return (
-		<View style={styles.container}>
+		<View style={styles.feed}>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
+				contentContainerStyle={{ gap: 5 }}
 				data={posts}
 				renderItem={({ item }) => (
 					<View style={styles.post}>
@@ -40,7 +41,7 @@ function Feed(props: any) {
 							<Video
 								style={styles.media}
 								source={{ uri: item.mediaURL }}
-								resizeMode={ResizeMode.CONTAIN}
+								resizeMode={ResizeMode.COVER}
 								shouldPlay
 								isMuted
 							/>
@@ -57,8 +58,9 @@ function Feed(props: any) {
 										uid: item.user.uid,
 									});
 								}}
+								style={styles.postIconBox}
 							>
-								<Text style={styles.postUser}>
+								<Text style={styles.postUsername}>
 									{item.user.username}
 								</Text>
 							</TouchableOpacity>
@@ -88,24 +90,36 @@ export class FeedScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-	container: {
+	feed: {
 		flex: 1,
-		margin: 0,
 	},
 	post: {
 		flex: 1,
-		margin: 0,
+		borderRadius: 20,
+		backgroundColor: "lightgrey",
 	},
 	postDesc: {
 		flex: 1,
-		margin: 0,
+		gap: 5,
 		padding: 10,
 	},
-	postUser: {
+	postIconBox: {
 		fontSize: 20,
+		borderRadius: 5,
+		backgroundColor: "white",
+		padding: 15,
+	},
+	postInfo: {
+		paddingLeft: 15,
+		paddingRight: 15,
+	},
+	postUsername: {
+		fontSize: 15,
+		fontWeight: "bold",
 	},
 	media: {
 		flex: 1,
+		borderRadius: 5,
 		aspectRatio: 1 / 1,
 	},
 });
