@@ -3,7 +3,6 @@ import {
 	StyleSheet,
 	View,
 	Text,
-	TextInput,
 	FlatList,
 	TouchableOpacity,
 } from "react-native";
@@ -12,7 +11,6 @@ import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileScreen from "./ProfileScreen";
 import { connect } from "react-redux";
 import globalStyles from "../../styles";
@@ -81,7 +79,13 @@ function Search() {
 export class SearchScreen extends Component {
 	render() {
 		return (
-			<Stack.Navigator initialRouteName="Search">
+			<Stack.Navigator
+				initialRouteName="Search"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
 				<Stack.Screen name="Search" component={Search} />
 				<Stack.Screen name="Profile" component={ProfileScreen} />
 			</Stack.Navigator>

@@ -198,7 +198,13 @@ function CameraComponent() {
 export class CameraScreen extends Component {
 	render() {
 		return (
-			<Stack.Navigator initialRouteName="Camera">
+			<Stack.Navigator
+				initialRouteName="Camera"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
 				<Stack.Screen name="Camera" component={CameraComponent} />
 				<Stack.Screen
 					name="Publish Post"
