@@ -142,7 +142,9 @@ function Feed(props: any) {
 											contentContainerStyle={{ gap: 5 }}
 											data={item.routine}
 											renderItem={({ item }) => (
-												<View>
+												<View
+													style={styles.postExercise}
+												>
 													<Text>
 														{item.exerciseName}
 													</Text>
@@ -237,6 +239,12 @@ const styles = StyleSheet.create({
 	postIconText: {
 		fontSize: 15,
 		fontWeight: "bold",
+	},
+
+	postExercise: {
+		fontSize: 15,
+		justifyContent: "space-evenly",
+		flexDirection: "row",
 	},
 	media: {
 		flex: 1,
