@@ -3,7 +3,6 @@ import {
 	StyleSheet,
 	View,
 	Text,
-	TextInput,
 	FlatList,
 	TouchableOpacity,
 } from "react-native";
@@ -12,7 +11,6 @@ import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileScreen from "./ProfileScreen";
 import { connect } from "react-redux";
 import globalStyles from "../../styles";

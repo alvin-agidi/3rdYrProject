@@ -147,7 +147,7 @@ function Feed(props: any) {
 														{item.exerciseName}
 													</Text>
 													<Text>
-														{item.start}
+														{item.start} -{" "}
 														{item.end}
 													</Text>
 												</View>
