@@ -12,6 +12,7 @@ export default StyleSheet.create({
 		fontSize: 15,
 		borderRadius: 5,
 		backgroundColor: "skyblue",
+		color: "white",
 		alignSelf: "stretch",
 	},
 	button: {
@@ -23,6 +24,12 @@ export default StyleSheet.create({
 	},
 	buttonText: {
 		fontSize: 15,
+		color: "white",
 		fontWeight: "bold",
+	},
+	logo: {
+		fontSize: 70,
+		fontWeight: "bold",
+		color: "deepskyblue",
 	},
 });

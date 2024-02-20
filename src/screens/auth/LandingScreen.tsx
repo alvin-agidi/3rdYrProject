@@ -12,8 +12,8 @@ const Stack = createNativeStackNavigator();
 function Landing() {
 	const navigation = useNavigation();
 	return (
-		<View style={styles.form}>
-			<Text>FITNEXT</Text>
+		<View style={{ ...styles.form, justifyContent: "center" }}>
+			<Text style={styles.logo}>ΛCTIV</Text>
 			<PressableButton
 				onPress={() => navigation.navigate("Register")}
 				text="Register"
@@ -30,7 +30,11 @@ export class LandingScreen extends Component {
 	render() {
 		return (
 			<Stack.Navigator initialRouteName="Landing">
-				<Stack.Screen name="Landing" component={Landing} />
+				<Stack.Screen
+					name="Landing"
+					component={Landing}
+					options={{ title: "" }}
+				/>
 				<Stack.Screen name="Register" component={RegisterScreen} />
 				<Stack.Screen name="Sign in" component={SignInScreen} />
 			</Stack.Navigator>
