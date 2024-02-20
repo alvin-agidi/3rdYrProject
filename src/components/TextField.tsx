@@ -6,11 +6,7 @@ import globalStyles from "../styles";
 export function TextField(props: any): JSX.Element {
 	return (
 		<View style={styles.searchSection}>
-			<Icon
-				name={props.iconName}
-				size={props.iconSize}
-				color={props.iconColor}
-			/>
+			<Icon name={props.iconName} color="skyblue" size={30} />
 			<TextInput
 				style={{ ...globalStyles.textInput, flex: 1 }}
 				placeholder={props.placeholder}

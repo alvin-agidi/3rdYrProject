@@ -18,7 +18,7 @@ import { TextField } from "../../components/TextField";
 
 const Stack = createNativeStackNavigator();
 
-function Search() {
+function Search(props: any) {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any>([]);
 
@@ -52,14 +52,13 @@ function Search() {
 				onChangeText={(queryString: any) => fetchUsers(queryString)}
 				style={globalStyles.textInput}
 				iconName="magnify"
-				iconColor="black"
-				iconSize={20}
 			/>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
 				data={users}
 				style={styles.results}
+				contentContainerStyle={{ gap: 2 }}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
@@ -67,8 +66,14 @@ function Search() {
 								uid: item.id,
 							})
 						}
+						style={styles.result}
 					>
 						<Text style={styles.user}>{item.username}</Text>
+						{props.following.includes(item.id) ? (
+							<View style={styles.following}>
+								<Text>Following</Text>
+							</View>
+						) : null}
 					</TouchableOpacity>
 				)}
 			/>
@@ -86,7 +91,10 @@ export class SearchScreen extends Component {
 					headerTitleStyle: { color: "black" },
 				}}
 			>
-				<Stack.Screen name="Search" component={Search} />
+				<Stack.Screen
+					name="Search"
+					children={(props) => <Search {...props} {...this.props} />}
+				/>
 				<Stack.Screen name="Profile" component={ProfileScreen} />
 			</Stack.Navigator>
 		);
@@ -96,12 +104,36 @@ export class SearchScreen extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		gap: 10,
+		gap: 15,
 		padding: 10,
 	},
 	results: {
 		flex: 1,
+		borderRadius: 10,
+		backgroundColor: "lightgrey",
+	},
+	noResults: {
+		flex: 1,
+		borderRadius: 10,
+		backgroundColor: "white",
 		gap: 10,
+		justifyContent: "center",
+	},
+	result: {
+		flex: 1,
+		gap: 10,
+		justifyContent: "space-between",
+		alignItems: "center",
+		backgroundColor: "white",
+		flexDirection: "row",
+		padding: 10,
+	},
+	following: {
+		fontSize: 20,
+		borderColor: "skyblue",
+		borderWidth: 1,
+		borderRadius: 5,
+		padding: 5,
 	},
 	user: {
 		fontSize: 20,
