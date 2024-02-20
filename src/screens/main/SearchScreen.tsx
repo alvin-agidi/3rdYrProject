@@ -12,9 +12,11 @@ import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileScreen from "./ProfileScreen";
 import { connect } from "react-redux";
 import globalStyles from "../../styles";
+import { TextField } from "../../components/TextField";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,10 +44,18 @@ function Search() {
 
 	return (
 		<View style={styles.container}>
-			<TextInput
+			{/* <TextInput
 				placeholder="Search users"
 				onChangeText={(queryString) => fetchUsers(queryString)}
 				style={globalStyles.textInput}
+			/> */}
+			<TextField
+				placeholder="Search users"
+				onChangeText={(queryString: any) => fetchUsers(queryString)}
+				style={globalStyles.textInput}
+				iconName="magnify"
+				iconColor="black"
+				iconSize={20}
 			/>
 			<FlatList
 				horizontal={false}

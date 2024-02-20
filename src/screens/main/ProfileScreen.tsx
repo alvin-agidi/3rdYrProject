@@ -13,12 +13,14 @@ function ProfileScreen(props: any) {
 	const [posts, setPosts] = useState<any>([]);
 	const [following, setFollowing] = useState<any>([]);
 	const [followers, setFollowers] = useState<any>([]);
-	const [isFollowing, setIsFollowing] = useState<any>(false);
+	const [isFollowing, setIsFollowing] = useState(false);
+	const [isCurrentUser, setIsCurrentUser] = useState(false);
 
 	useEffect(() => {
 		setPosts([]);
-		const isCurrentUser =
-			props.route.params.uid === firebase.auth().currentUser!.uid;
+		setIsCurrentUser(
+			props.route.params.uid === firebase.auth().currentUser!.uid
+		);
 
 		function getUser(): void {
 			if (isCurrentUser) {
@@ -136,9 +138,6 @@ function ProfileScreen(props: any) {
 	}, [followers]);
 
 	useEffect(() => {
-		const isCurrentUser =
-			props.route.params.uid === firebase.auth().currentUser!.uid;
-
 		function getFollowing(): void {
 			if (isCurrentUser) {
 				setFollowing(props.following);
@@ -263,7 +262,12 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	infoBox: { gap: 5 },
-	gallery: { borderRadius: 10, flex: 1, overflow: "hidden" },
+	gallery: {
+		borderRadius: 10,
+		flex: 1,
+		overflow: "hidden",
+		backgroundColor: "lightgrey",
+	},
 	imageBox: {
 		flex: 1 / 3,
 	},

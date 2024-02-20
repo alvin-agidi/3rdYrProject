@@ -47,7 +47,7 @@ export class SignInScreen extends Component<{}, any> {
 						this.setState({ password });
 					}}
 				/>
-				<PressableButton onPress={this.signIn} text="Sign In" />
+				<PressableButton onPress={this.signIn} text="Sign in" />
 			</View>
 		);
 	}

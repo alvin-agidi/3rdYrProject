@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Text, View, Pressable } from "react-native";
+import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import { SignInScreen } from "./SignInScreen";
 import { RegisterScreen } from "./RegisterScreen";
@@ -13,6 +13,7 @@ function Landing() {
 	const navigation = useNavigation();
 	return (
 		<View style={styles.form}>
+			<Text>FITNEXT</Text>
 			<PressableButton
 				onPress={() => navigation.navigate("Register")}
 				text="Register"
