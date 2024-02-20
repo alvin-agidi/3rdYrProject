@@ -171,7 +171,13 @@ function Feed(props: any) {
 export class FeedScreen extends Component {
 	render() {
 		return (
-			<Stack.Navigator initialRouteName="Feed">
+			<Stack.Navigator
+				initialRouteName="Feed"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
 				<Stack.Screen
 					name="Feed"
 					children={(props) => <Feed {...props} {...this.props} />}

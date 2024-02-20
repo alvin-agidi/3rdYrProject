@@ -11,7 +11,9 @@ export default StyleSheet.create({
 		padding: 10,
 		fontSize: 15,
 		borderRadius: 5,
-		backgroundColor: "skyblue",
+		backgroundColor: "white",
+		borderColor: "skyblue",
+		borderWidth: 1,
 		alignSelf: "stretch",
 	},
 	button: {
@@ -23,6 +25,7 @@ export default StyleSheet.create({
 	},
 	buttonText: {
 		fontSize: 15,
+		color: "white",
 		fontWeight: "bold",
 	},
 });

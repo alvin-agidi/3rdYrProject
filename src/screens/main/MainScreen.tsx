@@ -36,6 +36,7 @@ export class Main extends Component {
 				initialRouteName="FeedScreen"
 				// tabBarPosition="bottom"
 				screenOptions={{
+					tabBarActiveTintColor: "deepskyblue",
 					tabBarShowLabel: false,
 					// tabBarItemStyle: { width: 100 },
 					// lazy: true,

@@ -79,7 +79,13 @@ function Search() {
 export class SearchScreen extends Component {
 	render() {
 		return (
-			<Stack.Navigator initialRouteName="Search">
+			<Stack.Navigator
+				initialRouteName="Search"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
 				<Stack.Screen name="Search" component={Search} />
 				<Stack.Screen name="Profile" component={ProfileScreen} />
 			</Stack.Navigator>
