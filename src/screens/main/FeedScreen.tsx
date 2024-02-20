@@ -1,21 +1,14 @@
 import React, { Component, useEffect, useState } from "react";
-import {
-	StyleSheet,
-	View,
-	Text,
-	Image,
-	FlatList,
-	TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text, Image, FlatList } from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import ProfileScreen from "./ProfileScreen";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { PressableButton } from "../../components/PressableButton";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +19,10 @@ function Feed(props: any) {
 	useEffect(() => {
 		if (props.followingLoaded === props.following.length) {
 			props.followingPosts.sort((x: any, y: any) => {
-				return x.createdAt - y.createdAt;
+				return y.createdAt.localeCompare(x.createdAt);
+			});
+			props.followingPosts.forEach((post: any) => {
+				post.showRoutine = true;
 			});
 			setPosts(props.followingPosts);
 		}
@@ -43,6 +39,7 @@ function Feed(props: any) {
 				.collection("likes")
 				.doc(firebase.auth().currentUser!.uid)
 				.delete();
+			// posts.find((post: any) => post.id == postID).isLiked = false;
 		} else {
 			firebase
 				.firestore()
@@ -54,6 +51,14 @@ function Feed(props: any) {
 				.doc(firebase.auth().currentUser!.uid)
 				.set({});
 		}
+	}
+
+	function toggleShowRoutine(postID: string) {
+		setPosts(() => {
+			// const post = posts.find((post: any) => post.id === postID);
+			// post.showRoutine = !post.showRoutine;
+			return [...posts];
+		});
 	}
 
 	return (
@@ -71,6 +76,7 @@ function Feed(props: any) {
 								source={{ uri: item.mediaURL }}
 								resizeMode={ResizeMode.COVER}
 								shouldPlay
+								isLooping
 								isMuted
 							/>
 						) : (
@@ -80,34 +86,80 @@ function Feed(props: any) {
 							/>
 						)}
 						<View style={styles.postDesc}>
-							<TouchableOpacity
-								onPress={() => {
-									navigation.navigate("Profile", {
-										uid: item.user.uid,
-									});
-								}}
-								style={styles.postIconBox}
-							>
-								<Text style={styles.postUsername}>
-									{item.user.username}
-								</Text>
-								<PressableButton
-									text={item.isLiked ? "Unlike" : "Like"}
-									onPress={() => {
-										toggleLike(
-											item.user.uid,
-											item.id,
-											item.isLiked
-										);
-									}}
-								/>
-							</TouchableOpacity>
-							<Text>
-								{item.likes.length} like
-								{item.likes.length != 1 ? "s" : ""}
-							</Text>
+							<View style={styles.postHeader}>
+								<View style={styles.postBanner}>
+									<Text
+										style={styles.postUsername}
+										onPress={() => {
+											navigation.navigate("Profile", {
+												uid: item.user.uid,
+											});
+										}}
+									>
+										{item.user.username}
+									</Text>
+									<View style={styles.postIconBox}>
+										{item.isVideo ? (
+											<Icon
+												name="dumbbell"
+												color="black"
+												size={30}
+												onPress={() => {
+													toggleShowRoutine(item.id);
+												}}
+											/>
+										) : null}
+									</View>
+									<View style={styles.postIconBox}>
+										<Icon
+											name={
+												item.isLiked
+													? "cards-heart"
+													: "heart-outline"
+											}
+											color="black"
+											size={30}
+											onPress={() => {
+												toggleLike(
+													item.user.uid,
+													item.id,
+													item.isLiked
+												);
+											}}
+										/>
+										<Text style={styles.postIconText}>
+											{item.likes.length} like
+											{item.likes.length != 1 ? "s" : ""}
+										</Text>
+									</View>
+								</View>
+								{item.showRoutine && item.isVideo ? (
+									<View style={styles.postRoutineBox}>
+										<Text>Routine</Text>
+										<FlatList
+											horizontal={false}
+											numColumns={1}
+											contentContainerStyle={{ gap: 5 }}
+											data={item.routine}
+											renderItem={({ item }) => (
+												<View>
+													<Text>
+														{item.exerciseName}
+													</Text>
+													<Text>
+														{item.start}
+														{item.end}
+													</Text>
+												</View>
+											)}
+										/>
+									</View>
+								) : null}
+							</View>
 							<Text>{item.caption}</Text>
-							<Text>{item.createdAt}</Text>
+							<Text>
+								{new Date(item.createdAt).toLocaleDateString()}
+							</Text>
 						</View>
 					</View>
 				)}
@@ -136,26 +188,47 @@ const styles = StyleSheet.create({
 	},
 	post: {
 		flex: 1,
-		borderRadius: 20,
-		backgroundColor: "lightgrey",
+		borderRadius: 10,
+		backgroundColor: "skyblue",
 	},
 	postDesc: {
 		flex: 1,
 		gap: 5,
 		padding: 10,
 	},
-	postIconBox: {
+	postHeader: {
 		fontSize: 20,
 		borderRadius: 5,
 		backgroundColor: "white",
-		padding: 15,
+		flexDirection: "column",
+	},
+	postBanner: {
+		borderRadius: 5,
+		flex: 1,
+		backgroundColor: "whitesmoke",
+		alignItems: "center",
+		justifyContent: "space-between",
+		flexDirection: "row",
+		gap: 5,
+	},
+	postRoutineBox: {
+		flex: 1,
+		gap: 5,
+		padding: 10,
+	},
+	postIconBox: {
+		gap: 5,
+		padding: 10,
+		alignItems: "center",
+		justifyContent: "space-evenly",
 		flexDirection: "row",
 	},
-	postInfo: {
-		paddingLeft: 15,
-		paddingRight: 15,
-	},
 	postUsername: {
+		fontSize: 15,
+		padding: 10,
+		fontWeight: "bold",
+	},
+	postIconText: {
 		fontSize: 15,
 		fontWeight: "bold",
 	},

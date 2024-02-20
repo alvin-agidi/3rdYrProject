@@ -115,39 +115,49 @@ export function fetchFollowingUserPosts(uid: string) {
 			.doc(uid)
 			.collection("posts")
 			.onSnapshot((snapshot: any) => {
-				const userID = snapshot.docs[0].ref.path.split("/")[1];
-				fetchFollowingUser(userID).then((user) => {
-					var posts = snapshot.docs.map((doc: any) => {
-						const data = doc.data();
-						const postID = doc.id;
-						const createdAt = data.createdAt
-							.toDate()
-							.toLocaleString();
-						return {
-							...data,
-							postID,
-							createdAt,
-							user,
-						};
-					});
-					Promise.all(
-						posts.map((post: any) =>
-							fetchPostLikes(post.user.uid, post.postID).then(
-								(likes) => {
-									post.likes = likes;
-									post.isLiked = likes.includes(
-										firebase.auth().currentUser!.uid
-									);
-								}
+				if (snapshot.docs && snapshot.docs.length) {
+					uid =
+						snapshot.docs[0]._delegate._document.key.path
+							.segments[6];
+					// uid = snapshot.docs[0].ref.path.split("/")[1];
+					fetchFollowingUser(uid).then((user) => {
+						var posts = snapshot.docs.map((doc: any) => {
+							const data = doc.data();
+							const id = doc.id;
+							const createdAt = data.createdAt
+								.toDate()
+								.toISOString();
+							return {
+								...data,
+								id,
+								createdAt,
+								user,
+							};
+						});
+						Promise.all(
+							posts.map((post: any) =>
+								fetchPostLikes(post.user.uid, post.id).then(
+									(likes) => {
+										post.likes = likes;
+										post.isLiked = likes.includes(
+											firebase.auth().currentUser!.uid
+										);
+									}
+								)
 							)
-						)
-					).then(() => {
-						dispatch({
-							type: FOLLOWING_POSTS_STATE_CHANGE,
-							posts,
+						).then(() => {
+							dispatch({
+								type: FOLLOWING_POSTS_STATE_CHANGE,
+								posts,
+							});
 						});
 					});
-				});
+				} else {
+					dispatch({
+						type: FOLLOWING_POSTS_STATE_CHANGE,
+						posts: [],
+					});
+				}
 			});
 	};
 }
@@ -161,8 +171,7 @@ function fetchPostLikes(userID: string, postID: string): Promise<string[]> {
 			.collection("posts")
 			.doc(postID)
 			.collection("likes")
-			.get()
-			.then((snapshot) => {
+			.onSnapshot((snapshot) => {
 				return resolve(snapshot.docs.map((doc) => doc.id));
 			});
 	});

@@ -8,20 +8,21 @@ export default StyleSheet.create({
 		alignItems: "center",
 	},
 	textInput: {
-		padding: 5,
-		fontSize: 18,
+		padding: 10,
+		fontSize: 15,
 		borderRadius: 5,
-		backgroundColor: "lightgrey",
-		width: "100%",
+		backgroundColor: "skyblue",
+		alignSelf: "stretch",
 	},
 	button: {
 		borderRadius: 5,
 		padding: 10,
-		backgroundColor: "lightgrey",
+		backgroundColor: "deepskyblue",
 		alignItems: "center",
 		width: "auto",
 	},
 	buttonText: {
 		fontSize: 15,
+		fontWeight: "bold",
 	},
 });
