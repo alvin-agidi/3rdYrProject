@@ -245,18 +245,17 @@ export class CameraScreen extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		// alignItems: "center",
 		justifyContent: "center",
 		padding: 5,
 	},
 	camera: {
+		alignSelf: "stretch",
 		flex: 1,
 	},
 	iconBox: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-around",
-		padding: 20,
 	},
 	media: {
 		flex: 1,

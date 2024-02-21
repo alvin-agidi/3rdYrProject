@@ -94,7 +94,7 @@ export default function PublishPost(props: any) {
 	}
 
 	return (
-		<View style={styles.container}>
+		<View style={globalStyles.container}>
 			<TextInput
 				placeholder="Write a caption..."
 				onChangeText={(caption) => {
@@ -120,11 +120,6 @@ export default function PublishPost(props: any) {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		gap: 10,
-		padding: 10,
-	},
 	media: {
 		flex: 1,
 		alignSelf: "stretch",

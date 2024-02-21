@@ -12,7 +12,7 @@ const Stack = createNativeStackNavigator();
 function Landing() {
 	const navigation = useNavigation();
 	return (
-		<View style={{ ...styles.form, justifyContent: "center" }}>
+		<View style={{ ...styles.container, justifyContent: "center" }}>
 			<Text style={styles.logo}>ΛCTIV</Text>
 			<PressableButton
 				onPress={() => navigation.navigate("Register")}

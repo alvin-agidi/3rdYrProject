@@ -30,7 +30,7 @@ export class SignInScreen extends Component<{}, any> {
 
 	render() {
 		return (
-			<View style={styles.form}>
+			<View style={styles.container}>
 				<ValidatedTextField
 					placeholder="Email"
 					inputMode="email"

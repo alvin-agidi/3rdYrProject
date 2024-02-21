@@ -41,7 +41,7 @@ function Search(props: any) {
 	}
 
 	return (
-		<View style={styles.container}>
+		<View style={globalStyles.container}>
 			{/* <TextInput
 				placeholder="Search users"
 				onChangeText={(queryString) => fetchUsers(queryString)}
@@ -102,11 +102,6 @@ export class SearchScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		gap: 15,
-		padding: 10,
-	},
 	results: {
 		flex: 1,
 		borderRadius: 10,

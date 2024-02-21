@@ -193,11 +193,12 @@ export class FeedScreen extends Component {
 const styles = StyleSheet.create({
 	feed: {
 		flex: 1,
+		padding: 5,
 	},
 	post: {
 		flex: 1,
 		borderRadius: 10,
-		backgroundColor: "skyblue",
+		backgroundColor: "lightgrey",
 	},
 	postDesc: {
 		flex: 1,
