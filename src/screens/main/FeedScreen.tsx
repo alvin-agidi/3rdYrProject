@@ -17,13 +17,16 @@ function Feed(props: any) {
 	const [posts, setPosts] = useState<any>([]);
 
 	useEffect(() => {
-		if (props.followingLoaded === props.following.length) {
-			props.followingPosts.sort((x: any, y: any) => {
-				return y.createdAt.localeCompare(x.createdAt);
-			});
-			props.followingPosts.forEach((post: any) => {
-				post.showRoutine = true;
-			});
+		if (
+			props.following.length &&
+			props.followingLoaded === props.following.length
+		) {
+			// props.followingPosts.sort((x: any, y: any) => {
+			// 	return y.createdAt.localeCompare(x.createdAt);
+			// });
+			// props.followingPosts.forEach((post: any) => {
+			// 	post.showRoutine = true;
+			// });
 			setPosts(props.followingPosts);
 		}
 	}, [props.followingLoaded]);
@@ -54,11 +57,11 @@ function Feed(props: any) {
 	}
 
 	function toggleShowRoutine(postID: string) {
-		setPosts(() => {
-			// const post = posts.find((post: any) => post.id === postID);
-			// post.showRoutine = !post.showRoutine;
-			return [...posts];
-		});
+		// setPosts(() => {
+		// 	// const post = posts.find((post: any) => post.id === postID);
+		// 	// post.showRoutine = !post.showRoutine;
+		// 	return [...posts];
+		// });
 	}
 
 	return (
