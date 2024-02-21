@@ -12,6 +12,7 @@ import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "./ProfileScreen";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import globalStyles from "../../styles";
 import { TextField } from "../../components/TextField";
@@ -42,11 +43,6 @@ function Search(props: any) {
 
 	return (
 		<View style={globalStyles.container}>
-			{/* <TextInput
-				placeholder="Search users"
-				onChangeText={(queryString) => fetchUsers(queryString)}
-				style={globalStyles.textInput}
-			/> */}
 			<TextField
 				placeholder="Search users"
 				onChangeText={(queryString: any) => fetchUsers(queryString)}
@@ -58,7 +54,9 @@ function Search(props: any) {
 				numColumns={1}
 				data={users}
 				style={styles.results}
-				contentContainerStyle={{ gap: 2 }}
+				contentContainerStyle={{
+					gap: 2,
+				}}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
@@ -75,6 +73,16 @@ function Search(props: any) {
 							</View>
 						) : null}
 					</TouchableOpacity>
+				)}
+				ListEmptyComponent={() => (
+					<View style={styles.noResults}>
+						<Icon
+							name="account-alert-outline"
+							size={80}
+							color="white"
+						/>
+						<Text style={styles.noResultsText}>No results</Text>
+					</View>
 				)}
 			/>
 		</View>
@@ -107,13 +115,19 @@ const styles = StyleSheet.create({
 		alignSelf: "stretch",
 		borderRadius: 10,
 		backgroundColor: "lightgrey",
+		flexDirection: "column",
 	},
 	noResults: {
 		flex: 1,
-		borderRadius: 10,
-		backgroundColor: "white",
-		gap: 10,
+		alignSelf: "stretch",
 		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 250,
+	},
+	noResultsText: {
+		color: "white",
+		fontSize: 50,
+		fontWeight: "bold",
 	},
 	result: {
 		flex: 1,
