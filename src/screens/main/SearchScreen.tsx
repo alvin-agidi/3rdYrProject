@@ -77,7 +77,7 @@ function Search(props: any) {
 				ListEmptyComponent={() => (
 					<View style={styles.noResults}>
 						<Icon
-							name="account-alert-outline"
+							name="account-off-outline"
 							size={80}
 							color="white"
 						/>
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
 		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 250,
+		marginTop: 240,
 	},
 	noResultsText: {
 		color: "white",

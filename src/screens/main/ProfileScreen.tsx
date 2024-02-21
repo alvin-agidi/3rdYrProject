@@ -7,6 +7,7 @@ import "firebase/compat/firestore";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import globalStyles from "../../styles";
 import { PressableButton } from "../../components/PressableButton";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 function ProfileScreen(props: any) {
 	const [user, setUser] = useState<any>();
@@ -249,6 +250,16 @@ function ProfileScreen(props: any) {
 							/>
 						</View>
 					)}
+					ListEmptyComponent={() => (
+						<View style={styles.noResults}>
+							<Icon
+								name="image-off-outline"
+								size={80}
+								color="white"
+							/>
+							<Text style={styles.noResultsText}>No posts</Text>
+						</View>
+					)}
 				/>
 			</View>
 		</View>
@@ -281,6 +292,18 @@ const styles = StyleSheet.create({
 	image: {
 		flex: 1,
 		aspectRatio: 1 / 1,
+	},
+	noResults: {
+		flex: 1,
+		alignSelf: "stretch",
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 220,
+	},
+	noResultsText: {
+		color: "white",
+		fontSize: 50,
+		fontWeight: "bold",
 	},
 });
 
