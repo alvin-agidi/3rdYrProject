@@ -5,6 +5,7 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import styles from "../../styles";
 import { PressableButton } from "../../components/PressableButton";
+import { ValidatedTextField } from "../../components/ValidatedTextField";
 
 export class SignInScreen extends Component<{}, any> {
 	constructor(props: any) {
@@ -30,22 +31,26 @@ export class SignInScreen extends Component<{}, any> {
 	render() {
 		return (
 			<View style={styles.form}>
-				<TextInput
+				<ValidatedTextField
 					placeholder="Email"
 					inputMode="email"
 					textContentType="emailAddress"
-					style={styles.textInput}
-					onChangeText={(email) => {
+					validRegex={/^[^\s@]+@[^\s@]+\.[^\s@]+$/}
+					validationMessage="Please enter a valid email."
+					onChangeText={(email: string) => {
 						this.setState({ email });
 					}}
+					iconName="email-outline"
 				/>
-				<TextInput
+				<ValidatedTextField
 					placeholder="Password"
 					secureTextEntry={true}
-					style={styles.textInput}
-					onChangeText={(password) => {
+					validRegex={/.{6,}/}
+					validationMessage="Password must have at least 6 characters."
+					onChangeText={(password: string) => {
 						this.setState({ password });
 					}}
+					iconName="lock-outline"
 				/>
 				<PressableButton onPress={this.signIn} text="Sign in" />
 			</View>

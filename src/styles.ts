@@ -15,6 +15,7 @@ export default StyleSheet.create({
 		borderColor: "skyblue",
 		borderWidth: 1,
 		alignSelf: "stretch",
+		flex: 1,
 	},
 	button: {
 		borderRadius: 5,

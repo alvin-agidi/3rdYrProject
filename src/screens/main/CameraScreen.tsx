@@ -1,5 +1,5 @@
 import { Camera, CameraType, AutoFocus } from "expo-camera";
-import { Button, StyleSheet, Text, SafeAreaView, Image } from "react-native";
+import { Button, StyleSheet, Text, View, Image } from "react-native";
 import { Component, useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
 import { Video, ResizeMode } from "expo-av";
@@ -7,8 +7,10 @@ import * as MediaLibrary from "expo-media-library";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import PublishPostScreen from "./PublishPostScreen";
 import { connect } from "react-redux";
+import { PressableButton } from "../../components/PressableButton";
 
 const Stack = createNativeStackNavigator();
 
@@ -128,7 +130,7 @@ function CameraComponent() {
 
 	if (media) {
 		return (
-			<SafeAreaView style={styles.container}>
+			<View style={styles.container}>
 				{isVideoMode ? (
 					<Video
 						style={styles.media}
@@ -140,13 +142,27 @@ function CameraComponent() {
 				) : (
 					<Image style={styles.media} source={{ uri: media.uri }} />
 				)}
-				<Button title="Share" onPress={shareMedia} />
-				{hasMediaLibraryPermission ? (
-					<Button title="Save" onPress={saveMedia} />
-				) : undefined}
-				<Button title="Discard" onPress={() => setMedia(undefined)} />
-				<Button
-					title="Create post"
+				<View style={styles.iconBox}>
+					<Icon
+						name="export-variant"
+						size={50}
+						onPress={shareMedia}
+					/>
+					{hasMediaLibraryPermission ? (
+						<Icon
+							name="content-save-outline"
+							size={50}
+							onPress={saveMedia}
+						/>
+					) : undefined}
+					<Icon
+						name="trash-can-outline"
+						size={50}
+						onPress={() => setMedia(undefined)}
+					/>
+				</View>
+				<PressableButton
+					text="Create post"
 					onPress={() =>
 						navigation.navigate("Publish Post", {
 							media,
@@ -154,44 +170,55 @@ function CameraComponent() {
 						})
 					}
 				/>
-			</SafeAreaView>
+			</View>
 		);
 	}
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<View style={styles.container}>
 			<Camera
 				style={styles.camera}
 				ref={cameraRef}
 				type={cameraDirection}
 				autoFocus={AutoFocus.on}
 			/>
-
-			{isVideoMode ? (
-				<Button
-					title={isRecording ? "Stop recording" : "Record video"}
-					onPress={isRecording ? stopVideo : startVideo}
+			<View style={styles.iconBox}>
+				<Icon
+					name="camera-flip-outline"
+					size={50}
+					// color="skyblue"
+					onPress={switchCameraDirection}
 				/>
-			) : (
-				<Button title={"Take photo"} onPress={takePhoto} />
-			)}
-			<Button
-				title={
-					cameraDirection === CameraType.back
-						? "Switch to front camera"
-						: "Switch to back camera"
-				}
-				onPress={switchCameraDirection}
-			/>
-			<Button
-				title={isVideoMode ? "Switch to photo" : "Switch to video"}
-				onPress={switchVideoMode}
-			/>
+				{isVideoMode ? (
+					<Icon
+						name={
+							isRecording
+								? "stop-circle-outline"
+								: "radiobox-marked"
+						}
+						size={80}
+						color={isRecording ? "red" : "black"}
+						onPress={isRecording ? stopVideo : startVideo}
+					/>
+				) : (
+					<Icon
+						name="circle-outline"
+						size={80}
+						// color="skyblue"
+						onPress={takePhoto}
+					/>
+				)}
+				<Icon
+					name={isVideoMode ? "camera-outline" : "video-outline"}
+					size={50}
+					onPress={switchVideoMode}
+				/>
+			</View>
 
-			{hasImagePickerPermission ? (
+			{/* {hasImagePickerPermission ? (
 				<Button title={"Pick from gallery"} onPress={pickMedia} />
-			) : undefined}
-		</SafeAreaView>
+			) : undefined} */}
+		</View>
 	);
 }
 
@@ -218,13 +245,23 @@ export class CameraScreen extends Component {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
+		// alignItems: "center",
+		justifyContent: "center",
+		padding: 5,
 	},
 	camera: {
 		flex: 1,
 	},
+	iconBox: {
+		flexDirection: "row",
+		alignItems: "center",
+		justifyContent: "space-around",
+		padding: 20,
+	},
 	media: {
 		flex: 1,
 		alignSelf: "stretch",
+		borderRadius: 5,
 	},
 });
 
