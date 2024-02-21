@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/core";
 import { PressableButton } from "../../components/PressableButton";
 import globalStyles from "../../styles";
 import { ResizeMode, Video } from "expo-av";
+import { TextField } from "../../components/TextField";
 
 async function detectExercises(videoURL: string) {
 	return await fetch("http://143.47.229.158:5000/detectExercises", {
@@ -60,6 +61,10 @@ export default function PublishPost(props: any) {
 	}
 
 	function savePostData(mediaURL: string): void {
+		// navigation.popToTop();
+		navigation.navigate("Profile", {
+			uid: firebase.auth().currentUser!.uid,
+		});
 		firebase
 			.firestore()
 			.collection("users")
@@ -86,21 +91,18 @@ export default function PublishPost(props: any) {
 							);
 					});
 				}
-				// navigation.popToTop();
-				navigation.navigate("Profile", {
-					uid: firebase.auth().currentUser!.uid,
-				});
 			});
 	}
 
 	return (
 		<View style={globalStyles.container}>
-			<TextInput
-				placeholder="Write a caption..."
-				onChangeText={(caption) => {
+			<TextField
+				placeholder="Write a caption"
+				onChangeText={(caption: string) => {
 					setCaption(caption);
 				}}
 				style={globalStyles.textInput}
+				iconName="comment-outline"
 			/>
 			<PressableButton onPress={uploadMedia} text="Publish" />
 
@@ -111,6 +113,7 @@ export default function PublishPost(props: any) {
 					useNativeControls
 					resizeMode={ResizeMode.CONTAIN}
 					isLooping
+					shouldPlay
 				/>
 			) : (
 				<Image source={{ uri: mediaUri }} style={styles.media} />

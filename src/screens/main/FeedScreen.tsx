@@ -210,13 +210,13 @@ const styles = StyleSheet.create({
 	},
 	post: {
 		flex: 1,
-		borderRadius: 10,
+		borderRadius: 5,
 		backgroundColor: "lightgrey",
 	},
 	postDesc: {
 		flex: 1,
 		gap: 5,
-		padding: 10,
+		padding: 5,
 	},
 	postHeader: {
 		fontSize: 20,
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
 	postRoutineBox: {
 		flex: 1,
 		gap: 5,
-		padding: 10,
+		padding: 5,
 	},
 	postIconBox: {
 		gap: 5,

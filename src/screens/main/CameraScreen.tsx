@@ -138,6 +138,7 @@ function CameraComponent() {
 						useNativeControls
 						resizeMode={ResizeMode.CONTAIN}
 						isLooping
+						shouldPlay
 					/>
 				) : (
 					<Image style={styles.media} source={{ uri: media.uri }} />
@@ -247,6 +248,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		padding: 5,
+		gap: 5,
 	},
 	camera: {
 		alignSelf: "stretch",
