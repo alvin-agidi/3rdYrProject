@@ -6,6 +6,7 @@ import "firebase/compat/database";
 import "firebase/compat/firestore";
 import styles from "../../styles";
 import { PressableButton } from "../../components/PressableButton";
+import { ValidatedTextField } from "../../components/ValidatedTextField";
 
 export class RegisterScreen extends Component<{}, any> {
 	constructor(props: any) {
@@ -32,38 +33,44 @@ export class RegisterScreen extends Component<{}, any> {
 					.set({ email, username });
 			})
 			.catch((result: any) => {
-				console.log("Fail1 = " + result);
+				console.log(result);
 			});
 	}
 
 	render() {
 		return (
 			<View style={styles.form}>
-				<TextInput
+				<ValidatedTextField
 					placeholder="Email"
 					inputMode="email"
-					style={styles.textInput}
-					onChangeText={(email) => {
+					validRegex={/^[^\s@]+@[^\s@]+\.[^\s@]+$/}
+					validationMessage="Please enter a valid email."
+					onChangeText={(email: string) => {
 						this.setState({ email });
 					}}
+					iconName="email-outline"
 				/>
-				<TextInput
+				<ValidatedTextField
 					placeholder="Username"
-					style={styles.textInput}
-					onChangeText={(username) => {
+					validRegex={/^[a-z]+$/}
+					validationMessage="Username must only have lowercase letters."
+					onChangeText={(username: string) => {
+						username = username.toLowerCase();
 						this.setState({ username });
 					}}
+					iconName="account-outline"
 				/>
-				<TextInput
+				<ValidatedTextField
 					placeholder="Password"
 					secureTextEntry={true}
+					validRegex={/.{6,}/}
+					validationMessage="Password must have at least 6 characters."
 					textContentType="newPassword"
-					style={styles.textInput}
-					onChangeText={(password) => {
+					onChangeText={(password: string) => {
 						this.setState({ password });
 					}}
+					iconName="lock-outline"
 				/>
-
 				<PressableButton onPress={this.register} text="Register" />
 			</View>
 		);

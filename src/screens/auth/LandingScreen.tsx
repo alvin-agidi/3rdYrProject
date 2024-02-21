@@ -29,7 +29,13 @@ function Landing() {
 export class LandingScreen extends Component {
 	render() {
 		return (
-			<Stack.Navigator initialRouteName="Landing">
+			<Stack.Navigator
+				initialRouteName="Landing"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
 				<Stack.Screen
 					name="Landing"
 					component={Landing}
