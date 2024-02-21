@@ -165,6 +165,19 @@ function Feed(props: any) {
 						</View>
 					</View>
 				)}
+				ListEmptyComponent={() => (
+					<View style={styles.noResults}>
+						<Icon
+							name="image-off-outline"
+							size={80}
+							color="white"
+						/>
+						<Text style={styles.noResultsText}>No posts</Text>
+						<Text style={{ ...styles.noResultsText, fontSize: 20 }}>
+							Follow some users
+						</Text>
+					</View>
+				)}
 			/>
 		</View>
 	);
@@ -251,6 +264,18 @@ const styles = StyleSheet.create({
 		flex: 1,
 		borderRadius: 5,
 		aspectRatio: 1 / 1,
+	},
+	noResults: {
+		flex: 1,
+		alignSelf: "stretch",
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 250,
+	},
+	noResultsText: {
+		color: "white",
+		fontSize: 50,
+		fontWeight: "bold",
 	},
 });
 

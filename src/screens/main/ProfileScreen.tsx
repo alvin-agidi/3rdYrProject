@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
 		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 220,
+		marginTop: 200,
 	},
 	noResultsText: {
 		color: "white",
