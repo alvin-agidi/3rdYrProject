@@ -5,7 +5,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import * as VideoThumbnails from "expo-video-thumbnails";
-import globalStyles from "../../styles";
+import globalStyles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 

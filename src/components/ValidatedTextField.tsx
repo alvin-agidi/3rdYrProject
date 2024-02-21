@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TextInput, StyleSheet, Text } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import globalStyles from "../styles";
+import globalStyles from "../globalStyles";
 
 export function ValidatedTextField(props: any): JSX.Element {
 	const [text, setText] = useState("");

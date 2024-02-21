@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/core";
 import { SignInScreen } from "./SignInScreen";
 import { RegisterScreen } from "./RegisterScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import styles from "../../styles";
+import styles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 
 const Stack = createNativeStackNavigator();

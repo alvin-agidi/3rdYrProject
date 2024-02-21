@@ -1,6 +1,6 @@
 import React from "react";
 import { Pressable, Text } from "react-native";
-import styles from "../styles";
+import styles from "../globalStyles";
 
 export function PressableButton(props: any): JSX.Element {
 	return (

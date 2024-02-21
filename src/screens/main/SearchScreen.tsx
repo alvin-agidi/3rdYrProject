@@ -14,7 +14,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "./ProfileScreen";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
-import globalStyles from "../../styles";
+import globalStyles from "../../globalStyles";
 import { TextField } from "../../components/TextField";
 
 const Stack = createNativeStackNavigator();

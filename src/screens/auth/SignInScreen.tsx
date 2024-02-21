@@ -3,7 +3,7 @@ import { View, TextInput, Text, Pressable } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
-import styles from "../../styles";
+import styles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 import { ValidatedTextField } from "../../components/ValidatedTextField";
 

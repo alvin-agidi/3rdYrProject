@@ -9,6 +9,7 @@ import ProfileScreen from "./ProfileScreen";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import CommentsScreen from "./CommentsScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -115,6 +116,25 @@ function Feed(props: any) {
 									</View>
 									<View style={styles.postIconBox}>
 										<Icon
+											name="comment-outline"
+											size={30}
+											color="black"
+											onPress={() => {
+												navigation.navigate(
+													"Comments",
+													{
+														postID: item.id,
+														uid: item.user.uid,
+													}
+												);
+												// navigation.navigate("Profile", {
+												// 	uid: item.user.uid,
+												// });
+											}}
+										/>
+									</View>
+									<View style={styles.postIconBox}>
+										<Icon
 											name={
 												item.isLiked
 													? "cards-heart"
@@ -130,6 +150,7 @@ function Feed(props: any) {
 												);
 											}}
 										/>
+
 										<Text style={styles.postIconText}>
 											{item.likes.length} like
 											{item.likes.length != 1 ? "s" : ""}
@@ -163,7 +184,7 @@ function Feed(props: any) {
 							</View>
 							<Text>{item.caption}</Text>
 							<Text>
-								{new Date(item.createdAt).toLocaleDateString()}
+								{new Date(item.createdAt).toLocaleString()}
 							</Text>
 						</View>
 					</View>
@@ -200,6 +221,7 @@ export class FeedScreen extends Component {
 					name="Feed"
 					children={(props) => <Feed {...props} {...this.props} />}
 				/>
+				<Stack.Screen name="Comments" component={CommentsScreen} />
 				<Stack.Screen name="Profile" component={ProfileScreen} />
 			</Stack.Navigator>
 		);
