@@ -8,7 +8,7 @@ import {
 	fetchFollowers,
 	clearData,
 } from "../../../redux/actions";
-// import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
@@ -18,8 +18,7 @@ import FeedScreen from "./FeedScreen";
 import CameraScreen from "./CameraScreen";
 import ProfileScreen from "./ProfileScreen";
 
-// const Tab = createMaterialTopTabNavigator();
-const Tab2 = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 export class Main extends Component {
 	componentDidMount() {
@@ -32,25 +31,14 @@ export class Main extends Component {
 
 	render() {
 		return (
-			<Tab2.Navigator
+			<Tab.Navigator
 				initialRouteName="FeedScreen"
-				// tabBarPosition="bottom"
 				screenOptions={{
 					tabBarActiveTintColor: "deepskyblue",
 					tabBarShowLabel: false,
-					// tabBarItemStyle: { width: 100 },
-					// lazy: true,
-					// tabBarStyle: {
-					// 	padding: 10,
-					// 	paddingLeft: 0,
-					// 	paddingRight: 0,
-					// },
-					// tabBarIndicatorStyle: {
-					// 	top: 0,
-					// },
 				}}
 			>
-				<Tab2.Screen
+				<Tab.Screen
 					name="FeedScreen"
 					component={FeedScreen}
 					options={{
@@ -65,7 +53,7 @@ export class Main extends Component {
 						headerShown: false,
 					}}
 				/>
-				<Tab2.Screen
+				<Tab.Screen
 					name="SearchScreen"
 					component={SearchScreen}
 					options={{
@@ -76,7 +64,7 @@ export class Main extends Component {
 						headerShown: false,
 					}}
 				/>
-				<Tab2.Screen
+				<Tab.Screen
 					name="CameraScreen"
 					component={CameraScreen}
 					options={{
@@ -91,10 +79,12 @@ export class Main extends Component {
 						headerShown: false,
 					}}
 				/>
-				<Tab2.Screen
+				<Tab.Screen
 					name="My Profile"
 					component={ProfileScreen}
-					initialParams={{ uid: firebase.auth().currentUser!.uid }}
+					initialParams={{
+						uid: firebase.auth().currentUser!.uid,
+					}}
 					options={{
 						tabBarIcon: ({ color, size = 25 }) => (
 							<Icon
@@ -103,16 +93,20 @@ export class Main extends Component {
 								size={size}
 							/>
 						),
-						headerShown: true,
+						headerShown: false,
 					}}
 				/>
-			</Tab2.Navigator>
+			</Tab.Navigator>
 		);
 	}
 }
 
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
+	following: store.userState.following,
+	followers: store.userState.followers,
+	followingLoaded: store.followingState.followingLoaded,
+	followingPosts: store.followingState.followingPosts,
 });
 
 const mapDispatchProps = (dispatch: any) =>

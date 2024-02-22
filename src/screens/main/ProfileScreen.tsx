@@ -1,5 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, FlatList, Button } from "react-native";
+import React, { Component, useEffect, useState } from "react";
+import {
+	StyleSheet,
+	View,
+	Text,
+	Image,
+	FlatList,
+	TouchableOpacity,
+} from "react-native";
 import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -8,8 +15,15 @@ import * as VideoThumbnails from "expo-video-thumbnails";
 import globalStyles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+import CommentsScreen from "./CommentsScreen";
+import PostList from "./PostList";
 
-function ProfileScreen(props: any) {
+const Stack = createNativeStackNavigator();
+
+function Profile(props: any) {
+	const navigation = useNavigation();
 	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
 	const [following, setFollowing] = useState<any>([]);
@@ -18,6 +32,7 @@ function ProfileScreen(props: any) {
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
 
 	useEffect(() => {
+		console.log(props.following);
 		setPosts([]);
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
@@ -233,7 +248,15 @@ function ProfileScreen(props: any) {
 					contentContainerStyle={{ gap: 2 }}
 					columnWrapperStyle={{ gap: 2 }}
 					renderItem={({ item }) => (
-						<View style={styles.imageBox}>
+						<TouchableOpacity
+							style={styles.imageBox}
+							onPress={() => {
+								navigation.navigate("Post", {
+									uid: props.route.params.uid,
+									postID: item.id,
+								});
+							}}
+						>
 							<Image
 								source={{
 									uri: item.isVideo
@@ -242,7 +265,7 @@ function ProfileScreen(props: any) {
 								}}
 								style={styles.image}
 							/>
-						</View>
+						</TouchableOpacity>
 					)}
 					ListEmptyComponent={() => (
 						<View style={styles.noResults}>
@@ -258,6 +281,33 @@ function ProfileScreen(props: any) {
 			</View>
 		</View>
 	);
+}
+
+export class ProfileScreen extends Component {
+	render() {
+		return (
+			<Stack.Navigator
+				initialRouteName="Profile"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
+				<Stack.Screen
+					name="Profile"
+					children={(props) => <Profile {...props} {...this.props} />}
+				/>
+				<Stack.Screen name="Post" component={PostList} />
+				{/* <Stack.Screen
+					name="Post"
+					children={(props) => (
+						<PostList {...props} {...this.props} />
+					)}
+				/> */}
+				<Stack.Screen name="Comments" component={CommentsScreen} />
+			</Stack.Navigator>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
@@ -303,9 +353,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
-	posts: store.userState.posts,
 	following: store.userState.following,
 	followers: store.userState.followers,
+	followingLoaded: store.followingState.followingLoaded,
+	followingPosts: store.followingState.followingPosts,
 });
 
 export default connect(mapStateToProps, null)(ProfileScreen);

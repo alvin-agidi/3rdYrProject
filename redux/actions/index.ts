@@ -96,7 +96,7 @@ export function fetchFollowing(uid: string) {
 	};
 }
 
-function fetchFollowingUser(uid: string) {
+export function fetchFollowingUser(uid: string) {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
@@ -162,7 +162,10 @@ export function fetchFollowingUserPosts(uid: string) {
 	};
 }
 
-function fetchPostLikes(userID: string, postID: string): Promise<string[]> {
+export function fetchPostLikes(
+	userID: string,
+	postID: string
+): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
