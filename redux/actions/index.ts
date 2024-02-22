@@ -48,7 +48,10 @@ export function fetchUserPosts(uid: string) {
 				var posts = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
-					const createdAt = data.createdAt.toDate().toISOString();
+					var createdAt = data.createdAt
+						? data.createdAt
+						: firebase.firestore.Timestamp.now();
+					createdAt = createdAt.toDate().toISOString();
 					return { id, ...data, createdAt };
 				});
 				dispatch({
@@ -127,9 +130,10 @@ export function fetchFollowingUserPosts(uid: string) {
 						var posts = snapshot.docs.map((doc: any) => {
 							const data = doc.data();
 							const id = doc.id;
-							const createdAt = data.createdAt
-								.toDate()
-								.toISOString();
+							var createdAt = data.createdAt
+								? data.createdAt
+								: firebase.firestore.Timestamp.now();
+							createdAt = createdAt.toDate().toISOString();
 							return {
 								...data,
 								id,

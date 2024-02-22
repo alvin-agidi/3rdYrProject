@@ -32,7 +32,6 @@ function Profile(props: any) {
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
 
 	useEffect(() => {
-		console.log(props.following);
 		setPosts([]);
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
@@ -102,7 +101,11 @@ function Profile(props: any) {
 								snapshot.docs.map((doc) => {
 									const id = doc.id;
 									const data = doc.data();
-									const createdAt = data.createdAt
+									var createdAt = (
+										data.createdAt
+											? data.createdAt
+											: firebase.firestore.Timestamp.now()
+									)
 										.toDate()
 										.toISOString();
 									return {
@@ -298,12 +301,6 @@ export class ProfileScreen extends Component {
 					children={(props) => <Profile {...props} {...this.props} />}
 				/>
 				<Stack.Screen name="Post" component={PostList} />
-				{/* <Stack.Screen
-					name="Post"
-					children={(props) => (
-						<PostList {...props} {...this.props} />
-					)}
-				/> */}
 				<Stack.Screen name="Comments" component={CommentsScreen} />
 			</Stack.Navigator>
 		);

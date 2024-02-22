@@ -78,9 +78,13 @@ export default function Comments(props: any): JSX.Element {
 					var comments = snapshot.docs.map((doc) => {
 						const data = doc.data();
 						const id = doc.id;
-						const createdAt = data.createdAt
-							? data.createdAt
-							: firebase.firestore.Timestamp.now();
+						var createdAt = (
+							data.createdAt
+								? data.createdAt
+								: firebase.firestore.Timestamp.now()
+						)
+							.toDate()
+							.toLocaleString();
 						return { id, ...data, createdAt };
 					});
 					fetchCommentCreators(comments);
@@ -117,7 +121,7 @@ export default function Comments(props: any): JSX.Element {
 							</Text>
 							<Text>{item.text}</Text>
 						</View>
-						<Text>{item.createdAt.toDate().toLocaleString()}</Text>
+						<Text>{item.createdAt}</Text>
 					</View>
 				)}
 				ListEmptyComponent={() => (
