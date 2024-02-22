@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { StyleSheet, View, TextInput, Image } from "react-native";
+import {
+	StyleSheet,
+	View,
+	TextInput,
+	Image,
+	KeyboardAvoidingView,
+	Platform,
+} from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/storage";
@@ -95,17 +102,11 @@ export default function PublishPost(props: any) {
 	}
 
 	return (
-		<View style={globalStyles.container}>
-			<TextField
-				placeholder="Write a caption"
-				onChangeText={(caption: string) => {
-					setCaption(caption);
-				}}
-				style={globalStyles.textInput}
-				iconName="comment-outline"
-			/>
-			<PressableButton onPress={uploadMedia} text="Publish" />
-
+		<KeyboardAvoidingView
+			style={globalStyles.container}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
+		>
 			{isVideo ? (
 				<Video
 					style={styles.media}
@@ -118,7 +119,16 @@ export default function PublishPost(props: any) {
 			) : (
 				<Image source={{ uri: mediaUri }} style={styles.media} />
 			)}
-		</View>
+			<TextField
+				placeholder="Write a caption"
+				onChangeText={(caption: string) => {
+					setCaption(caption);
+				}}
+				style={globalStyles.textInput}
+				iconName="comment-outline"
+			/>
+			<PressableButton onPress={uploadMedia} text="Publish" />
+		</KeyboardAvoidingView>
 	);
 }
 

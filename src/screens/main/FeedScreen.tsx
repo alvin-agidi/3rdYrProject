@@ -1,5 +1,12 @@
 import React, { Component, useEffect, useState } from "react";
-import { StyleSheet, View, Text, Image, FlatList } from "react-native";
+import {
+	StyleSheet,
+	View,
+	Text,
+	Image,
+	FlatList,
+	TouchableOpacity,
+} from "react-native";
 import { Video, ResizeMode } from "expo-av";
 import { connect } from "react-redux";
 import { useNavigation } from "@react-navigation/core";
@@ -22,15 +29,26 @@ function Feed(props: any) {
 			props.following.length &&
 			props.followingLoaded === props.following.length
 		) {
-			// props.followingPosts.sort((x: any, y: any) => {
-			// 	return y.createdAt.localeCompare(x.createdAt);
-			// });
-			// props.followingPosts.forEach((post: any) => {
-			// 	post.showRoutine = true;
-			// });
-			setPosts(props.followingPosts);
+			setPosts(() => props.followingPosts);
+			setPosts((posts: any) =>
+				posts
+					.map((post: any) => {
+						const isLiked = post.likes.includes(
+							firebase.auth().currentUser!.uid
+						);
+						const likeCount = post.likes.length;
+						return {
+							...post,
+							isLiked,
+							likeCount,
+						};
+					})
+					.sort((x: any, y: any) => {
+						return y.createdAt.localeCompare(x.createdAt);
+					})
+			);
 		}
-	}, [props.followingLoaded]);
+	}, [props.followingLoaded, props.following]);
 
 	function toggleLike(userID: string, postID: string, isLiked: boolean) {
 		if (isLiked) {
@@ -55,14 +73,30 @@ function Feed(props: any) {
 				.doc(firebase.auth().currentUser!.uid)
 				.set({});
 		}
+		setPosts((posts: any[]) =>
+			posts.map((post: any) => {
+				if (post.id === postID) {
+					if (post.isLiked) {
+						post.likeCount--;
+					} else {
+						post.likeCount++;
+					}
+					post.isLiked = !post.isLiked;
+				}
+				return post;
+			})
+		);
 	}
 
 	function toggleShowRoutine(postID: string) {
-		// setPosts(() => {
-		// 	// const post = posts.find((post: any) => post.id === postID);
-		// 	// post.showRoutine = !post.showRoutine;
-		// 	return [...posts];
-		// });
+		setPosts((posts: any[]) =>
+			posts.map((post: any) => {
+				if (post.id === postID) {
+					post.showRoutine = !post.showRoutine;
+				}
+				return post;
+			})
+		);
 	}
 
 	return (
@@ -102,38 +136,45 @@ function Feed(props: any) {
 									>
 										{item.user.username}
 									</Text>
-									<View style={styles.postIconBox}>
+									<TouchableOpacity
+										style={styles.postIconBox}
+										onPress={() => {
+											toggleShowRoutine(item.id);
+										}}
+									>
 										{item.isVideo ? (
 											<Icon
 												name="dumbbell"
 												color="black"
 												size={30}
-												onPress={() => {
-													toggleShowRoutine(item.id);
-												}}
 											/>
 										) : null}
-									</View>
-									<View style={styles.postIconBox}>
+									</TouchableOpacity>
+									<TouchableOpacity
+										style={styles.postIconBox}
+										onPress={() => {
+											navigation.navigate("Comments", {
+												postID: item.id,
+												uid: item.user.uid,
+											});
+										}}
+									>
 										<Icon
 											name="comment-outline"
 											size={30}
 											color="black"
-											onPress={() => {
-												navigation.navigate(
-													"Comments",
-													{
-														postID: item.id,
-														uid: item.user.uid,
-													}
-												);
-												// navigation.navigate("Profile", {
-												// 	uid: item.user.uid,
-												// });
-											}}
 										/>
-									</View>
-									<View style={styles.postIconBox}>
+									</TouchableOpacity>
+									<TouchableOpacity
+										style={styles.postIconBox}
+										onPress={() => {
+											toggleLike(
+												item.user.uid,
+												item.id,
+												item.isLiked
+											);
+										}}
+									>
 										<Icon
 											name={
 												item.isLiked
@@ -142,23 +183,18 @@ function Feed(props: any) {
 											}
 											color="black"
 											size={30}
-											onPress={() => {
-												toggleLike(
-													item.user.uid,
-													item.id,
-													item.isLiked
-												);
-											}}
 										/>
 
 										<Text style={styles.postIconText}>
-											{item.likes.length} like
-											{item.likes.length != 1 ? "s" : ""}
+											{item.likeCount} like
+											{item.likeCount != 1 ? "s" : ""}
 										</Text>
-									</View>
+									</TouchableOpacity>
 								</View>
 								{item.showRoutine && item.isVideo ? (
-									<View style={styles.postRoutineBox}>
+									<TouchableOpacity
+										style={styles.postRoutineBox}
+									>
 										<Text>Routine</Text>
 										<FlatList
 											horizontal={false}
@@ -179,7 +215,7 @@ function Feed(props: any) {
 												</View>
 											)}
 										/>
-									</View>
+									</TouchableOpacity>
 								) : null}
 							</View>
 							<Text>{item.caption}</Text>
@@ -254,7 +290,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		backgroundColor: "whitesmoke",
 		alignItems: "center",
-		justifyContent: "space-between",
+		justifyContent: "flex-end",
 		flexDirection: "row",
 		gap: 5,
 	},
@@ -267,10 +303,11 @@ const styles = StyleSheet.create({
 		gap: 5,
 		padding: 10,
 		alignItems: "center",
-		justifyContent: "space-evenly",
+		justifyContent: "center",
 		flexDirection: "row",
 	},
 	postUsername: {
+		flex: 1,
 		fontSize: 15,
 		padding: 10,
 		fontWeight: "bold",

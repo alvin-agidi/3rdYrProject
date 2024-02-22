@@ -4,7 +4,7 @@ import styles from "../globalStyles";
 
 export function PressableButton(props: any): JSX.Element {
 	return (
-		<Pressable onPress={props.onPress} style={styles.button}>
+		<Pressable {...props} style={styles.button}>
 			<Text style={styles.buttonText}>{props.text}</Text>
 		</Pressable>
 	);

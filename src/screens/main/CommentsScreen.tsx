@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text } from "react-native";
+import {
+	FlatList,
+	View,
+	StyleSheet,
+	Text,
+	KeyboardAvoidingView,
+	Platform,
+	Keyboard,
+} from "react-native";
 import firebase from "firebase/compat/app";
 import globalStyles from "../../globalStyles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -10,14 +18,13 @@ import { TextField } from "../../components/TextField";
 import { PressableButton } from "../../components/PressableButton";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Comments(props: any) {
+export default function Comments(props: any): JSX.Element {
 	const navigation = useNavigation();
 	const [comments, setComments] = useState<any>([]);
 	const [text, setText] = useState<any>("");
 	const [postID, setPostID] = useState("");
 
 	function sendComment() {
-		// console.log(props.route.params);
 		if (text) {
 			firebase
 				.firestore()
@@ -31,6 +38,7 @@ export default function Comments(props: any) {
 					createdBy: firebase.auth().currentUser!.uid,
 					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 				});
+			Keyboard.dismiss();
 		}
 	}
 
@@ -40,8 +48,7 @@ export default function Comments(props: any) {
 				.firestore()
 				.collection("users")
 				.doc(uid)
-				.get()
-				.then((snapshot) => resolve(snapshot.data()));
+				.onSnapshot((snapshot) => resolve(snapshot.data()));
 		});
 	}
 
@@ -54,7 +61,6 @@ export default function Comments(props: any) {
 					})
 				)
 			).then(() => {
-				console.log(comments);
 				setComments(comments);
 			});
 		}
@@ -68,12 +74,14 @@ export default function Comments(props: any) {
 				.doc(props.route.params.postID)
 				.collection("comments")
 				.orderBy("createdAt", "desc")
-				.get()
-				.then((snapshot) => {
+				.onSnapshot((snapshot) => {
 					var comments = snapshot.docs.map((doc) => {
 						const data = doc.data();
 						const id = doc.id;
-						return { id, ...data };
+						const createdAt = data.createdAt
+							? data.createdAt
+							: firebase.firestore.Timestamp.now();
+						return { id, ...data, createdAt };
 					});
 					fetchCommentCreators(comments);
 				});
@@ -81,7 +89,11 @@ export default function Comments(props: any) {
 		}
 	}, [props.route.params.postID]);
 	return (
-		<View style={globalStyles.container}>
+		<KeyboardAvoidingView
+			style={globalStyles.container}
+			behavior={Platform.OS === "ios" ? "padding" : "height"}
+			keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
+		>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
@@ -127,7 +139,7 @@ export default function Comments(props: any) {
 				}}
 			/>
 			<PressableButton text="Send" onPress={sendComment} />
-		</View>
+		</KeyboardAvoidingView>
 	);
 }
 

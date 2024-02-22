@@ -23,8 +23,7 @@ export function fetchUser(uid: string) {
 			.firestore()
 			.collection("users")
 			.doc(uid)
-			.get()
-			.then((snapshot) => {
+			.onSnapshot((snapshot) => {
 				if (snapshot.exists) {
 					dispatch({
 						type: USER_STATE_CHANGE,
@@ -45,8 +44,7 @@ export function fetchUserPosts(uid: string) {
 			.doc(uid)
 			.collection("posts")
 			.orderBy("createdAt", "desc")
-			.get()
-			.then((snapshot) => {
+			.onSnapshot((snapshot) => {
 				var posts = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
@@ -98,13 +96,18 @@ export function fetchFollowing(uid: string) {
 	};
 }
 
-async function fetchFollowingUser(uid: string) {
-	const snapshot = await firebase
-		.firestore()
-		.collection("users")
-		.doc(uid)
-		.get();
-	return { uid, ...snapshot.data() };
+function fetchFollowingUser(uid: string) {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.get()
+			.then((doc) => {
+				const uid = doc.id;
+				return resolve({ uid, ...doc.data() });
+			});
+	});
 }
 
 export function fetchFollowingUserPosts(uid: string) {
@@ -120,7 +123,7 @@ export function fetchFollowingUserPosts(uid: string) {
 						snapshot.docs[0]._delegate._document.key.path
 							.segments[6];
 					// uid = snapshot.docs[0].ref.path.split("/")[1];
-					fetchFollowingUser(uid).then((user) => {
+					fetchFollowingUser(uid).then((user: any) => {
 						var posts = snapshot.docs.map((doc: any) => {
 							const data = doc.data();
 							const id = doc.id;
@@ -139,9 +142,6 @@ export function fetchFollowingUserPosts(uid: string) {
 								fetchPostLikes(post.user.uid, post.id).then(
 									(likes) => {
 										post.likes = likes;
-										post.isLiked = likes.includes(
-											firebase.auth().currentUser!.uid
-										);
 									}
 								)
 							)

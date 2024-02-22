@@ -30,8 +30,7 @@ function Search(props: any) {
 			.collection("users")
 			.where("username", ">=", queryString)
 			.where("username", "<=", queryString + "~")
-			.get()
-			.then((snapshot) => {
+			.onSnapshot((snapshot) => {
 				var users = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
@@ -141,7 +140,7 @@ const styles = StyleSheet.create({
 	following: {
 		fontSize: 20,
 		borderColor: "skyblue",
-		borderWidth: 1,
+		borderWidth: 2,
 		borderRadius: 5,
 		padding: 5,
 	},

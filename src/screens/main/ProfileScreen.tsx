@@ -31,8 +31,7 @@ function ProfileScreen(props: any) {
 					.firestore()
 					.collection("users")
 					.doc(props.route.params.uid)
-					.get()
-					.then((snapshot) => {
+					.onSnapshot((snapshot) => {
 						if (snapshot.exists) {
 							setUser(snapshot.data());
 						} else {
@@ -51,8 +50,7 @@ function ProfileScreen(props: any) {
 					.collection("users")
 					.doc(props.route.params.uid)
 					.collection("following")
-					.get()
-					.then((snapshot) => {
+					.onSnapshot((snapshot) => {
 						setFollowing(snapshot.docs.map((doc) => doc.id));
 					});
 			}
@@ -67,8 +65,7 @@ function ProfileScreen(props: any) {
 					.collection("users")
 					.doc(props.route.params.uid)
 					.collection("followers")
-					.get()
-					.then((snapshot) => {
+					.onSnapshot((snapshot) => {
 						setFollowers(snapshot.docs.map((doc) => doc.id));
 					});
 			}
@@ -85,8 +82,7 @@ function ProfileScreen(props: any) {
 						.doc(props.route.params.uid)
 						.collection("posts")
 						.orderBy("createdAt", "desc")
-						.get()
-						.then((snapshot) => {
+						.onSnapshot((snapshot) => {
 							return resolve(
 								snapshot.docs.map((doc) => {
 									const id = doc.id;
@@ -148,8 +144,7 @@ function ProfileScreen(props: any) {
 					.collection("users")
 					.doc(props.route.params.uid)
 					.collection("following")
-					.get()
-					.then((snapshot) => {
+					.onSnapshot((snapshot) => {
 						setFollowing(snapshot.docs.map((doc) => doc.id));
 					});
 			}
@@ -164,8 +159,7 @@ function ProfileScreen(props: any) {
 					.collection("users")
 					.doc(props.route.params.uid)
 					.collection("followers")
-					.get()
-					.then((snapshot) => {
+					.onSnapshot((snapshot) => {
 						setFollowers(snapshot.docs.map((doc) => doc.id));
 					});
 			}

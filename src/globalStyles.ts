@@ -13,7 +13,7 @@ export default StyleSheet.create({
 		borderRadius: 5,
 		backgroundColor: "white",
 		borderColor: "skyblue",
-		borderWidth: 1,
+		borderWidth: 2,
 		alignSelf: "stretch",
 		flex: 1,
 	},
