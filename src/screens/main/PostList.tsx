@@ -40,7 +40,6 @@ export default function PostList(props: any) {
 					})
 			);
 		}
-		console.log(props.route);
 		if (
 			props.route.params &&
 			props.route.params.uid &&
