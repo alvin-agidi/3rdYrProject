@@ -113,7 +113,7 @@ export default function Comments(props: any): JSX.Element {
 								style={styles.username}
 								onPress={() => {
 									navigation.navigate("Profile", {
-										uid: item.createdBy,
+										uid: item.user.uid,
 									});
 								}}
 							>

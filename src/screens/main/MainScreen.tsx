@@ -17,6 +17,7 @@ import SearchScreen from "./SearchScreen";
 import FeedScreen from "./FeedScreen";
 import CameraScreen from "./CameraScreen";
 import ProfileScreen from "./ProfileScreen";
+import NotificationsScreen from "./NotificationsScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -77,6 +78,19 @@ export class Main extends Component {
 						),
 						tabBarLabel: "Camera",
 						headerShown: false,
+					}}
+				/>
+				<Tab.Screen
+					name="Notifications"
+					component={NotificationsScreen}
+					options={{
+						tabBarIcon: ({ color, size = 25 }) => (
+							<Icon
+								name="bell-outline"
+								color={color}
+								size={size}
+							/>
+						),
 					}}
 				/>
 				<Tab.Screen
