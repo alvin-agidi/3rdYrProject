@@ -59,7 +59,7 @@ function Search(props: any) {
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
-							navigation.navigate("Results", {
+							navigation.navigate("Profile1", {
 								uid: item.id,
 							})
 						}
@@ -102,7 +102,11 @@ export class SearchScreen extends Component {
 					name="Search"
 					children={(props) => <Search {...props} {...this.props} />}
 				/>
-				<Stack.Screen name="Results" component={ProfileScreen} />
+				<Stack.Screen
+					name="Profile1"
+					component={ProfileScreen}
+					options={{ title: "" }}
+				/>
 			</Stack.Navigator>
 		);
 	}

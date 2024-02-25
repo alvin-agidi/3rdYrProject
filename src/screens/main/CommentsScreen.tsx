@@ -18,10 +18,10 @@ import { TextField } from "../../components/TextField";
 import { PressableButton } from "../../components/PressableButton";
 import { useNavigation } from "@react-navigation/native";
 
-export default function Comments(props: any): JSX.Element {
+export default function Comments(props: any) {
 	const navigation = useNavigation();
 	const [comments, setComments] = useState<any>([]);
-	const [text, setText] = useState<any>("");
+	const [text, setText] = useState("");
 	const [postID, setPostID] = useState("");
 
 	function sendComment() {
@@ -48,7 +48,10 @@ export default function Comments(props: any): JSX.Element {
 				.firestore()
 				.collection("users")
 				.doc(uid)
-				.onSnapshot((snapshot) => resolve(snapshot.data()));
+				.onSnapshot((doc) => {
+					const uid = doc.id;
+					resolve({ uid, ...doc.data() });
+				});
 		});
 	}
 
@@ -112,8 +115,9 @@ export default function Comments(props: any): JSX.Element {
 							<Text
 								style={styles.username}
 								onPress={() => {
-									navigation.navigate("Profile", {
-										uid: item.user.uid,
+									navigation.popToTop();
+									navigation.navigate("Profile1", {
+										uid: item.creator.uid,
 									});
 								}}
 							>

@@ -38,7 +38,11 @@ export class FeedScreen extends Component {
 					)}
 				/>
 				<Stack.Screen name="Comments" component={CommentsScreen} />
-				<Stack.Screen name="Profile" component={ProfileScreen} />
+				<Stack.Screen
+					name="Profile1"
+					component={ProfileScreen}
+					options={{ title: "" }}
+				/>
 			</Stack.Navigator>
 		);
 	}

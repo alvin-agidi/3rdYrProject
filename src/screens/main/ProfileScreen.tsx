@@ -22,7 +22,7 @@ import PostList from "./PostList";
 
 const Stack = createNativeStackNavigator();
 
-function Profile(props: any) {
+export function Profile(props: any) {
 	const navigation = useNavigation();
 	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
@@ -286,7 +286,7 @@ function Profile(props: any) {
 	);
 }
 
-export class ProfileScreen extends Component {
+class ProfileScreen extends Component {
 	render() {
 		return (
 			<Stack.Navigator

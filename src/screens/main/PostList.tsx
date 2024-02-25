@@ -153,7 +153,7 @@ export default function PostList(props: any) {
 									<Text
 										style={styles.postUsername}
 										onPress={() => {
-											navigation.navigate("Profile", {
+											navigation.navigate("Profile1", {
 												uid: item.user.uid,
 											});
 										}}

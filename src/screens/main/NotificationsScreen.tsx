@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-	FlatList,
-	View,
-	StyleSheet,
-	Text,
-	KeyboardAvoidingView,
-	Platform,
-	Keyboard,
-} from "react-native";
+import { FlatList, View, StyleSheet, Text } from "react-native";
 import firebase from "firebase/compat/app";
 import globalStyles from "../../globalStyles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -36,7 +28,7 @@ export default function NotificationsScreen(props: any) {
 							<Text
 								style={styles.username}
 								onPress={() => {
-									navigation.navigate("Profile", {
+									navigation.navigate("Profile1", {
 										uid: item.createdBy,
 									});
 								}}
