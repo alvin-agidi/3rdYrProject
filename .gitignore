@@ -36,3 +36,5 @@ yarn-error.*
 package-lock.json
 package.json
 commands
+firestore-debug.log
+ui-debug.log
