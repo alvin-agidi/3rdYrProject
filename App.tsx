@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
@@ -9,6 +8,7 @@ import { Provider } from "react-redux";
 import rootReducer from "./redux/reducers";
 import { configureStore } from "@reduxjs/toolkit";
 import { LandingScreen } from "./src/screens/auth/LandingScreen";
+
 
 const store = configureStore({
 	reducer: rootReducer,
@@ -27,8 +27,6 @@ const firebaseConfig = {
 if (firebase.apps.length === 0) {
 	firebase.initializeApp(firebaseConfig);
 }
-
-const Stack = createNativeStackNavigator();
 
 export class App extends Component<{}, any> {
 	constructor(props: any) {
