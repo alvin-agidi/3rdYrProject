@@ -6,17 +6,14 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import MainScreen from "./src/screens/main/MainScreen";
 import { Provider } from "react-redux";
-import { applyMiddleware } from "redux";
 import rootReducer from "./redux/reducers";
 import { configureStore } from "@reduxjs/toolkit";
-import thunk from "redux-thunk";
 import { LandingScreen } from "./src/screens/auth/LandingScreen";
 
 const store = configureStore({
 	reducer: rootReducer,
 });
 
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
 	apiKey: "AIzaSyAUV8eOm74mhlr3eEHZ8VZr74UYB2rNGJY",
 	authDomain: "yrproject-64b5e.firebaseapp.com",
