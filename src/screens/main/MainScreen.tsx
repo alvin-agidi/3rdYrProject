@@ -18,9 +18,6 @@ import FeedScreen from "./FeedScreen";
 import CameraScreen from "./CameraScreen";
 import ProfileScreen from "./ProfileScreen";
 import NotificationsScreen from "./NotificationsScreen";
-import * as Notifications from "expo-notifications";
-import { isDevice } from "expo-device";
-import messaging from "@react-native-firebase/messaging";
 
 const Tab = createBottomTabNavigator();
 
@@ -31,12 +28,6 @@ export class Main extends Component {
 		this.props.fetchUserPosts(firebase.auth().currentUser!.uid);
 		this.props.fetchFollowing(firebase.auth().currentUser!.uid);
 		this.props.fetchFollowers(firebase.auth().currentUser!.uid);
-		try {
-			const token = await messaging().getToken();
-			console.log(token);
-		} catch (e) {
-			console.log;
-		}
 	}
 
 	render() {

@@ -1,5 +1,5 @@
 import { Camera, CameraType, AutoFocus } from "expo-camera";
-import { Button, StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import { Component, useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
 import { Video, ResizeMode } from "expo-av";
@@ -216,9 +216,12 @@ function CameraComponent() {
 				/>
 			</View>
 
-			{/* {hasImagePickerPermission ? (
-				<Button title={"Pick from gallery"} onPress={pickMedia} />
-			) : undefined} */}
+			{hasImagePickerPermission ? (
+				<PressableButton
+					text={"Pick from gallery"}
+					onPress={pickMedia}
+				/>
+			) : undefined}
 		</View>
 	);
 }

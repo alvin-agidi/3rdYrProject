@@ -1,14 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { FlatList, View, StyleSheet, Text } from "react-native";
-import firebase from "firebase/compat/app";
+import React, { Component, useEffect, useState } from "react";
+import {
+	FlatList,
+	View,
+	StyleSheet,
+	Text,
+	TouchableOpacity,
+} from "react-native";
 import globalStyles from "../../globalStyles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
+import ProfileScreen from "./ProfileScreen";
+import PostList from "./PostList";
 
-export default function NotificationsScreen(props: any) {
+const Stack = createNativeStackNavigator();
+
+export default function Notifications(props: any) {
 	const navigation = useNavigation();
 	const [notifications, setNotifications] = useState<any>([]);
 	// useEffect(() => {}, []);
@@ -23,22 +33,20 @@ export default function NotificationsScreen(props: any) {
 				}}
 				style={styles.comments}
 				renderItem={({ item }) => (
-					<View style={styles.comment}>
+					<TouchableOpacity
+						style={styles.comment}
+						onPress={() => {
+							navigation.navigate("Profile1", {
+								uid: item.routeUID,
+							});
+						}}
+					>
 						<View style={styles.commentInfo}>
-							<Text
-								style={styles.username}
-								onPress={() => {
-									navigation.navigate("Profile1", {
-										uid: item.createdBy,
-									});
-								}}
-							>
-								{item.creator.username}
-							</Text>
-							<Text>{item.text}</Text>
+							<Text style={styles.username}>{item.title}</Text>
+							<Text>{item.body}</Text>
 						</View>
 						<Text>{item.createdAt}</Text>
-					</View>
+					</TouchableOpacity>
 				)}
 				ListEmptyComponent={() => (
 					<View style={styles.noResults}>
@@ -51,6 +59,29 @@ export default function NotificationsScreen(props: any) {
 			/>
 		</View>
 	);
+}
+
+class NotificationsScreen extends Component {
+	render() {
+		return (
+			<Stack.Navigator
+				initialRouteName="Notifications"
+				screenOptions={{
+					headerTintColor: "deepskyblue",
+					headerTitleStyle: { color: "black" },
+				}}
+			>
+				<Stack.Screen
+					name="Notifications"
+					children={(props) => (
+						<Notifications {...props} {...this.props} />
+					)}
+				/>
+				<Stack.Screen name="Post" component={PostList} />
+				<Stack.Screen name="Profile1" component={ProfileScreen} />
+			</Stack.Navigator>
+		);
+	}
 }
 
 const styles = StyleSheet.create({
