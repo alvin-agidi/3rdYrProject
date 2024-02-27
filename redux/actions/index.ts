@@ -6,6 +6,7 @@ import {
 	FOLLOWING_POSTS_STATE_CHANGE,
 	USER_POSTS_STATE_CHANGE,
 	USER_STATE_CHANGE,
+	NOTIFICATIONS_STATE_CHANGE,
 } from "../constants";
 import "firebase/compat/auth";
 import "firebase/compat/database";
@@ -130,9 +131,9 @@ export function fetchFollowingUserPosts(uid: string) {
 						var posts = snapshot.docs.map((doc: any) => {
 							const data = doc.data();
 							const id = doc.id;
-							var createdAt = data.createdAt
-								? data.createdAt
-								: firebase.firestore.Timestamp.now();
+							var createdAt =
+								data.createdAt ??
+								firebase.firestore.Timestamp.now();
 							createdAt = createdAt.toDate().toISOString();
 							return {
 								...data,
@@ -182,4 +183,30 @@ export function fetchPostLikes(
 				return resolve(snapshot.docs.map((doc) => doc.id));
 			});
 	});
+}
+
+export function fetchNotifications(uid: string) {
+	return (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("notifications")
+			.orderBy("createdAt", "desc")
+			.onSnapshot((snapshot) => {
+				const notifications = snapshot.docs.map((doc) => {
+					const data = doc.data();
+					const createdAt = (
+						data.createdAt ?? firebase.firestore.Timestamp.now()
+					)
+						.toDate()
+						.toLocaleString();
+					return { ...data, createdAt };
+				});
+				dispatch({
+					type: NOTIFICATIONS_STATE_CHANGE,
+					notifications,
+				});
+			});
+	};
 }

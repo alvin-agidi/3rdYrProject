@@ -15,13 +15,17 @@ import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import ProfileScreen from "./ProfileScreen";
 import PostList from "./PostList";
+import { connect } from "react-redux";
+import Comments from "./CommentsScreen";
 
 const Stack = createNativeStackNavigator();
 
-export default function Notifications(props: any) {
+function Notifications(props: any) {
 	const navigation = useNavigation();
 	const [notifications, setNotifications] = useState<any>([]);
-	// useEffect(() => {}, []);
+	useEffect(() => {
+		setNotifications(props.notifications);
+	}, [props.notifications]);
 	return (
 		<View style={globalStyles.container}>
 			<FlatList
@@ -31,21 +35,24 @@ export default function Notifications(props: any) {
 				contentContainerStyle={{
 					gap: 5,
 				}}
-				style={styles.comments}
+				style={styles.notifications}
 				renderItem={({ item }) => (
 					<TouchableOpacity
-						style={styles.comment}
 						onPress={() => {
-							navigation.navigate("Profile1", {
-								uid: item.routeUID,
-							});
+							navigation.navigate(
+								item.navPostID ? "Post" : "Profile1",
+								{
+									uid: item.navUID,
+									postID: item.navPostID,
+								}
+							);
 						}}
 					>
-						<View style={styles.commentInfo}>
+						<View style={styles.notification}>
 							<Text style={styles.username}>{item.title}</Text>
 							<Text>{item.body}</Text>
+							<Text>{item.createdAt}</Text>
 						</View>
-						<Text>{item.createdAt}</Text>
 					</TouchableOpacity>
 				)}
 				ListEmptyComponent={() => (
@@ -78,7 +85,12 @@ class NotificationsScreen extends Component {
 					)}
 				/>
 				<Stack.Screen name="Post" component={PostList} />
-				<Stack.Screen name="Profile1" component={ProfileScreen} />
+				<Stack.Screen name="Comments" component={Comments} />
+				<Stack.Screen
+					name="Profile1"
+					component={ProfileScreen}
+					options={{ title: "" }}
+				/>
 			</Stack.Navigator>
 		);
 	}
@@ -92,17 +104,13 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		marginTop: 250,
 	},
-	comments: {
+	notifications: {
 		flex: 1,
 		padding: 5,
 		backgroundColor: "lightgrey",
 		borderRadius: 10,
+		gap: 5,
 		alignSelf: "stretch",
-	},
-	comment: {
-		padding: 5,
-		borderRadius: 5,
-		backgroundColor: "white",
 	},
 	noResultsText: {
 		color: "white",
@@ -114,11 +122,23 @@ const styles = StyleSheet.create({
 		// padding: 10,
 		fontWeight: "bold",
 	},
-	commentInfo: {
+	notification: {
+		padding: 5,
+		borderRadius: 5,
+		backgroundColor: "white",
 		flex: 1,
-		flexDirection: "row",
 		justifyContent: "flex-start",
 		gap: 5,
-		alignContent: "center",
 	},
 });
+
+const mapStateToProps = (store: any) => ({
+	currentUser: store.userState.currentUser,
+	following: store.userState.following,
+	followers: store.userState.followers,
+	followingLoaded: store.followingState.followingLoaded,
+	followingPosts: store.followingState.followingPosts,
+	notifications: store.userState.notifications,
+});
+
+export default connect(mapStateToProps, null)(NotificationsScreen);

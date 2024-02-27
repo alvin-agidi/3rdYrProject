@@ -6,6 +6,7 @@ import {
 	fetchUserPosts,
 	fetchFollowing,
 	fetchFollowers,
+	fetchNotifications,
 	clearData,
 } from "../../../redux/actions";
 
@@ -28,6 +29,7 @@ export class Main extends Component {
 		this.props.fetchUserPosts(firebase.auth().currentUser!.uid);
 		this.props.fetchFollowing(firebase.auth().currentUser!.uid);
 		this.props.fetchFollowers(firebase.auth().currentUser!.uid);
+		this.props.fetchNotifications(firebase.auth().currentUser!.uid);
 	}
 
 	render() {
@@ -91,6 +93,7 @@ export class Main extends Component {
 								size={size}
 							/>
 						),
+						headerShown: false,
 					}}
 				/>
 				<Tab.Screen
@@ -131,6 +134,7 @@ const mapDispatchProps = (dispatch: any) =>
 			fetchUserPosts,
 			fetchFollowing,
 			fetchFollowers,
+			fetchNotifications,
 		},
 		dispatch
 	);

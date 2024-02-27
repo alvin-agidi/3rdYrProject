@@ -44,7 +44,7 @@ export class FeedScreen extends Component {
 					projectId: appConfig?.expo?.extra?.eas?.projectId,
 				})
 			).data;
-			console.log(token);
+			// console.log(token);
 			firebase
 				.firestore()
 				.collection("users")

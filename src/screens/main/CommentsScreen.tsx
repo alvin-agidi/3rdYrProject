@@ -78,13 +78,11 @@ export default function Comments(props: any) {
 				.collection("comments")
 				.orderBy("createdAt", "desc")
 				.onSnapshot((snapshot) => {
-					var comments = snapshot.docs.map((doc) => {
+					const comments = snapshot.docs.map((doc) => {
 						const data = doc.data();
 						const id = doc.id;
-						var createdAt = (
-							data.createdAt
-								? data.createdAt
-								: firebase.firestore.Timestamp.now()
+						const createdAt = (
+							data.createdAt ?? firebase.firestore.Timestamp.now()
 						)
 							.toDate()
 							.toLocaleString();

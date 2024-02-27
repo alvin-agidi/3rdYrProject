@@ -102,9 +102,8 @@ export function Profile(props: any) {
 									const id = doc.id;
 									const data = doc.data();
 									var createdAt = (
-										data.createdAt
-											? data.createdAt
-											: firebase.firestore.Timestamp.now()
+										data.createdAt ??
+										firebase.firestore.Timestamp.now()
 									)
 										.toDate()
 										.toISOString();
