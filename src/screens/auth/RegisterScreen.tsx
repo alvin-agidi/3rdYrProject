@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View, TextInput, Pressable, Text } from "react-native";
+import { View, TextInput, Pressable, Text, Switch } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
@@ -7,6 +7,7 @@ import "firebase/compat/firestore";
 import styles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 import { ValidatedTextField } from "../../components/ValidatedTextField";
+import { Toggle } from "../../components/Toggle";
 
 export class RegisterScreen extends Component<{}, any> {
 	constructor(props: any) {
@@ -15,13 +16,14 @@ export class RegisterScreen extends Component<{}, any> {
 			email: "",
 			username: "",
 			password: "",
+			isPT: false,
 		};
 
 		this.register = this.register.bind(this);
 	}
 
 	register() {
-		const { email, password, username } = this.state;
+		const { email, username, password, isPT } = this.state;
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
@@ -30,7 +32,7 @@ export class RegisterScreen extends Component<{}, any> {
 					.firestore()
 					.collection("users")
 					.doc(firebase.auth().currentUser!.uid)
-					.set({ email, username });
+					.set({ email, username, isPT });
 			})
 			.catch((result: any) => {
 				console.log(result);
@@ -70,6 +72,14 @@ export class RegisterScreen extends Component<{}, any> {
 						this.setState({ password });
 					}}
 					iconName="lock-outline"
+				/>
+				<Toggle
+					text="Register as a personal trainer"
+					iconName="account-supervisor-outline"
+					onValueChange={() => {
+						this.setState({ isPT: !this.state.isPT });
+					}}
+					value={this.state.isPT}
 				/>
 				<PressableButton onPress={this.register} text="Register" />
 			</View>

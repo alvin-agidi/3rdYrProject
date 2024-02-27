@@ -5,7 +5,7 @@ import globalStyles from "../globalStyles";
 
 export function TextField(props: any): JSX.Element {
 	return (
-		<View style={styles.searchSection}>
+		<View style={styles.textField}>
 			<Icon name={props.iconName} size={30} color="skyblue" />
 			<TextInput
 				{...props}
@@ -16,12 +16,9 @@ export function TextField(props: any): JSX.Element {
 }
 
 const styles = StyleSheet.create({
-	searchSection: {
+	textField: {
 		gap: 5,
 		flexDirection: "row",
 		alignItems: "center",
-	},
-	searchIcon: {
-		padding: 10,
 	},
 });
