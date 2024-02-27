@@ -7,6 +7,8 @@ import {
 	USER_POSTS_STATE_CHANGE,
 	USER_STATE_CHANGE,
 	NOTIFICATIONS_STATE_CHANGE,
+	CLIENTS_STATE_CHANGE,
+	PTS_STATE_CHANGE,
 } from "../constants";
 import "firebase/compat/auth";
 import "firebase/compat/database";
@@ -206,6 +208,40 @@ export function fetchNotifications(uid: string) {
 				dispatch({
 					type: NOTIFICATIONS_STATE_CHANGE,
 					notifications,
+				});
+			});
+	};
+}
+
+export function fetchClients(uid: string) {
+	return (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("clients")
+			.onSnapshot((snapshot) => {
+				var clients = snapshot.docs.map((doc) => doc.id);
+				dispatch({
+					type: CLIENTS_STATE_CHANGE,
+					clients,
+				});
+			});
+	};
+}
+
+export function fetchPTs(uid: string) {
+	return (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("PTs")
+			.onSnapshot((snapshot) => {
+				var PTs = snapshot.docs.map((doc) => doc.id);
+				dispatch({
+					type: PTS_STATE_CHANGE,
+					PTs,
 				});
 			});
 	};

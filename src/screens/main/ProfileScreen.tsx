@@ -28,8 +28,50 @@ export function Profile(props: any) {
 	const [posts, setPosts] = useState<any>([]);
 	const [following, setFollowing] = useState<any>([]);
 	const [followers, setFollowers] = useState<any>([]);
+	const [clients, setClients] = useState<any>([]);
+	const [PTs, setPTs] = useState<any>([]);
 	const [isFollowing, setIsFollowing] = useState(false);
+	const [isMyPT, setIsMyPT] = useState(false);
+	const [isClient, setIsClient] = useState(false);
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
+
+	function getFollowing(): void {
+		if (isCurrentUser) {
+			setFollowing(props.following);
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("following")
+				.onSnapshot((snapshot) => {
+					setFollowing(snapshot.docs.map((doc) => doc.id));
+				});
+		}
+	}
+
+	function getFollowers(): void {
+		if (isCurrentUser) {
+			setFollowers(props.followers);
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("followers")
+				.onSnapshot((snapshot) => {
+					setFollowers(snapshot.docs.map((doc) => doc.id));
+				});
+		}
+	}
+
+	function getClients(): void {
+		setClients(props.Clients);
+	}
+
+	function getPTs(): void {
+		setPTs(props.PTs);
+	}
 
 	useEffect(() => {
 		setPosts([]);
@@ -51,36 +93,6 @@ export function Profile(props: any) {
 						} else {
 							console.log("User does not exist");
 						}
-					});
-			}
-		}
-
-		function getFollowing(): void {
-			if (isCurrentUser) {
-				setFollowing(props.following);
-			} else {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.collection("following")
-					.onSnapshot((snapshot) => {
-						setFollowing(snapshot.docs.map((doc) => doc.id));
-					});
-			}
-		}
-
-		function getFollowers(): void {
-			if (isCurrentUser) {
-				setFollowers(props.followers);
-			} else {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.collection("followers")
-					.onSnapshot((snapshot) => {
-						setFollowers(snapshot.docs.map((doc) => doc.id));
 					});
 			}
 		}
@@ -120,24 +132,31 @@ export function Profile(props: any) {
 			});
 		}
 
-		function generateThumbnail(post: any) {
-			return VideoThumbnails.getThumbnailAsync(post.mediaURL, {
-				time: 100,
-			}).then((thumbnail) => {
-				post.thumbnailURI = thumbnail.uri;
+		function generateThumbnail(mediaURL: any) {
+			return new Promise((resolve) => {
+				return VideoThumbnails.getThumbnailAsync(mediaURL, {
+					time: 100,
+				}).then((thumbnail) => resolve(thumbnail.uri));
 			});
 		}
 
 		getUser();
 		getFollowing();
 		getFollowers();
+		if (isCurrentUser) {
+			getClients();
+			getPTs();
+		}
 		getPosts().then((tempPosts: any[]) => {
 			Promise.all(
 				tempPosts.map((post: any) => {
 					if (post.isVideo && !post.thumbnailURI) {
-						return generateThumbnail(post);
+						return generateThumbnail(post.mediaURL).then(
+							(thumbnailURI) => {
+								post.thumbnailURI = thumbnailURI;
+							}
+						);
 					}
-					return post;
 				})
 			).then(() => {
 				setPosts(tempPosts);
@@ -146,45 +165,19 @@ export function Profile(props: any) {
 	}, [props.route.params.uid]);
 
 	useEffect(() => {
-		if (followers.includes(firebase.auth().currentUser!.uid)) {
-			setIsFollowing(true);
-		}
-	}, [followers]);
+		setIsFollowing(props.following.includes(props.route.params.uid));
+	}, [props.following]);
 
 	useEffect(() => {
-		function getFollowing(): void {
-			if (isCurrentUser) {
-				setFollowing(props.following);
-			} else {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.collection("following")
-					.onSnapshot((snapshot) => {
-						setFollowing(snapshot.docs.map((doc) => doc.id));
-					});
-			}
-		}
-
-		function getFollowers(): void {
-			if (isCurrentUser) {
-				setFollowers(props.followers);
-			} else {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.collection("followers")
-					.onSnapshot((snapshot) => {
-						setFollowers(snapshot.docs.map((doc) => doc.id));
-					});
-			}
-		}
-
 		getFollowing();
 		getFollowers();
-	}, [isFollowing, props.following, props.followers]);
+		if (isCurrentUser) {
+			getClients();
+			getPTs();
+		}
+		setIsMyPT(props.PTs.includes(props.route.params.uid));
+		setIsClient(props.clients.includes(props.route.params.uid));
+	}, [props.following, props.followers, props.clients, props.PTs]);
 
 	function toggleFollow() {
 		if (isFollowing) {
@@ -222,6 +215,78 @@ export function Profile(props: any) {
 		}
 	}
 
+	function toggleIsClient() {
+		if (isClient) {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(firebase.auth().currentUser!.uid)
+				.collection("clients")
+				.doc(props.route.params.uid)
+				.delete();
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("PTs")
+				.doc(firebase.auth().currentUser!.uid)
+				.delete();
+			setIsClient(false);
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(firebase.auth().currentUser!.uid)
+				.collection("clients")
+				.doc(props.route.params.uid)
+				.set({});
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("PTs")
+				.doc(firebase.auth().currentUser!.uid)
+				.set({});
+			setIsClient(true);
+		}
+	}
+
+	function toggleIsMyPT() {
+		if (isMyPT) {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(firebase.auth().currentUser!.uid)
+				.collection("PTs")
+				.doc(props.route.params.uid)
+				.delete();
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("clients")
+				.doc(firebase.auth().currentUser!.uid)
+				.delete();
+			setIsMyPT(false);
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(firebase.auth().currentUser!.uid)
+				.collection("PTs")
+				.doc(props.route.params.uid)
+				.set({});
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("clients")
+				.doc(firebase.auth().currentUser!.uid)
+				.set({});
+			setIsMyPT(true);
+		}
+	}
+
 	function signOut() {
 		firebase.auth().signOut();
 	}
@@ -233,14 +298,35 @@ export function Profile(props: any) {
 				<Text style={styles.username}>{user.username}</Text>
 				<Text style={styles.info}>{following.length} following</Text>
 				<Text style={styles.info}>{followers.length} followers</Text>
-				{props.route.params.uid !== firebase.auth().currentUser!.uid ? (
+				{isCurrentUser && props.currentUser.isPT ? (
+					<PressableButton
+						onPress={() => navigation.navigate("Clients")}
+						text="View my clients"
+					/>
+				) : null}
+				{isCurrentUser ? (
+					<PressableButton
+						onPress={() => navigation.navigate("PTs")}
+						text="View my personal trainers"
+					/>
+				) : (
 					<PressableButton
 						onPress={toggleFollow}
 						text={isFollowing ? "Following" : "Follow"}
 					/>
-				) : (
-					<PressableButton onPress={signOut} text="Sign out" />
 				)}
+				{props.currentUser.isPT && !isCurrentUser ? (
+					<PressableButton
+						onPress={toggleIsClient}
+						text={isClient ? "Remove as client" : "Add as client"}
+					/>
+				) : null}
+				{isMyPT ? (
+					<PressableButton
+						onPress={toggleIsMyPT}
+						text="Remove as my PT"
+					/>
+				) : null}
 			</View>
 			<View style={styles.gallery}>
 				<FlatList
@@ -283,6 +369,9 @@ export function Profile(props: any) {
 					)}
 				/>
 			</View>
+			{isCurrentUser ? (
+				<PressableButton onPress={signOut} text="Sign out" />
+			) : null}
 		</View>
 	);
 }
@@ -351,6 +440,8 @@ const mapStateToProps = (store: any) => ({
 	followers: store.userState.followers,
 	followingLoaded: store.followingState.followingLoaded,
 	followingPosts: store.followingState.followingPosts,
+	clients: store.userState.clients,
+	PTs: store.userState.PTs,
 });
 
 export default connect(mapStateToProps, null)(ProfileScreen);

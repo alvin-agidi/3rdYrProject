@@ -7,6 +7,8 @@ import {
 	fetchFollowing,
 	fetchFollowers,
 	fetchNotifications,
+	fetchClients,
+	fetchPTs,
 	clearData,
 } from "../../../redux/actions";
 
@@ -30,6 +32,8 @@ export class Main extends Component {
 		this.props.fetchFollowing(firebase.auth().currentUser!.uid);
 		this.props.fetchFollowers(firebase.auth().currentUser!.uid);
 		this.props.fetchNotifications(firebase.auth().currentUser!.uid);
+		this.props.fetchClients(firebase.auth().currentUser!.uid);
+		this.props.fetchPTs(firebase.auth().currentUser!.uid);
 	}
 
 	render() {
@@ -136,6 +140,8 @@ const mapDispatchProps = (dispatch: any) =>
 			fetchFollowing,
 			fetchFollowers,
 			fetchNotifications,
+			fetchClients,
+			fetchPTs,
 		},
 		dispatch
 	);
