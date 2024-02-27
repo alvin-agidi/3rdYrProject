@@ -89,6 +89,8 @@ const mapStateToProps = (store: any) => ({
 	followers: store.userState.followers,
 	followingLoaded: store.followingState.followingLoaded,
 	followingPosts: store.followingState.followingPosts,
+	clients: store.userState.clients,
+	PTs: store.userState.PTs,
 });
 
 export default connect(mapStateToProps, null)(FeedScreen);

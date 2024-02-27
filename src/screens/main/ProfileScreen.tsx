@@ -19,6 +19,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 import CommentsScreen from "./CommentsScreen";
 import PostList from "./PostList";
+import { Label } from "../../components/Label";
 
 const Stack = createNativeStackNavigator();
 
@@ -295,9 +296,13 @@ export function Profile(props: any) {
 	return (
 		<View style={styles.profile}>
 			<View style={styles.infoBox}>
-				<Text style={styles.username}>{user.username}</Text>
-				<Text style={styles.info}>{following.length} following</Text>
+				<View style={styles.usernameBox}>
+					<Text style={styles.username}>{user.username}</Text>
+					{isCurrentUser ? <Label text="You" /> : null}
+					{user.isPT ? <Label text="PT" /> : null}
+				</View>
 				<Text style={styles.info}>{followers.length} followers</Text>
+				<Text style={styles.info}>{following.length} following</Text>
 				{isCurrentUser && props.currentUser.isPT ? (
 					<PressableButton
 						onPress={() => navigation.navigate("Clients")}
@@ -328,47 +333,44 @@ export function Profile(props: any) {
 					/>
 				) : null}
 			</View>
-			<View style={styles.gallery}>
-				<FlatList
-					horizontal={false}
-					numColumns={3}
-					data={posts}
-					contentContainerStyle={{ gap: 2 }}
-					columnWrapperStyle={{ gap: 2 }}
-					renderItem={({ item }) => (
-						<TouchableOpacity
-							style={styles.imageBox}
-							onPress={() => {
-								navigation.navigate("Post", {
-									uid: props.route.params.uid,
-									postID: item.id,
-								});
+			<FlatList
+				horizontal={false}
+				numColumns={3}
+				data={posts}
+				contentContainerStyle={{ gap: 2 }}
+				columnWrapperStyle={{ gap: 2 }}
+				style={styles.gallery}
+				renderItem={({ item }) => (
+					<TouchableOpacity
+						style={styles.imageBox}
+						onPress={() => {
+							navigation.navigate("Post", {
+								uid: props.route.params.uid,
+								postID: item.id,
+							});
+						}}
+					>
+						<Image
+							source={{
+								uri: item.isVideo
+									? item.thumbnailURI
+									: item.mediaURL,
 							}}
-						>
-							<Image
-								source={{
-									uri: item.isVideo
-										? item.thumbnailURI
-										: item.mediaURL,
-								}}
-								style={styles.image}
-							/>
-						</TouchableOpacity>
-					)}
-					ListEmptyComponent={() => (
-						<View style={styles.noResults}>
-							<Icon
-								name="image-off-outline"
-								size={80}
-								color="white"
-							/>
-							<Text style={globalStyles.noResultsText}>
-								No posts
-							</Text>
-						</View>
-					)}
-				/>
-			</View>
+							style={styles.image}
+						/>
+					</TouchableOpacity>
+				)}
+				ListEmptyComponent={() => (
+					<View style={styles.noResults}>
+						<Icon
+							name="image-off-outline"
+							size={80}
+							color="white"
+						/>
+						<Text style={globalStyles.noResultsText}>No posts</Text>
+					</View>
+				)}
+			/>
 			{isCurrentUser ? (
 				<PressableButton onPress={signOut} text="Sign out" />
 			) : null}
@@ -412,6 +414,10 @@ const styles = StyleSheet.create({
 	},
 	imageBox: {
 		flex: 1 / 3,
+	},
+	usernameBox: {
+		gap: 5,
+		flexDirection: "row",
 	},
 	username: {
 		fontSize: 30,

@@ -22,16 +22,13 @@ const Stack = createNativeStackNavigator();
 
 function Notifications(props: any) {
 	const navigation = useNavigation();
-	const [notifications, setNotifications] = useState<any>([]);
-	useEffect(() => {
-		setNotifications(props.notifications);
-	}, [props.notifications]);
+
 	return (
 		<View style={globalStyles.container}>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
-				data={notifications}
+				data={props.notifications}
 				contentContainerStyle={{
 					gap: 5,
 				}}
@@ -129,7 +126,13 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (store: any) => ({
-	notifications: store.userState.notifications,
+	currentUser: store.userState.currentUser,
+	following: store.userState.following,
+	followers: store.userState.followers,
+	followingLoaded: store.followingState.followingLoaded,
+	followingPosts: store.followingState.followingPosts,
+	clients: store.userState.clients,
+	PTs: store.userState.PTs,
 });
 
 export default connect(mapStateToProps, null)(NotificationsScreen);

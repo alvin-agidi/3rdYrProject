@@ -15,6 +15,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { fetchPostLikes, fetchFollowingUser } from "../../../redux/actions";
 import globalStyles from "../../globalStyles";
+import { Label } from "../../components/Label";
 
 export default function PostList(props: any) {
 	const navigation = useNavigation();
@@ -161,6 +162,16 @@ export default function PostList(props: any) {
 									>
 										{item.user.username}
 									</Text>
+									<View style={globalStyles.labelBox}>
+										{props.clients.includes(
+											item.user.uid
+										) ? (
+											<Label text="Your client" />
+										) : null}
+										{props.PTs.includes(item.user.uid) ? (
+											<Label text="Your PT" />
+										) : null}
+									</View>
 									<TouchableOpacity
 										style={styles.postIconBox}
 										onPress={() => {
@@ -291,6 +302,7 @@ const styles = StyleSheet.create({
 	},
 	postBanner: {
 		borderRadius: 5,
+		padding: 5,
 		flex: 1,
 		backgroundColor: "whitesmoke",
 		alignItems: "center",
@@ -305,7 +317,7 @@ const styles = StyleSheet.create({
 	},
 	postIconBox: {
 		gap: 5,
-		padding: 10,
+		padding: 5,
 		alignItems: "center",
 		justifyContent: "center",
 		flexDirection: "row",
@@ -313,7 +325,7 @@ const styles = StyleSheet.create({
 	postUsername: {
 		flex: 1,
 		fontSize: 15,
-		padding: 10,
+		padding: 5,
 		fontWeight: "bold",
 	},
 	postIconText: {

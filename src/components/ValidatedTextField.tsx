@@ -31,7 +31,7 @@ export function ValidatedTextField(props: any): JSX.Element {
 					{validationMessage}
 				</Text>
 			) : null}
-			<View style={styles.search}>
+			<View style={styles.textField}>
 				<Icon name={props.iconName} size={30} color="skyblue" />
 				<TextInput
 					{...props}
@@ -49,13 +49,10 @@ const styles = StyleSheet.create({
 		gap: 5,
 		alignItems: "center",
 	},
-	search: {
+	textField: {
 		gap: 5,
 		flexDirection: "row",
 		alignItems: "center",
-	},
-	searchIcon: {
-		padding: 10,
 	},
 	validationMessage: {
 		color: "red",
