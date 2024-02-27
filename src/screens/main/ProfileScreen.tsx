@@ -67,7 +67,7 @@ export function Profile(props: any) {
 	}
 
 	function getClients(): void {
-		setClients(props.Clients);
+		setClients(props.clients);
 	}
 
 	function getPTs(): void {
@@ -144,10 +144,8 @@ export function Profile(props: any) {
 		getUser();
 		getFollowing();
 		getFollowers();
-		if (isCurrentUser) {
-			getClients();
-			getPTs();
-		}
+		getClients();
+		getPTs();
 		getPosts().then((tempPosts: any[]) => {
 			Promise.all(
 				tempPosts.map((post: any) => {
@@ -303,16 +301,22 @@ export function Profile(props: any) {
 				</View>
 				<Text style={styles.info}>{followers.length} followers</Text>
 				<Text style={styles.info}>{following.length} following</Text>
+				{isCurrentUser ? (
+					<Text style={styles.info}>{PTs.length} PTs</Text>
+				) : null}
+				{isCurrentUser && props.currentUser.isPT ? (
+					<Text style={styles.info}>{clients.length} clients</Text>
+				) : null}
 				{isCurrentUser && props.currentUser.isPT ? (
 					<PressableButton
 						onPress={() => navigation.navigate("Clients")}
-						text="View my clients"
+						text="View your clients"
 					/>
 				) : null}
 				{isCurrentUser ? (
 					<PressableButton
 						onPress={() => navigation.navigate("PTs")}
-						text="View my personal trainers"
+						text="View your personal trainers"
 					/>
 				) : (
 					<PressableButton
