@@ -133,11 +133,6 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
-	following: store.userState.following,
-	followers: store.userState.followers,
-	followingLoaded: store.followingState.followingLoaded,
-	followingPosts: store.followingState.followingPosts,
 	notifications: store.userState.notifications,
 });
 

@@ -83,7 +83,7 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="Notifications"
+					name="NotificationsScreen"
 					component={NotificationsScreen}
 					options={{
 						tabBarIcon: ({ color, size = 25 }) => (
@@ -93,6 +93,7 @@ export class Main extends Component {
 								size={size}
 							/>
 						),
+						tabBarLabel: "Notifications",
 						headerShown: false,
 					}}
 				/>
