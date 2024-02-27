@@ -276,7 +276,9 @@ export function Profile(props: any) {
 								size={80}
 								color="white"
 							/>
-							<Text style={styles.noResultsText}>No posts</Text>
+							<Text style={globalStyles.noResultsText}>
+								No posts
+							</Text>
 						</View>
 					)}
 				/>
@@ -340,11 +342,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		marginTop: 200,
-	},
-	noResultsText: {
-		color: "white",
-		fontSize: 50,
-		fontWeight: "bold",
 	},
 });
 

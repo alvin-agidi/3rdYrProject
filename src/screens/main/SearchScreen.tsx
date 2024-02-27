@@ -80,7 +80,9 @@ function Search(props: any) {
 							size={80}
 							color="white"
 						/>
-						<Text style={styles.noResultsText}>No results</Text>
+						<Text style={globalStyles.noResultsText}>
+							No results
+						</Text>
 					</View>
 				)}
 			/>
@@ -126,11 +128,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		marginTop: 240,
-	},
-	noResultsText: {
-		color: "white",
-		fontSize: 50,
-		fontWeight: "bold",
 	},
 	result: {
 		flex: 1,

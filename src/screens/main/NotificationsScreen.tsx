@@ -49,16 +49,18 @@ function Notifications(props: any) {
 						}}
 					>
 						<View style={styles.notification}>
-							<Text style={styles.username}>{item.title}</Text>
+							<Text style={globalStyles.bold}>{item.title}</Text>
 							<Text>{item.body}</Text>
-							<Text>{item.createdAt}</Text>
+							<Text style={globalStyles.date}>
+								{item.createdAt}
+							</Text>
 						</View>
 					</TouchableOpacity>
 				)}
 				ListEmptyComponent={() => (
 					<View style={styles.noResults}>
 						<Icon name="bell-off-outline" size={80} color="white" />
-						<Text style={styles.noResultsText}>
+						<Text style={globalStyles.noResultsText}>
 							No notifications
 						</Text>
 					</View>
@@ -112,14 +114,8 @@ const styles = StyleSheet.create({
 		gap: 5,
 		alignSelf: "stretch",
 	},
-	noResultsText: {
-		color: "white",
-		fontSize: 50,
-		fontWeight: "bold",
-	},
-	username: {
+	title: {
 		fontSize: 15,
-		// padding: 10,
 		fontWeight: "bold",
 	},
 	notification: {

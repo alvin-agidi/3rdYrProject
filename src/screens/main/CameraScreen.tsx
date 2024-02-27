@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import PublishPostScreen from "./PublishPostScreen";
 import { connect } from "react-redux";
 import { PressableButton } from "../../components/PressableButton";
+import globalStyles from "../../globalStyles";
 
 const Stack = createNativeStackNavigator();
 
@@ -57,9 +58,23 @@ function CameraComponent() {
 		hasCameraPermission === undefined ||
 		hasMicrophonePermission === undefined
 	) {
-		return <Text>Requestion permissions...</Text>;
+		return (
+			<View style={styles.noResults}>
+				<Icon name="camera-outline" size={80} color="white" />
+				<Text style={globalStyles.noResultsText}>
+					Requesting camera permissions
+				</Text>
+			</View>
+		);
 	} else if (!hasCameraPermission) {
-		return <Text>Permission for camera not granted.</Text>;
+		return (
+			<View style={styles.noResults}>
+				<Icon name="camera-off-outline" size={80} color="white" />
+				<Text style={globalStyles.noResultsText}>
+					No camera permissions
+				</Text>
+			</View>
+		);
 	}
 
 	function startVideo(): void {
@@ -266,6 +281,12 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignSelf: "stretch",
 		borderRadius: 5,
+	},
+	noResults: {
+		flex: 1,
+		alignSelf: "stretch",
+		justifyContent: "center",
+		alignItems: "center",
 	},
 });
 

@@ -14,6 +14,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { fetchPostLikes, fetchFollowingUser } from "../../../redux/actions";
+import globalStyles from "../../globalStyles";
 
 export default function PostList(props: any) {
 	const navigation = useNavigation();
@@ -243,7 +244,7 @@ export default function PostList(props: any) {
 								) : null}
 							</View>
 							<Text>{item.caption}</Text>
-							<Text>
+							<Text style={globalStyles.date}>
 								{new Date(item.createdAt).toLocaleString()}
 							</Text>
 						</View>
@@ -256,7 +257,7 @@ export default function PostList(props: any) {
 							size={80}
 							color="white"
 						/>
-						<Text style={styles.noResultsText}>No posts</Text>
+						<Text style={globalStyles.noResultsText}>No posts</Text>
 						{/* <Text style={{ ...styles.noResultsText, fontSize: 20 }}>
 							Follow some users
 						</Text> */}
@@ -336,10 +337,5 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		marginTop: 250,
-	},
-	noResultsText: {
-		color: "white",
-		fontSize: 50,
-		fontWeight: "bold",
 	},
 });

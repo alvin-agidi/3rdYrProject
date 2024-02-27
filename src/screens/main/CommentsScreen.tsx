@@ -111,7 +111,7 @@ export default function Comments(props: any) {
 					<View style={styles.comment}>
 						<View style={styles.commentText}>
 							<Text
-								style={styles.username}
+								style={globalStyles.bold}
 								onPress={() => {
 									navigation.popToTop();
 									navigation.navigate("Profile1", {
@@ -123,7 +123,7 @@ export default function Comments(props: any) {
 							</Text>
 							<Text>{item.text}</Text>
 						</View>
-						<Text>{item.createdAt}</Text>
+						<Text style={globalStyles.date}>{item.createdAt}</Text>
 					</View>
 				)}
 				ListEmptyComponent={() => (
@@ -133,7 +133,9 @@ export default function Comments(props: any) {
 							size={80}
 							color="white"
 						/>
-						<Text style={styles.noResultsText}>No comments</Text>
+						<Text style={globalStyles.noResultsText}>
+							No comments
+						</Text>
 					</View>
 				)}
 			/>
@@ -170,20 +172,9 @@ const styles = StyleSheet.create({
 		gap: 5,
 		backgroundColor: "white",
 	},
-	noResultsText: {
-		color: "white",
-		fontSize: 50,
-		fontWeight: "bold",
-	},
-	username: {
-		fontSize: 15,
-		// padding: 10,
-		fontWeight: "bold",
-	},
 	commentText: {
 		flex: 1,
 		flexDirection: "row",
-		justifyContent: "flex-start",
 		gap: 5,
 		alignContent: "center",
 	},

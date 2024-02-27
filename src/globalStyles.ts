@@ -34,4 +34,17 @@ export default StyleSheet.create({
 		fontWeight: "bold",
 		color: "deepskyblue",
 	},
+	date: {
+		alignSelf: "flex-end",
+	},
+	noResultsText: {
+		textAlign: "center",
+		color: "white",
+		fontSize: 50,
+		fontWeight: "bold",
+	},
+	bold: {
+		fontSize: 15,
+		fontWeight: "bold",
+	},
 });
