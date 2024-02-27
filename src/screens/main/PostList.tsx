@@ -152,26 +152,24 @@ export default function PostList(props: any) {
 						<View style={styles.postDesc}>
 							<View style={styles.postHeader}>
 								<View style={styles.postBanner}>
-									<Text
-										style={styles.postUsername}
+									<TouchableOpacity
 										onPress={() => {
 											navigation.navigate("Profile1", {
 												uid: item.user.uid,
 											});
 										}}
+										style={styles.postUsername}
 									>
-										{item.user.username}
-									</Text>
-									<View style={globalStyles.labelBox}>
-										{props.clients.includes(
-											item.user.uid
-										) ? (
-											<Label text="Your client" />
-										) : null}
-										{props.PTs.includes(item.user.uid) ? (
-											<Label text="Your PT" />
-										) : null}
-									</View>
+										<Text style={globalStyles.bold}>
+											{item.user.username}
+										</Text>
+									</TouchableOpacity>
+									{props.clients.includes(item.user.uid) ? (
+										<Label text="Your client" />
+									) : null}
+									{props.PTs.includes(item.user.uid) ? (
+										<Label text="Your PT" />
+									) : null}
 									<TouchableOpacity
 										style={styles.postIconBox}
 										onPress={() => {
