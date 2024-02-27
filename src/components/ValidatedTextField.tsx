@@ -6,6 +6,7 @@ import globalStyles from "../globalStyles";
 export function ValidatedTextField(props: any): JSX.Element {
 	const [text, setText] = useState("");
 	const [validationMessage, setValidationMessage] = useState("");
+	const [color, setColor] = useState("skyblue");
 
 	function onChangeText(changedText: string) {
 		props.onChangeText(changedText);
@@ -32,12 +33,19 @@ export function ValidatedTextField(props: any): JSX.Element {
 				</Text>
 			) : null}
 			<View style={styles.textField}>
-				<Icon name={props.iconName} size={30} color="skyblue" />
+				<Icon name={props.iconName} size={30} color={color} />
 				<TextInput
 					{...props}
-					style={globalStyles.textInput}
-					onEndEditing={isValid}
+					style={{
+						...globalStyles.textInput,
+						borderColor: color,
+					}}
+					onEndEditing={() => {
+						setColor("skyblue");
+						isValid();
+					}}
 					onChangeText={onChangeText}
+					onFocus={() => setColor("deepskyblue")}
 				/>
 			</View>
 		</View>
