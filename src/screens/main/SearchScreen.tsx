@@ -12,13 +12,14 @@ import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "./ProfileScreen";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import { TextField } from "../../components/TextField";
 import globalStyles from "../../globalStyles";
 
 const Stack = createNativeStackNavigator();
 
-function Search() {
+function Search(props: any) {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any>([]);
 
@@ -41,35 +42,49 @@ function Search() {
 	}
 
 	return (
-		<View style={styles.container}>
-			{/* <TextInput
-				placeholder="Search users"
-				onChangeText={(queryString) => fetchUsers(queryString)}
-				style={globalStyles.textInput}
-			/> */}
+		<View style={globalStyles.container}>
 			<TextField
 				placeholder="Search users"
 				onChangeText={(queryString: any) => fetchUsers(queryString)}
 				style={globalStyles.textInput}
 				iconName="magnify"
-				iconColor="black"
-				iconSize={20}
 			/>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
 				data={users}
 				style={styles.results}
+				contentContainerStyle={{
+					gap: 2,
+				}}
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
-							navigation.navigate("Profile", {
+							navigation.navigate("Profile1", {
 								uid: item.id,
 							})
 						}
+						style={styles.result}
 					>
 						<Text style={styles.user}>{item.username}</Text>
+						{props.following.includes(item.id) ? (
+							<View style={styles.following}>
+								<Text>Following</Text>
+							</View>
+						) : null}
 					</TouchableOpacity>
+				)}
+				ListEmptyComponent={() => (
+					<View style={styles.noResults}>
+						<Icon
+							name="account-off-outline"
+							size={80}
+							color="white"
+						/>
+						<Text style={globalStyles.noResultsText}>
+							No results
+						</Text>
+					</View>
 				)}
 			/>
 		</View>
@@ -86,22 +101,50 @@ export class SearchScreen extends Component {
 					headerTitleStyle: { color: "black" },
 				}}
 			>
-				<Stack.Screen name="Search" component={Search} />
-				<Stack.Screen name="Profile" component={ProfileScreen} />
+				<Stack.Screen
+					name="Search"
+					children={(props) => <Search {...props} {...this.props} />}
+				/>
+				<Stack.Screen
+					name="Profile1"
+					component={ProfileScreen}
+					options={{ title: "" }}
+				/>
 			</Stack.Navigator>
 		);
 	}
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		gap: 10,
-		padding: 10,
-	},
 	results: {
 		flex: 1,
+		alignSelf: "stretch",
+		borderRadius: 10,
+		backgroundColor: "lightgrey",
+		flexDirection: "column",
+	},
+	noResults: {
+		flex: 1,
+		alignSelf: "stretch",
+		justifyContent: "center",
+		alignItems: "center",
+		marginTop: 240,
+	},
+	result: {
+		flex: 1,
 		gap: 10,
+		justifyContent: "space-between",
+		alignItems: "center",
+		backgroundColor: "white",
+		flexDirection: "row",
+		padding: 10,
+	},
+	following: {
+		fontSize: 20,
+		borderColor: "skyblue",
+		borderWidth: 1,
+		borderRadius: 5,
+		padding: 5,
 	},
 	user: {
 		fontSize: 20,
