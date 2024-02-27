@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "project",
-    "slug": "project",
+    "slug": "3rd-year-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "57d4078f-ae08-4067-a68a-4a25ddc4a198"
+      }
+    },
+    "owner": "vines"
   }
 }

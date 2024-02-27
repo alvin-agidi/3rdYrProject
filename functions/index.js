@@ -1,104 +1,102 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-import { initializeApp } from "firebase-admin/app";
-import { getAuth } from "firebase-admin/auth";
-import { getDatabase } from "firebase-admin/database";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+// import { getAuth } from "firebase-admin/auth";
 import { getMessaging } from "firebase-admin/messaging";
-import { log, warn } from "firebase-functions/logger";
-import { onValueWritten } from "firebase-functions/v2/database";
+import { log } from "firebase-functions/logger";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { setGlobalOptions } from "firebase-functions/v2";
-import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFirestore } from "firebase-admin/firestore";
 
-const firebaseConfig = {
-	apiKey: "AIzaSyDOCAbC123dEf456GhI789jKl01-MnO",
-	authDomain: "myapp-project-123.firebaseapp.com",
-	databaseURL: "https://myapp-project-123.firebaseio.com",
-	projectId: "myapp-project-123",
-	storageBucket: "myapp-project-123.appspot.com",
-	messagingSenderId: "65211879809",
-	appId: "1:65211879909:web:3ae38ef1cdcb2e01fe5f0c",
-	measurementId: "G-8GSGZQ44ST",
+var firebaseConfig = {
+	apiKey: "AIzaSyAUV8eOm74mhlr3eEHZ8VZr74UYB2rNGJY",
+	authDomain: "yrproject-64b5e.firebaseapp.com",
+	databaseURL:
+		"https://yrproject-64b5e-default-rtdb.europe-west1.firebasedatabase.app",
+	projectId: "yrproject-64b5e",
+	storageBucket: "yrproject-64b5e.appspot.com",
+	messagingSenderId: "68905325798",
+	appId: "1:68905325798:web:614befb202f9c97f44d727",
+	measurementId: "G-95P67P8P3V",
 };
-
-initializeApp(firebaseConfig);
 setGlobalOptions({ region: "europe-west2" });
-// const db = getFirestore();
-// connectFirestoreEmulator(db, "127.0.0.1", 8907);
+
+const app = initializeApp(firebaseConfig);
+// const auth = getAuth(app);
+const messaging = getMessaging(app);
+const firestore = getFirestore(app);
+// connectFirestoreEmulator(db, "localhost", "8080");
 
 export const sendFollowerNotification = onDocumentCreated(
-	"users/{followerUid}/followers/{followedUid}/",
+	"users/{followedUid}/followers/{followerUid}/",
 	async (event) => {
 		log(
 			`User ${event.params.followerUid} is now following` +
 				` user ${event.params.followedUid}`
 		);
-		// const tokensRef = db.ref(
-		//   `/users/${event.params.followedUid}/notificationTokens`
-		// );
 
-		// const notificationTokens = await tokensRef.get();
-		// if (!notificationTokens.hasChildren()) {
-		//   log("There are no tokens to send notifications to.");
-		//   return;
-		// }
+		const notificationTokens = (
+			await firestore
+				.collection("users")
+				.doc(event.params.followedUid)
+				.collection("notificationTokens")
+				.get()
+		).docs.map((doc) => doc.id);
 
-		log(
-			`There are ${notificationTokens.numChildren()} tokens` +
-				" to send notifications to."
-		);
-		// const followerProfile = await auth.getUser(event.params.followerUid);
+		log(notificationTokens);
 
-		// Notification details.
+		const follower = (
+			await firestore
+				.collection("users")
+				.doc(event.params.followerUid)
+				.get()
+		).data();
+
 		const notification = {
 			title: "You have a new follower!",
-			body:
-				(followerProfile.displayName ?? "Someone") +
-				" is now following you.",
-			// image: followerProfile.photoURL ?? "",
+			body: follower.username + " is now following you.",
+			dismissed: false,
+			destUID: event.params.followerUid,
+			destPostID: null,
 		};
 
-		// Send notifications to all tokens.
-		const messages = [];
-		notificationTokens.forEach((token) => {
-			messages.push({
-				token: token.key,
-				notification: notification,
+		firestore
+			.collection("users")
+			.doc(event.params.followedUid)
+			.collection("notifications")
+			.add({
+				...notification,
+				createdAt: firestore.FieldValue.serverTimestamp(),
 			});
-		});
-		const batchResponse = await messaging.sendEach(messages);
 
-		if (batchResponse.failureCount < 1) {
-			// Messages sent sucessfully. We're done!
-			log("Messages sent.");
-			return;
-		}
-		warn(
-			`${batchResponse.failureCount} messages weren't sent.`,
-			batchResponse
-		);
+		// const messages = [];
+		// notificationTokens.forEach((token) => {
+		//   messages.push({
+		//     token: token.key,
+		//     notification: notification,
+		//   });
+		// });
+		// const batchResponse = await messaging.sendEach(messages);
 
-		// Clean up the tokens that are not registered any more.
-		for (let i = 0; i < batchResponse.responses.length; i++) {
-			const errorCode = batchResponse.responses[i].error?.code;
-			const errorMessage = batchResponse.responses[i].error?.message;
-			if (
-				errorCode === "messaging/invalid-registration-token" ||
-				errorCode === "messaging/registration-token-not-registered" ||
-				(errorCode === "messaging/invalid-argument" &&
-					errorMessage ===
-						"The registration token is not a valid FCM registration token")
-			) {
-				log(`Removing invalid token: ${messages[i].token}`);
-				await tokensRef.child(messages[i].token).remove();
-			}
-		}
+		// if (batchResponse.failureCount < 1) {
+		//   // Messages sent sucessfully. We're done!
+		//   log("Messages sent.");
+		//   return;
+		// }
+		// warn(`${batchResponse.failureCount} messages weren't sent.`, batchResponse);
+
+		// // Clean up the tokens that are not registered any more.
+		// for (let i = 0; i < batchResponse.responses.length; i++) {
+		//   const errorCode = batchResponse.responses[i].error?.code;
+		//   const errorMessage = batchResponse.responses[i].error?.message;
+		//   if (
+		//     errorCode === "messaging/invalid-registration-token" ||
+		//     errorCode === "messaging/registration-token-not-registered" ||
+		//     (errorCode === "messaging/invalid-argument" &&
+		//       errorMessage ===
+		//         "The registration token is not a valid FCM registration token")
+		//   ) {
+		//     log(`Removing invalid token: ${messages[i].token}`);
+		//     await tokensRef.child(messages[i].token).remove();
+		//   }
+		// }
 	}
 );
