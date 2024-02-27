@@ -109,7 +109,7 @@ export default function Comments(props: any) {
 				style={styles.comments}
 				renderItem={({ item }) => (
 					<View style={styles.comment}>
-						<View style={styles.commentInfo}>
+						<View style={styles.commentText}>
 							<Text
 								style={styles.username}
 								onPress={() => {
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
 	comment: {
 		padding: 5,
 		borderRadius: 5,
+		gap: 5,
 		backgroundColor: "white",
 	},
 	noResultsText: {
@@ -179,7 +180,7 @@ const styles = StyleSheet.create({
 		// padding: 10,
 		fontWeight: "bold",
 	},
-	commentInfo: {
+	commentText: {
 		flex: 1,
 		flexDirection: "row",
 		justifyContent: "flex-start",
