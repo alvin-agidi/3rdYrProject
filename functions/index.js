@@ -54,8 +54,8 @@ export const sendFollowerNotification = onDocumentCreated(
 			title: "You have a new follower!",
 			body: follower.username + " is now following you.",
 			dismissed: false,
-			destUID: event.params.followerUid,
-			destPostID: null,
+			navUID: event.params.followerUid,
+			navPostID: null,
 		};
 
 		firestore
