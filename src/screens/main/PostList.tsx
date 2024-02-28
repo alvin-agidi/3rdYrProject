@@ -21,27 +21,28 @@ export default function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 
+	function addLikeInfo(posts: any) {
+		setPosts(() => posts);
+		setPosts((posts: any) =>
+			posts
+				.map((post: any) => {
+					const isLiked = post.likes.includes(
+						firebase.auth().currentUser!.uid
+					);
+					const likeCount = post.likes.length;
+					return {
+						...post,
+						isLiked,
+						likeCount,
+					};
+				})
+				.sort((x: any, y: any) => {
+					return y.createdAt.localeCompare(x.createdAt);
+				})
+		);
+	}
+
 	useEffect(() => {
-		function addLikeInfo(posts: any) {
-			setPosts(() => posts);
-			setPosts((posts: any) =>
-				posts
-					.map((post: any) => {
-						const isLiked = post.likes.includes(
-							firebase.auth().currentUser!.uid
-						);
-						const likeCount = post.likes.length;
-						return {
-							...post,
-							isLiked,
-							likeCount,
-						};
-					})
-					.sort((x: any, y: any) => {
-						return y.createdAt.localeCompare(x.createdAt);
-					})
-			);
-		}
 		if (
 			props.route.params &&
 			props.route.params.uid &&
@@ -164,10 +165,12 @@ export default function PostList(props: any) {
 											{item.user.username}
 										</Text>
 									</TouchableOpacity>
-									{props.clients.includes(item.user.uid) ? (
+									{props.clients &&
+									props.clients.includes(item.user.uid) ? (
 										<Label text="Your client" />
 									) : null}
-									{props.PTs.includes(item.user.uid) ? (
+									{props.PTs &&
+									props.PTs.includes(item.user.uid) ? (
 										<Label text="Your PT" />
 									) : null}
 									<TouchableOpacity
@@ -176,7 +179,7 @@ export default function PostList(props: any) {
 											toggleShowRoutine(item.id);
 										}}
 									>
-										{item.isVideo ? (
+										{item.exercisesDetected ? (
 											<Icon
 												name="dumbbell"
 												color="black"
@@ -225,7 +228,7 @@ export default function PostList(props: any) {
 										</Text>
 									</TouchableOpacity>
 								</View>
-								{item.showRoutine && item.isVideo ? (
+								{item.showRoutine && item.exercisesDetected ? (
 									<TouchableOpacity
 										style={styles.postRoutineBox}
 									>
