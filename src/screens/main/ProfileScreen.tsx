@@ -20,6 +20,7 @@ import { useNavigation } from "@react-navigation/native";
 import CommentsScreen from "./CommentsScreen";
 import PostList from "./PostList";
 import { Label } from "../../components/Label";
+import UserList from "./UserList";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,6 +36,86 @@ export function Profile(props: any) {
 	const [isMyPT, setIsMyPT] = useState(false);
 	const [isClient, setIsClient] = useState(false);
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
+
+	function getUser(): void {
+		if (isCurrentUser) {
+			setUser(props.currentUser);
+		} else {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.onSnapshot((snapshot) => {
+					if (snapshot.exists) {
+						setUser(snapshot.data());
+					} else {
+						console.log("User does not exist");
+					}
+				});
+		}
+	}
+
+	function generateThumbnail(mediaURL: any) {
+		return new Promise((resolve) => {
+			return VideoThumbnails.getThumbnailAsync(mediaURL, {
+				time: 100,
+			}).then((thumbnail) => resolve(thumbnail.uri));
+		});
+	}
+
+	function getPosts() {
+		return new Promise((resolve) => {
+			if (isCurrentUser) {
+				return resolve(props.posts);
+			} else {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.collection("posts")
+					.orderBy("createdAt", "desc")
+					.onSnapshot((snapshot) => {
+						return resolve(
+							snapshot.docs.map((doc) => {
+								const id = doc.id;
+								const data = doc.data();
+								var createdAt = (
+									data.createdAt ??
+									firebase.firestore.Timestamp.now()
+								)
+									.toDate()
+									.toISOString();
+								return {
+									id,
+									...data,
+									createdAt,
+									thumbnailURI: "",
+								};
+							})
+						);
+					});
+			}
+		}).then((tempPosts: any) => {
+			Promise.all(
+				tempPosts.map((post: any) => {
+					if (post.isVideo && !post.thumbnailURI) {
+						console.log(post.id);
+						return new Promise((resolve) => {
+							generateThumbnail(post.mediaURL).then(
+								(thumbnailURI) => {
+									return resolve({ ...post, thumbnailURI });
+								}
+							);
+						});
+					}
+					return post;
+				})
+			).then((posts) => {
+				console.log(posts.map((post) => post.thumbnailURI));
+				setPosts(posts);
+			});
+		});
+	}
 
 	function getFollowing(): void {
 		if (isCurrentUser) {
@@ -75,97 +156,21 @@ export function Profile(props: any) {
 	}
 
 	useEffect(() => {
-		setPosts([]);
+		// setPosts([]);
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
 		);
-
-		function getUser(): void {
-			if (isCurrentUser) {
-				setUser(props.currentUser);
-			} else {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.onSnapshot((snapshot) => {
-						if (snapshot.exists) {
-							setUser(snapshot.data());
-						} else {
-							console.log("User does not exist");
-						}
-					});
-			}
-		}
-
-		function getPosts(): Promise<any[]> {
-			return new Promise((resolve) => {
-				if (isCurrentUser) {
-					return resolve(props.posts);
-				} else {
-					firebase
-						.firestore()
-						.collection("users")
-						.doc(props.route.params.uid)
-						.collection("posts")
-						.orderBy("createdAt", "desc")
-						.onSnapshot((snapshot) => {
-							return resolve(
-								snapshot.docs.map((doc) => {
-									const id = doc.id;
-									const data = doc.data();
-									var createdAt = (
-										data.createdAt ??
-										firebase.firestore.Timestamp.now()
-									)
-										.toDate()
-										.toISOString();
-									return {
-										id,
-										...data,
-										createdAt,
-										thumbnailURI: "",
-									};
-								})
-							);
-						});
-				}
-			});
-		}
-
-		function generateThumbnail(mediaURL: any) {
-			return new Promise((resolve) => {
-				return VideoThumbnails.getThumbnailAsync(mediaURL, {
-					time: 100,
-				}).then((thumbnail) => resolve(thumbnail.uri));
-			});
-		}
-
 		getUser();
 		getFollowing();
 		getFollowers();
 		getClients();
 		getPTs();
-		getPosts().then((tempPosts: any[]) => {
-			Promise.all(
-				tempPosts.map((post: any) => {
-					if (post.isVideo && !post.thumbnailURI) {
-						return generateThumbnail(post.mediaURL).then(
-							(thumbnailURI) => {
-								post.thumbnailURI = thumbnailURI;
-							}
-						);
-					}
-				})
-			).then(() => {
-				setPosts(tempPosts);
-			});
-		});
+		getPosts();
 	}, [props.route.params.uid]);
 
 	useEffect(() => {
-		setIsFollowing(props.following.includes(props.route.params.uid));
-	}, [props.following]);
+		getPosts();
+	}, [props.posts]);
 
 	useEffect(() => {
 		getFollowing();
@@ -176,6 +181,7 @@ export function Profile(props: any) {
 		}
 		setIsMyPT(props.PTs.includes(props.route.params.uid));
 		setIsClient(props.clients.includes(props.route.params.uid));
+		setIsFollowing(props.following.includes(props.route.params.uid));
 	}, [props.following, props.followers, props.clients, props.PTs]);
 
 	function toggleFollow() {
@@ -293,50 +299,58 @@ export function Profile(props: any) {
 	if (user === undefined) return <View />;
 	return (
 		<View style={styles.profile}>
+			<View style={styles.usernameBox}>
+				<Text style={styles.username}>{user.username}</Text>
+				{isCurrentUser ? <Label text="You" /> : null}
+				{user.isPT ? <Label text="PT" /> : null}
+			</View>
 			<View style={styles.infoBox}>
-				<View style={styles.usernameBox}>
-					<Text style={styles.username}>{user.username}</Text>
-					{isCurrentUser ? <Label text="You" /> : null}
-					{user.isPT ? <Label text="PT" /> : null}
-				</View>
-				<Text style={styles.info}>{followers.length} followers</Text>
+				<Text style={styles.info}>
+					{followers.length} follower
+					{followers.length !== 1 ? "s" : ""}
+				</Text>
 				<Text style={styles.info}>{following.length} following</Text>
 				{isCurrentUser ? (
-					<Text style={styles.info}>{PTs.length} PTs</Text>
+					<Text style={styles.info}>
+						{PTs.length} PT{PTs.length !== 1 ? "s" : ""}
+					</Text>
 				) : null}
 				{isCurrentUser && props.currentUser.isPT ? (
-					<Text style={styles.info}>{clients.length} clients</Text>
-				) : null}
-				{isCurrentUser && props.currentUser.isPT ? (
-					<PressableButton
-						onPress={() => navigation.navigate("Clients")}
-						text="View your clients"
-					/>
-				) : null}
-				{isCurrentUser ? (
-					<PressableButton
-						onPress={() => navigation.navigate("PTs")}
-						text="View your personal trainers"
-					/>
-				) : (
-					<PressableButton
-						onPress={toggleFollow}
-						text={isFollowing ? "Following" : "Follow"}
-					/>
-				)}
-				{props.currentUser.isPT && !isCurrentUser ? (
-					<PressableButton
-						onPress={toggleIsClient}
-						text={isClient ? "Remove as client" : "Add as client"}
-					/>
-				) : null}
-				{isMyPT ? (
-					<PressableButton
-						onPress={toggleIsMyPT}
-						text="Remove as my PT"
-					/>
+					<Text style={styles.info}>
+						{clients.length} client
+						{clients.length !== 1 ? "s" : ""}
+					</Text>
 				) : null}
 			</View>
+			{isCurrentUser && props.currentUser.isPT ? (
+				<PressableButton
+					onPress={() => navigation.navigate("Your Clients")}
+					text="View your clients"
+				/>
+			) : null}
+			{isCurrentUser ? (
+				<PressableButton
+					onPress={() => navigation.navigate("Your PTs")}
+					text="View your personal trainers"
+				/>
+			) : (
+				<PressableButton
+					onPress={toggleFollow}
+					text={isFollowing ? "Following" : "Follow"}
+				/>
+			)}
+			{props.currentUser.isPT && !isCurrentUser ? (
+				<PressableButton
+					onPress={toggleIsClient}
+					text={isClient ? "Remove as client" : "Add as client"}
+				/>
+			) : null}
+			{isMyPT ? (
+				<PressableButton
+					onPress={toggleIsMyPT}
+					text="Remove as my PT"
+				/>
+			) : null}
 			<FlatList
 				horizontal={false}
 				numColumns={3}
@@ -397,6 +411,17 @@ class ProfileScreen extends Component {
 					children={(props) => <Profile {...props} {...this.props} />}
 				/>
 				<Stack.Screen name="Post" component={PostList} />
+				<Stack.Screen
+					name="Your Clients"
+					component={UserList}
+					initialParams={{ users: this.props.clients }}
+				/>
+				<Stack.Screen name="Profile1" component={Profile} />
+				<Stack.Screen
+					name="Your PTs"
+					component={UserList}
+					initialParams={{ users: this.props.PTs }}
+				/>
 				<Stack.Screen name="Comments" component={CommentsScreen} />
 			</Stack.Navigator>
 		);
@@ -409,7 +434,17 @@ const styles = StyleSheet.create({
 		gap: 10,
 		padding: 10,
 	},
-	infoBox: { gap: 5 },
+	infoBox: {
+		gap: 2,
+		flexDirection: "row",
+		justifyContent: "space-around",
+		backgroundColor: "none",
+		// borderColor: "deepskyblue",
+		// borderWidth: 2,
+		borderRadius: 5,
+		overflow: "hidden",
+		flexWrap: "wrap",
+	},
 	gallery: {
 		borderRadius: 10,
 		flex: 1,
@@ -424,11 +459,20 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 	},
 	username: {
+		flex: 1,
 		fontSize: 30,
 		fontWeight: "bold",
 	},
 	info: {
 		fontSize: 20,
+		padding: 5,
+		minWidth: "49%",
+		flexShrink: 0,
+		flexGrow: 1,
+		alignItems: "center",
+		justifyContent: "center",
+		backgroundColor: "white",
+		textAlign: "center",
 	},
 	image: {
 		flex: 1,
@@ -440,12 +484,13 @@ const styles = StyleSheet.create({
 		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 200,
+		marginTop: 120,
 	},
 });
 
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
+	posts: store.userState.posts,
 	following: store.userState.following,
 	followers: store.userState.followers,
 	followingLoaded: store.followingState.followingLoaded,
