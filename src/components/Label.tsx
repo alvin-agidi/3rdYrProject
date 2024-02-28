@@ -19,9 +19,6 @@ const styles = StyleSheet.create({
 		padding: 5,
 		alignItems: "center",
 		justifyContent: "center",
-	},
-	labelBox: {
-		flexDirection: "row",
-		gap: 5,
+		backgroundColor: "white",
 	},
 });

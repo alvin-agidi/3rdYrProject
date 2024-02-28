@@ -55,19 +55,19 @@ export default function Comments(props: any) {
 		});
 	}
 
-	useEffect(() => {
-		function fetchCommentCreators(comments: any[]) {
-			Promise.all(
-				comments.map((comment: any) =>
-					fetchUser(comment.createdBy).then((creator) => {
-						comment.creator = creator;
-					})
-				)
-			).then(() => {
-				setComments(comments);
-			});
-		}
+	function fetchCommentCreators(comments: any[]) {
+		Promise.all(
+			comments.map((comment: any) =>
+				fetchUser(comment.createdBy).then((creator) => {
+					comment.creator = creator;
+				})
+			)
+		).then(() => {
+			setComments(comments);
+		});
+	}
 
+	useEffect(() => {
 		if (props.route.params.postID !== postID) {
 			firebase
 				.firestore()
@@ -121,7 +121,7 @@ export default function Comments(props: any) {
 							>
 								{item.creator.username}
 							</Text>
-							<Text>{item.text}</Text>
+							<Text style={styles.commentText}>{item.text}</Text>
 						</View>
 						<Text style={globalStyles.date}>{item.createdAt}</Text>
 					</View>
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
 		alignSelf: "stretch",
 	},
 	comment: {
+		flex: 1,
 		padding: 5,
 		borderRadius: 5,
 		gap: 5,
