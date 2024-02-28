@@ -69,7 +69,7 @@ export default function PublishPost(props: any) {
 
 	function savePostData(mediaURL: string): void {
 		navigation.popToTop();
-		navigation.navigate("Profile", {
+		navigation.navigate("My Profile", {
 			uid: firebase.auth().currentUser!.uid,
 		});
 		firebase

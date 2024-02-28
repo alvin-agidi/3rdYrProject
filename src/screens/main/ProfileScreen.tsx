@@ -11,7 +11,6 @@ import { connect } from "react-redux";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import * as VideoThumbnails from "expo-video-thumbnails";
 import globalStyles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -21,6 +20,7 @@ import CommentsScreen from "./CommentsScreen";
 import PostList from "./PostList";
 import { Label } from "../../components/Label";
 import UserList from "./UserList";
+import { generateThumbnail } from "../../globalFunctions";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,14 +53,6 @@ export function Profile(props: any) {
 					}
 				});
 		}
-	}
-
-	function generateThumbnail(mediaURL: any) {
-		return new Promise((resolve) => {
-			return VideoThumbnails.getThumbnailAsync(mediaURL, {
-				time: 100,
-			}).then((thumbnail) => resolve(thumbnail.uri));
-		});
 	}
 
 	function getPosts() {
@@ -99,7 +91,6 @@ export function Profile(props: any) {
 			Promise.all(
 				tempPosts.map((post: any) => {
 					if (post.isVideo && !post.thumbnailURI) {
-						console.log(post.id);
 						return new Promise((resolve) => {
 							generateThumbnail(post.mediaURL).then(
 								(thumbnailURI) => {
@@ -111,7 +102,6 @@ export function Profile(props: any) {
 					return post;
 				})
 			).then((posts) => {
-				console.log(posts.map((post) => post.thumbnailURI));
 				setPosts(posts);
 			});
 		});
@@ -416,12 +406,17 @@ class ProfileScreen extends Component {
 					component={UserList}
 					initialParams={{ users: this.props.clients }}
 				/>
-				<Stack.Screen name="Profile1" component={Profile} />
 				<Stack.Screen
 					name="Your PTs"
 					component={UserList}
 					initialParams={{ users: this.props.PTs }}
 				/>
+				<Stack.Screen
+					name="Profile1"
+					children={(props) => <Profile {...props} {...this.props} />}
+					options={{ title: "Profile" }}
+				/>
+				{/* <Stack.Screen name="Profile1" component={Profile} /> */}
 				<Stack.Screen name="Comments" component={CommentsScreen} />
 			</Stack.Navigator>
 		);
