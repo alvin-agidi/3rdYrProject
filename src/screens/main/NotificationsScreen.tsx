@@ -131,6 +131,7 @@ const mapStateToProps = (store: any) => ({
 	followers: store.userState.followers,
 	followingLoaded: store.followingState.followingLoaded,
 	followingPosts: store.followingState.followingPosts,
+	notifications: store.userState.notifications,
 	clients: store.userState.clients,
 	PTs: store.userState.PTs,
 });

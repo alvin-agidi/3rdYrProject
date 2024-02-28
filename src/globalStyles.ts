@@ -36,6 +36,8 @@ export default StyleSheet.create({
 	},
 	date: {
 		alignSelf: "flex-end",
+		textAlign: "right",
+		justifyContent: "flex-end",
 	},
 	noResultsText: {
 		textAlign: "center",
@@ -46,5 +48,10 @@ export default StyleSheet.create({
 	bold: {
 		fontSize: 15,
 		fontWeight: "bold",
+	},
+	labelList: {
+		gap: 5,
+		flexDirection: "row",
+		flexWrap: "wrap",
 	},
 });

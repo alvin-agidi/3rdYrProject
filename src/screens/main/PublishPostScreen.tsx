@@ -81,6 +81,7 @@ export default function PublishPost(props: any) {
 				mediaURL,
 				isVideo,
 				caption,
+				exercisesDetected: false,
 				createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 			})
 			.then((doc) => {
@@ -93,7 +94,10 @@ export default function PublishPost(props: any) {
 							.collection("posts")
 							.doc(doc.id)
 							.set(
-								{ exercises: JSON.stringify(response) },
+								{
+									exercises: JSON.stringify(response),
+									exercisesDetected: true,
+								},
 								{ merge: true }
 							);
 					});

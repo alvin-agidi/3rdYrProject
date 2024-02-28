@@ -68,7 +68,7 @@ function Search(props: any) {
 						style={styles.result}
 					>
 						<Text style={styles.user}>{item.username}</Text>
-						<View style={styles.labelBox}>
+						<View style={globalStyles.labelList}>
 							{firebase.auth().currentUser!.uid === item.uid ? (
 								<Label text="You" />
 							) : null}
