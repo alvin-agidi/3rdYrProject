@@ -7,65 +7,77 @@ import {
 	Image,
 	TouchableOpacity,
 } from "react-native";
-import firebase from "firebase/compat/app";
 import globalStyles from "../../globalStyles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { PressableButton } from "../../components/PressableButton";
 import { Label } from "../../components/Label";
+import { generateThumbnail } from "../../globalFunctions";
+import { fetchPostExercises } from "../../../redux/actions";
 
 export default function UserList(props: any) {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any>([]);
 
-	function fetchExercises(uid: string, postID: string) {
-		return new Promise((resolve) => {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(uid)
-				.collection("posts")
-				.doc(postID)
-				.collection("exercises")
-				.onSnapshot((snapshot) => {
-					return resolve(snapshot.docs.map((doc) => doc.data()));
-				});
-		});
-	}
-
 	function fetchPosts(uid: string) {
 		return new Promise((resolve) => {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(uid)
-				.collection("posts")
-				// .orderBy("exercisesDetected", "desc")
-				.orderBy("createdAt", "desc")
-				.limit(3)
-				.onSnapshot((snapshot) => {
-					return resolve(
-						snapshot.docs.map((doc) => {
-							const id = doc.id;
-							const data = doc.data();
-							const createdAt = (
-								data.createdAt ??
-								firebase.firestore.Timestamp.now()
-							)
-								.toDate()
-								.toLocaleString();
-							return {
-								id,
-								...data,
-								user: { uid },
-								createdAt,
-							};
+			return new Promise((resolve) => {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(uid)
+					.collection("posts")
+					// .orderBy("exercisesDetected", "desc")
+					.orderBy("createdAt", "desc")
+					.limit(3)
+					.onSnapshot((snapshot) => {
+						return resolve(
+							snapshot.docs.map((doc) => {
+								const id = doc.id;
+								const data = doc.data();
+								const createdAt = (
+									data.createdAt ??
+									firebase.firestore.Timestamp.now()
+								)
+									.toDate()
+									.toLocaleString();
+								return {
+									id,
+									...data,
+									user: { uid },
+									createdAt,
+								};
+							})
+						);
+					});
+			}).then((posts: any) => {
+				Promise.all(
+					posts.map((post: any) =>
+						fetchPostExercises(post.user.uid, post.id).then(
+							(exercises) => {
+								post.exercises = exercises;
+							}
+						)
+					)
+				).then(() => {
+					Promise.all(
+						posts.map((post: any) => {
+							if (post.isVideo && !post.thumbnailURI) {
+								return generateThumbnail(post.mediaURL).then(
+									(thumbnailURI) => {
+										post.thumbnailURI = thumbnailURI;
+									}
+								);
+							}
+							return post;
 						})
-					);
+					).then(() => resolve(posts));
 				});
+			});
 		});
 	}
 
@@ -77,19 +89,9 @@ export default function UserList(props: any) {
 				.doc(uid)
 				.onSnapshot((doc) => {
 					const uid = doc.id;
-					fetchPosts(uid).then((posts: any) => {
-						Promise.all(
-							posts.map((post: any) =>
-								fetchExercises(post.user.uid, post.id).then(
-									(exercises) => {
-										post.exercises = exercises;
-									}
-								)
-							)
-						).then(() => {
-							return resolve({ uid, ...doc.data(), posts });
-						});
-					});
+					fetchPosts(uid).then((posts) =>
+						resolve({ uid, ...doc.data(), posts })
+					);
 				});
 		});
 	}
@@ -148,7 +150,9 @@ export default function UserList(props: any) {
 											style={styles.image}
 										/>
 										<View style={styles.highlightPostDesc}>
-											<Text>{post.caption}</Text>
+											<Text style={styles.caption}>
+												{post.caption}
+											</Text>
 											<FlatList
 												horizontal={false}
 												numColumns={1}
@@ -176,7 +180,7 @@ export default function UserList(props: any) {
 								<View style={styles.noResults}>
 									<Icon
 										name="camera-off-outline"
-										size={40}
+										size={80}
 										color="white"
 									/>
 									<Text style={globalStyles.noResultsText}>
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 250,
+		margin: 10,
 	},
 	users: {
 		flex: 1,
@@ -255,4 +259,10 @@ const styles = StyleSheet.create({
 		gap: 5,
 		justifyContent: "space-between",
 	},
+	caption: {
+		flex: 1,
+	},
 });
+function fetchExercises(uid: any, id: any) {
+	throw new Error("Function not implemented.");
+}
