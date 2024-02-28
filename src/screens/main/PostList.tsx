@@ -13,7 +13,11 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { fetchPostLikes, fetchFollowingUser } from "../../../redux/actions";
+import {
+	fetchPostLikes,
+	fetchFollowingUser,
+	fetchPostExercises,
+} from "../../../redux/actions";
 import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
 
@@ -21,8 +25,26 @@ export default function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 
-	function addLikeInfo(posts: any) {
-		setPosts(() => posts);
+	// function addExerciseInfo() {
+	// 	Promise.all(
+	// 		posts.map((post: any) => {
+	// 			if (post.exercisesDetected) {
+	// 				return new Promise((resolve) => {
+	// 					fetchPostExercises(post.user.uid, post.id).then(
+	// 						(exercises) => {
+	// 							return resolve({ ...post, exercises });
+	// 						}
+	// 					);
+	// 				});
+	// 			}
+	// 			return post;
+	// 		})
+	// 	).then((posts) => {
+	// 		setPosts(() => posts);
+	// 	});
+	// }
+
+	function addLikeInfo() {
 		setPosts((posts: any) =>
 			posts
 				.map((post: any) => {
@@ -71,10 +93,21 @@ export default function PostList(props: any) {
 								data!.user = user;
 							}
 						),
-					]).then(() => addLikeInfo([data]));
+						fetchPostExercises(
+							props.route.params.uid,
+							props.route.params.postID
+						).then((exercises) => {
+							data!.exercises = exercises;
+						}),
+					]).then(() => {
+						setPosts(() => [data]);
+						addLikeInfo();
+					});
 				});
 		} else if (props.followingLoaded === props.following.length) {
-			addLikeInfo(props.followingPosts);
+			setPosts(() => props.followingPosts);
+			addLikeInfo();
+			// addExerciseInfo();
 		}
 	}, [props.following, props.followingLoaded, props.followingPosts]);
 
@@ -173,20 +206,20 @@ export default function PostList(props: any) {
 									props.PTs.includes(item.user.uid) ? (
 										<Label text="Your PT" />
 									) : null}
-									<TouchableOpacity
-										style={styles.postIconBox}
-										onPress={() => {
-											toggleShowRoutine(item.id);
-										}}
-									>
-										{item.exercisesDetected ? (
+									{item.exercisesDetected ? (
+										<TouchableOpacity
+											style={styles.postIconBox}
+											onPress={() => {
+												toggleShowRoutine(item.id);
+											}}
+										>
 											<Icon
 												name="dumbbell"
 												color="black"
 												size={30}
 											/>
-										) : null}
-									</TouchableOpacity>
+										</TouchableOpacity>
+									) : null}
 									<TouchableOpacity
 										style={styles.postIconBox}
 										onPress={() => {
@@ -229,30 +262,24 @@ export default function PostList(props: any) {
 									</TouchableOpacity>
 								</View>
 								{item.showRoutine && item.exercisesDetected ? (
-									<TouchableOpacity
-										style={styles.postRoutineBox}
-									>
-										<Text>Routine</Text>
+									<View style={styles.postRoutineBox}>
 										<FlatList
 											horizontal={false}
 											numColumns={1}
-											contentContainerStyle={{ gap: 5 }}
-											data={item.routine}
-											renderItem={({ item }) => (
-												<View
-													style={styles.postExercise}
-												>
-													<Text>
-														{item.exerciseName}
-													</Text>
-													<Text>
-														{item.start} -{" "}
-														{item.end}
-													</Text>
-												</View>
+											data={item.exercises}
+											contentContainerStyle={{
+												gap: 5,
+											}}
+											style={globalStyles.labelList}
+											renderItem={({
+												item: exercise,
+											}) => (
+												<Label
+													text={exercise.exercise}
+												/>
 											)}
 										/>
-									</TouchableOpacity>
+									</View>
 								) : null}
 							</View>
 							<Text>{item.caption}</Text>
