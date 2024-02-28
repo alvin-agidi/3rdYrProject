@@ -133,10 +133,12 @@ export function fetchFollowingUserPosts(uid: string) {
 						var posts = snapshot.docs.map((doc: any) => {
 							const data = doc.data();
 							const id = doc.id;
-							var createdAt =
+							const createdAt = (
 								data.createdAt ??
-								firebase.firestore.Timestamp.now();
-							createdAt = createdAt.toDate().toISOString();
+								firebase.firestore.Timestamp.now()
+							)
+								.toDate()
+								.toISOString();
 							return {
 								...data,
 								id,
@@ -144,15 +146,25 @@ export function fetchFollowingUserPosts(uid: string) {
 								user,
 							};
 						});
-						Promise.all(
-							posts.map((post: any) =>
+						Promise.all([
+							...posts.map((post: any) =>
 								fetchPostLikes(post.user.uid, post.id).then(
 									(likes) => {
 										post.likes = likes;
 									}
 								)
-							)
-						).then(() => {
+							),
+							...posts.map((post: any) => {
+								if (post.exercisesDetected) {
+									return fetchPostExercises(
+										post.user.uid,
+										post.id
+									).then((exercises) => {
+										post.exercises = exercises;
+									});
+								}
+							}),
+						]).then(() => {
 							dispatch({
 								type: FOLLOWING_POSTS_STATE_CHANGE,
 								posts,
@@ -169,20 +181,32 @@ export function fetchFollowingUserPosts(uid: string) {
 	};
 }
 
-export function fetchPostLikes(
-	userID: string,
-	postID: string
-): Promise<string[]> {
+export function fetchPostLikes(uid: string, postID: string): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
 			.collection("users")
-			.doc(userID)
+			.doc(uid)
 			.collection("posts")
 			.doc(postID)
 			.collection("likes")
 			.onSnapshot((snapshot) => {
 				return resolve(snapshot.docs.map((doc) => doc.id));
+			});
+	});
+}
+
+export function fetchPostExercises(uid: string, postID: string) {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("posts")
+			.doc(postID)
+			.collection("exercises")
+			.onSnapshot((snapshot) => {
+				return resolve(snapshot.docs.map((doc) => doc.data()));
 			});
 	});
 }
