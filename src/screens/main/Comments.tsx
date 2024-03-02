@@ -114,7 +114,7 @@ export default function Comments(props: any) {
 								style={globalStyles.bold}
 								onPress={() => {
 									navigation.popToTop();
-									navigation.navigate("Profile1", {
+									navigation.navigate("Profile", {
 										uid: item.creator.uid,
 									});
 								}}

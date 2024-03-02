@@ -11,12 +11,15 @@ import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ProfileScreen from "./ProfileScreen";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import { TextField } from "../../components/TextField";
 import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
+import Profile from "./Profile";
+import PostList from "./PostList";
+import Comments from "./Comments";
+import UserList from "./UserList";
 
 const Stack = createNativeStackNavigator();
 
@@ -35,8 +38,7 @@ function Search(props: any) {
 			.then((snapshot) => {
 				var users = snapshot.docs.map((doc) => {
 					const uid = doc.id;
-					const data = doc.data();
-					return { uid, ...data };
+					return { uid, ...doc.data() };
 				});
 				setUsers(users);
 			});
@@ -61,7 +63,7 @@ function Search(props: any) {
 				renderItem={({ item }) => (
 					<TouchableOpacity
 						onPress={() =>
-							navigation.navigate("Profile1", {
+							navigation.navigate("Profile", {
 								uid: item.uid,
 							})
 						}
@@ -115,10 +117,18 @@ export class SearchScreen extends Component {
 					name="Search"
 					children={(props) => <Search {...props} {...this.props} />}
 				/>
+				<Stack.Screen name="Profile" component={Profile} />
+				<Stack.Screen name="Post" component={PostList} />
+				<Stack.Screen name="Comments" component={Comments} />
 				<Stack.Screen
-					name="Profile1"
-					component={ProfileScreen}
-					options={{ title: "" }}
+					name="Your Clients"
+					component={UserList}
+					initialParams={{ users: this.props.clients }}
+				/>
+				<Stack.Screen
+					name="Your PTs"
+					component={UserList}
+					initialParams={{ users: this.props.PTs }}
 				/>
 			</Stack.Navigator>
 		);
@@ -160,11 +170,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
 	following: store.userState.following,
-	followers: store.userState.followers,
-	followingLoaded: store.followingState.followingLoaded,
-	followingPosts: store.followingState.followingPosts,
 	clients: store.userState.clients,
 	PTs: store.userState.PTs,
 });

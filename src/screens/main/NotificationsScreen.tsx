@@ -13,10 +13,11 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
-import ProfileScreen from "./ProfileScreen";
+import Profile from "./Profile";
 import PostList from "./PostList";
 import { connect } from "react-redux";
-import Comments from "./CommentsScreen";
+import Comments from "./Comments";
+import UserList from "./UserList";
 
 const Stack = createNativeStackNavigator();
 
@@ -37,7 +38,7 @@ function Notifications(props: any) {
 					<TouchableOpacity
 						onPress={() => {
 							navigation.navigate(
-								item.navPostID ? "Post" : "Profile1",
+								item.navPostID ? "Post" : "Profile",
 								{
 									uid: item.navUID,
 									postID: item.navPostID,
@@ -83,12 +84,18 @@ class NotificationsScreen extends Component {
 						<Notifications {...props} {...this.props} />
 					)}
 				/>
+				<Stack.Screen name="Profile" component={Profile} />
 				<Stack.Screen name="Post" component={PostList} />
 				<Stack.Screen name="Comments" component={Comments} />
 				<Stack.Screen
-					name="Profile1"
-					component={ProfileScreen}
-					options={{ title: "" }}
+					name="Your Clients"
+					component={UserList}
+					initialParams={{ users: this.props.clients }}
+				/>
+				<Stack.Screen
+					name="Your PTs"
+					component={UserList}
+					initialParams={{ users: this.props.PTs }}
 				/>
 			</Stack.Navigator>
 		);
@@ -126,14 +133,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
-	following: store.userState.following,
-	followers: store.userState.followers,
-	followingLoaded: store.followingState.followingLoaded,
-	followingPosts: store.followingState.followingPosts,
 	notifications: store.userState.notifications,
-	clients: store.userState.clients,
-	PTs: store.userState.PTs,
 });
 
 export default connect(mapStateToProps, null)(NotificationsScreen);

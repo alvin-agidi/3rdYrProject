@@ -20,74 +20,80 @@ import {
 } from "../../../redux/actions";
 import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
+import { connect } from "react-redux";
 
-export default function PostList(props: any) {
+export function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 
 	function addLikeInfo() {
 		setPosts((posts: any) =>
-			posts
-				.map((post: any) => {
-					const isLiked = post.likes.includes(
-						firebase.auth().currentUser!.uid
-					);
-					const likeCount = post.likes.length;
-					return {
-						...post,
-						isLiked,
-						likeCount,
-					};
-				})
-				.sort((x: any, y: any) => {
-					return y.createdAt.localeCompare(x.createdAt);
-				})
+			posts.map((post: any) => {
+				const isLiked = post.likes.includes(
+					firebase.auth().currentUser!.uid
+				);
+				const likeCount = post.likes.length;
+				return {
+					...post,
+					isLiked,
+					likeCount,
+				};
+			})
 		);
 	}
 
 	useEffect(() => {
-		if (
-			props.route.params &&
-			props.route.params.uid &&
-			props.route.params.postID
-		) {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.collection("posts")
-				.doc(props.route.params.postID)
-				.get()
-				.then((doc) => {
-					var data = doc.data();
-					data!.id = doc.id;
-					data!.createdAt = data!.createdAt.toDate().toISOString();
-					Promise.all([
-						fetchPostLikes(
-							props.route.params.uid,
-							props.route.params.postID
-						).then((likes) => {
-							data!.likes = likes;
-						}),
-						fetchFollowingUser(props.route.params.uid).then(
-							(user) => {
-								data!.user = user;
-							}
-						),
-						fetchPostExercises(
-							props.route.params.uid,
-							props.route.params.postID
-						).then((exercises) => {
-							data!.exercises = exercises;
-						}),
-					]).then(() => {
-						setPosts(() => [data]);
-						addLikeInfo();
+		if (props.followingLoaded === props.following.length) {
+			if (
+				props.route.params &&
+				props.route.params.uid &&
+				props.route.params.postID
+			) {
+				firebase
+					.firestore()
+					.collection("users")
+					.doc(props.route.params.uid)
+					.collection("posts")
+					.doc(props.route.params.postID)
+					.get()
+					.then((doc) => {
+						var data = doc.data();
+						data!.id = doc.id;
+						data!.createdAt = data!.createdAt
+							.toDate()
+							.toISOString();
+						Promise.all([
+							fetchPostLikes(
+								props.route.params.uid,
+								props.route.params.postID
+							).then((likes) => {
+								data!.likes = likes;
+							}),
+							fetchFollowingUser(props.route.params.uid).then(
+								(user) => {
+									data!.user = user;
+								}
+							),
+							fetchPostExercises(
+								props.route.params.uid,
+								props.route.params.postID
+							).then((exercises) => {
+								data!.exercises = exercises;
+							}),
+						]).then(() => {
+							setPosts(() => [data]);
+							addLikeInfo();
+						});
 					});
-				});
-		} else if (props.followingLoaded === props.following.length) {
-			setPosts(() => props.followingPosts);
-			addLikeInfo();
+			} else {
+				setPosts(() => props.followingPosts);
+				addLikeInfo();
+				setPosts((posts: any) =>
+					posts.sort((x: any, y: any) => {
+						return y.createdAt.localeCompare(x.createdAt);
+					})
+				);
+			}
 		}
 	}, [props.following, props.followingLoaded, props.followingPosts]);
 
@@ -168,7 +174,7 @@ export default function PostList(props: any) {
 								<View style={styles.postBanner}>
 									<TouchableOpacity
 										onPress={() => {
-											navigation.navigate("Profile1", {
+											navigation.navigate("Profile", {
 												uid: item.user.uid,
 											});
 										}}
@@ -310,7 +316,7 @@ const styles = StyleSheet.create({
 	},
 	postBanner: {
 		borderRadius: 5,
-		padding: 5,
+		paddingHorizontal: 5,
 		flex: 1,
 		backgroundColor: "whitesmoke",
 		alignItems: "center",
@@ -359,3 +365,14 @@ const styles = StyleSheet.create({
 		marginTop: 250,
 	},
 });
+
+const mapStateToProps = (store: any) => ({
+	posts: store.userState.posts,
+	following: store.userState.following,
+	followingLoaded: store.followingState.followingLoaded,
+	followingPosts: store.followingState.followingPosts,
+	clients: store.userState.clients,
+	PTs: store.userState.PTs,
+});
+
+export default connect(mapStateToProps, null)(PostList);

@@ -16,8 +16,7 @@ import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { PressableButton } from "../../components/PressableButton";
 import { Label } from "../../components/Label";
-import { generateThumbnail } from "../../globalFunctions";
-import { fetchPostExercises } from "../../../redux/actions";
+import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 
 export default function UserList(props: any) {
 	const navigation = useNavigation();
@@ -192,7 +191,7 @@ export default function UserList(props: any) {
 						{/* <PressableButton
 							text="View profile"
 							onPress={() => {
-								navigation.navigate("Profile1", {
+								navigation.navigate("Profile", {
 									uid: user.uid,
 								});
 							}}
