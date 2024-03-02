@@ -80,7 +80,7 @@ function CameraComponent() {
 	function startVideo(): void {
 		setIsRecording(true);
 		var options = {
-			quality: "1080p",
+			quality: "720p",
 			maxDuration: 60,
 			mute: false,
 		};
@@ -98,7 +98,7 @@ function CameraComponent() {
 
 	function takePhoto(): void {
 		var options = {
-			quality: 1,
+			quality: 0.6,
 			base64: true,
 			exif: false,
 		};
@@ -113,7 +113,7 @@ function CameraComponent() {
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
 			aspect: [1, 1],
-			quality: 1,
+			quality: 0.6,
 		}).then((media: any) => {
 			if (!media.canceled) {
 				setMedia(media.assets[0]);
