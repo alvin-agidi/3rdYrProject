@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import {
 	StyleSheet,
-	View,
-	TextInput,
 	Image,
 	KeyboardAvoidingView,
 	Platform,
@@ -69,7 +67,7 @@ export default function PublishPost(props: any) {
 
 	function savePostData(mediaURL: string): void {
 		navigation.popToTop();
-		navigation.navigate("My Profile", {
+		navigation.navigate("Your Profile", {
 			uid: firebase.auth().currentUser!.uid,
 		});
 		firebase

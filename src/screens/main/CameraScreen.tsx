@@ -241,7 +241,7 @@ function CameraComponent() {
 	);
 }
 
-export class CameraScreen extends Component {
+export default class CameraScreen extends Component {
 	render() {
 		return (
 			<Stack.Navigator
@@ -289,13 +289,3 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 	},
 });
-
-const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
-	following: store.userState.following,
-	followers: store.userState.followers,
-	followingLoaded: store.followingState.followingLoaded,
-	followingPosts: store.followingState.followingPosts,
-});
-
-export default connect(mapStateToProps, null)(CameraScreen);

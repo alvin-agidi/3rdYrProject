@@ -102,11 +102,8 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="My Profile"
+					name="Your Profile"
 					component={ProfileScreen}
-					initialParams={{
-						uid: firebase.auth().currentUser!.uid,
-					}}
 					options={{
 						tabBarIcon: ({ color, size = 25 }) => (
 							<Icon
@@ -125,10 +122,13 @@ export class Main extends Component {
 
 const mapStateToProps = (store: any) => ({
 	currentUser: store.userState.currentUser,
+	posts: store.userState.posts,
 	following: store.userState.following,
 	followers: store.userState.followers,
 	followingLoaded: store.followingState.followingLoaded,
 	followingPosts: store.followingState.followingPosts,
+	clients: store.userState.clients,
+	PTs: store.userState.PTs,
 });
 
 const mapDispatchProps = (dispatch: any) =>

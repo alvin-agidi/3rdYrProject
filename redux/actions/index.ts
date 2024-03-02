@@ -13,6 +13,7 @@ import {
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
+import * as VideoThumbnails from "expo-video-thumbnails";
 
 export function clearData() {
 	return (dispatch: any) => {
@@ -51,10 +52,11 @@ export function fetchUserPosts(uid: string) {
 				var posts = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
-					var createdAt = data.createdAt
-						? data.createdAt
-						: firebase.firestore.Timestamp.now();
-					createdAt = createdAt.toDate().toISOString();
+					var createdAt = (
+						data.createdAt ?? firebase.firestore.Timestamp.now()
+					)
+						.toDate()
+						.toISOString();
 					return { id, ...data, createdAt };
 				});
 				dispatch({
@@ -269,4 +271,12 @@ export function fetchPTs(uid: string) {
 				});
 			});
 	};
+}
+
+export function generateThumbnail(mediaURL: any) {
+	return new Promise((resolve) => {
+		return VideoThumbnails.getThumbnailAsync(mediaURL, {
+			time: 100,
+		}).then((thumbnail) => resolve(thumbnail.uri));
+	});
 }

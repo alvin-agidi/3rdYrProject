@@ -3,13 +3,15 @@ import { Platform } from "react-native";
 import { connect } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ProfileScreen from "./ProfileScreen";
-import CommentsScreen from "./CommentsScreen";
+import Comments from "./Comments";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import PostList from "./PostList";
 import * as Notifications from "expo-notifications";
 import { isDevice } from "expo-device";
+import Profile from "./Profile";
+import UserList from "./UserList";
 const appConfig = require("../../../app.json");
 
 const Stack = createNativeStackNavigator();
@@ -72,11 +74,18 @@ export class FeedScreen extends Component {
 						<PostList {...props} {...this.props} />
 					)}
 				/>
-				<Stack.Screen name="Comments" component={CommentsScreen} />
+				<Stack.Screen name="Comments" component={Comments} />
+				<Stack.Screen name="Profile" component={Profile} />
+				<Stack.Screen name="Post" component={PostList} />
 				<Stack.Screen
-					name="Profile1"
-					component={ProfileScreen}
-					options={{ title: "" }}
+					name="Your Clients"
+					component={UserList}
+					initialParams={{ users: this.props.clients }}
+				/>
+				<Stack.Screen
+					name="Your PTs"
+					component={UserList}
+					initialParams={{ users: this.props.PTs }}
 				/>
 			</Stack.Navigator>
 		);
@@ -84,9 +93,7 @@ export class FeedScreen extends Component {
 }
 
 const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
 	following: store.userState.following,
-	followers: store.userState.followers,
 	followingLoaded: store.followingState.followingLoaded,
 	followingPosts: store.followingState.followingPosts,
 	clients: store.userState.clients,
