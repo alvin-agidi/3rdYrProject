@@ -189,14 +189,14 @@ export default function UserList(props: any) {
 								</View>
 							)}
 						/>
-						<PressableButton
+						{/* <PressableButton
 							text="View profile"
 							onPress={() => {
 								navigation.navigate("Profile1", {
 									uid: user.uid,
 								});
 							}}
-						/>
+						/> */}
 					</View>
 				)}
 				ListEmptyComponent={() => (
@@ -263,6 +263,3 @@ const styles = StyleSheet.create({
 		flex: 1,
 	},
 });
-function fetchExercises(uid: any, id: any) {
-	throw new Error("Function not implemented.");
-}

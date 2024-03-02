@@ -25,25 +25,6 @@ export default function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 
-	// function addExerciseInfo() {
-	// 	Promise.all(
-	// 		posts.map((post: any) => {
-	// 			if (post.exercisesDetected) {
-	// 				return new Promise((resolve) => {
-	// 					fetchPostExercises(post.user.uid, post.id).then(
-	// 						(exercises) => {
-	// 							return resolve({ ...post, exercises });
-	// 						}
-	// 					);
-	// 				});
-	// 			}
-	// 			return post;
-	// 		})
-	// 	).then((posts) => {
-	// 		setPosts(() => posts);
-	// 	});
-	// }
-
 	function addLikeInfo() {
 		setPosts((posts: any) =>
 			posts
@@ -107,7 +88,6 @@ export default function PostList(props: any) {
 		} else if (props.followingLoaded === props.following.length) {
 			setPosts(() => props.followingPosts);
 			addLikeInfo();
-			// addExerciseInfo();
 		}
 	}, [props.following, props.followingLoaded, props.followingPosts]);
 

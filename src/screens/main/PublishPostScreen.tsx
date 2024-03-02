@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
 	StyleSheet,
 	View,
-	TextInput,
 	Image,
 	KeyboardAvoidingView,
 	Platform,
@@ -18,10 +17,11 @@ import { ResizeMode, Video } from "expo-av";
 import { TextField } from "../../components/TextField";
 
 async function detectExercises(videoURL: string) {
-	return await fetch("http://143.47.229.158:5000/detectExercises", {
+	return await fetch("https://0dd4-34-86-77-116.ngrok-free.app", {
 		method: "POST",
 		mode: "cors",
 		headers: {
+			"ngrok-skip-browser-warning": "1",
 			"Content-Type": "application/json",
 		},
 		body: JSON.stringify({
@@ -87,19 +87,36 @@ export default function PublishPost(props: any) {
 			.then((doc) => {
 				if (isVideo) {
 					detectExercises(mediaURL).then((response) => {
-						firebase
-							.firestore()
-							.collection("users")
-							.doc(firebase.auth().currentUser!.uid)
-							.collection("posts")
-							.doc(doc.id)
-							.set(
-								{
-									exercises: JSON.stringify(response),
-									exercisesDetected: true,
-								},
-								{ merge: true }
-							);
+						console.log(response);
+						if (response && response.ok) {
+							response.json().then((exercises) => {
+								console.log(exercises);
+								if (exercises) {
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(firebase.auth().currentUser!.uid)
+										.collection("posts")
+										.doc(doc.id)
+										.set(
+											{ exercisesDetected: true },
+											{ merge: true }
+										);
+								}
+								for (const exercise of exercises) {
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(firebase.auth().currentUser!.uid)
+										.collection("posts")
+										.doc(doc.id)
+										.collection("exercises")
+										.add({
+											exercise: exercise.exercise,
+										});
+								}
+							});
+						}
 					});
 				}
 			});
