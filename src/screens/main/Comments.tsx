@@ -48,7 +48,8 @@ export default function Comments(props: any) {
 				.firestore()
 				.collection("users")
 				.doc(uid)
-				.onSnapshot((doc) => {
+				.get()
+				.then((doc) => {
 					const uid = doc.id;
 					resolve({ uid, ...doc.data() });
 				});

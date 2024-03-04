@@ -33,7 +33,8 @@ export default function UserList(props: any) {
 					// .orderBy("exercisesDetected", "desc")
 					.orderBy("createdAt", "desc")
 					.limit(3)
-					.onSnapshot((snapshot) => {
+					.get()
+					.then((snapshot) => {
 						return resolve(
 							snapshot.docs.map((doc) => {
 								const id = doc.id;
@@ -86,7 +87,8 @@ export default function UserList(props: any) {
 				.firestore()
 				.collection("users")
 				.doc(uid)
-				.onSnapshot((doc) => {
+				.get()
+				.then((doc) => {
 					const uid = doc.id;
 					fetchPosts(uid).then((posts) =>
 						resolve({ uid, ...doc.data(), posts })

@@ -16,7 +16,7 @@ import { ResizeMode, Video } from "expo-av";
 import { TextField } from "../../components/TextField";
 
 async function detectExercises(videoURL: string) {
-	return await fetch("https://0dd4-34-86-77-116.ngrok-free.app", {
+	return await fetch("https://f614-35-237-44-38.ngrok-free.app", {
 		method: "POST",
 		mode: "cors",
 		headers: {

@@ -43,57 +43,53 @@ export function PostList(props: any) {
 	}
 
 	useEffect(() => {
-		if (props.followingLoaded === props.following.length) {
-			if (
-				props.route.params &&
-				props.route.params.uid &&
-				props.route.params.postID
-			) {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.collection("posts")
-					.doc(props.route.params.postID)
-					.get()
-					.then((doc) => {
-						var data = doc.data();
-						data!.id = doc.id;
-						data!.createdAt = data!.createdAt
-							.toDate()
-							.toISOString();
-						Promise.all([
-							fetchPostLikes(
-								props.route.params.uid,
-								props.route.params.postID
-							).then((likes) => {
-								data!.likes = likes;
-							}),
-							fetchFollowingUser(props.route.params.uid).then(
-								(user) => {
-									data!.user = user;
-								}
-							),
-							fetchPostExercises(
-								props.route.params.uid,
-								props.route.params.postID
-							).then((exercises) => {
-								data!.exercises = exercises;
-							}),
-						]).then(() => {
-							setPosts(() => [data]);
-							addLikeInfo();
-						});
+		if (
+			props.route.params &&
+			props.route.params.uid &&
+			props.route.params.postID
+		) {
+			firebase
+				.firestore()
+				.collection("users")
+				.doc(props.route.params.uid)
+				.collection("posts")
+				.doc(props.route.params.postID)
+				.get()
+				.then((doc) => {
+					var data = doc.data();
+					data!.id = doc.id;
+					data!.createdAt = data!.createdAt.toDate().toISOString();
+					Promise.all([
+						fetchPostLikes(
+							props.route.params.uid,
+							props.route.params.postID
+						).then((likes) => {
+							data!.likes = likes;
+						}),
+						fetchFollowingUser(props.route.params.uid).then(
+							(user) => {
+								data!.user = user;
+							}
+						),
+						fetchPostExercises(
+							props.route.params.uid,
+							props.route.params.postID
+						).then((exercises) => {
+							data!.exercises = exercises;
+						}),
+					]).then(() => {
+						setPosts(() => [data]);
+						addLikeInfo();
 					});
-			} else {
-				setPosts(() => props.followingPosts);
-				addLikeInfo();
-				setPosts((posts: any) =>
-					posts.sort((x: any, y: any) => {
-						return y.createdAt.localeCompare(x.createdAt);
-					})
-				);
-			}
+				});
+		} else if (props.followingLoaded === props.following.length) {
+			setPosts(() => props.followingPosts);
+			addLikeInfo();
+			setPosts((posts: any) =>
+				posts.sort((x: any, y: any) => {
+					return y.createdAt.localeCompare(x.createdAt);
+				})
+			);
 		}
 	}, [props.following, props.followingLoaded, props.followingPosts]);
 
@@ -146,7 +142,7 @@ export function PostList(props: any) {
 	}
 
 	return (
-		<View style={styles.feed}>
+		<View style={styles.postList}>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
@@ -283,9 +279,6 @@ export function PostList(props: any) {
 							color="white"
 						/>
 						<Text style={globalStyles.noResultsText}>No posts</Text>
-						{/* <Text style={{ ...styles.noResultsText, fontSize: 20 }}>
-							Follow some users
-						</Text> */}
 					</View>
 				)}
 			/>
@@ -294,7 +287,7 @@ export function PostList(props: any) {
 }
 
 const styles = StyleSheet.create({
-	feed: {
+	postList: {
 		flex: 1,
 		padding: 5,
 	},

@@ -192,7 +192,8 @@ export function fetchPostLikes(uid: string, postID: string): Promise<string[]> {
 			.collection("posts")
 			.doc(postID)
 			.collection("likes")
-			.onSnapshot((snapshot) => {
+			.get()
+			.then((snapshot) => {
 				return resolve(snapshot.docs.map((doc) => doc.id));
 			});
 	});
@@ -207,7 +208,8 @@ export function fetchPostExercises(uid: string, postID: string) {
 			.collection("posts")
 			.doc(postID)
 			.collection("exercises")
-			.onSnapshot((snapshot) => {
+			.get()
+			.then((snapshot) => {
 				return resolve(snapshot.docs.map((doc) => doc.data()));
 			});
 	});
@@ -247,10 +249,9 @@ export function fetchClients(uid: string) {
 			.doc(uid)
 			.collection("clients")
 			.onSnapshot((snapshot) => {
-				var clients = snapshot.docs.map((doc) => doc.id);
 				dispatch({
 					type: CLIENTS_STATE_CHANGE,
-					clients,
+					clients: snapshot.docs.map((doc) => doc.id),
 				});
 			});
 	};
@@ -264,10 +265,9 @@ export function fetchPTs(uid: string) {
 			.doc(uid)
 			.collection("PTs")
 			.onSnapshot((snapshot) => {
-				var PTs = snapshot.docs.map((doc) => doc.id);
 				dispatch({
 					type: PTS_STATE_CHANGE,
-					PTs,
+					PTs: snapshot.docs.map((doc) => doc.id),
 				});
 			});
 	};

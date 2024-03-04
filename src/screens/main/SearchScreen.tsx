@@ -34,8 +34,7 @@ function Search(props: any) {
 			.collection("users")
 			.where("username", ">=", queryString)
 			.where("username", "<=", queryString + "~")
-			.get()
-			.then((snapshot) => {
+			.onSnapshot((snapshot) => {
 				var users = snapshot.docs.map((doc) => {
 					const uid = doc.id;
 					return { uid, ...doc.data() };

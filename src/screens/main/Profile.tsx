@@ -39,7 +39,8 @@ function Profile(props: any) {
 				.firestore()
 				.collection("users")
 				.doc(props.route.params.uid)
-				.onSnapshot((snapshot) => {
+				.get()
+				.then((snapshot) => {
 					if (snapshot.exists) {
 						setUser(snapshot.data());
 					} else {
@@ -60,7 +61,8 @@ function Profile(props: any) {
 					.doc(props.route.params.uid)
 					.collection("posts")
 					.orderBy("createdAt", "desc")
-					.onSnapshot((snapshot) => {
+					.get()
+					.then((snapshot) => {
 						return resolve(
 							snapshot.docs.map((doc) => {
 								const id = doc.id;
@@ -110,7 +112,8 @@ function Profile(props: any) {
 				.collection("users")
 				.doc(props.route.params.uid)
 				.collection("following")
-				.onSnapshot((snapshot) => {
+				.get()
+				.then((snapshot) => {
 					setFollowing(snapshot.docs.map((doc) => doc.id));
 				});
 		}
@@ -125,7 +128,8 @@ function Profile(props: any) {
 				.collection("users")
 				.doc(props.route.params.uid)
 				.collection("followers")
-				.onSnapshot((snapshot) => {
+				.get()
+				.then((snapshot) => {
 					setFollowers(snapshot.docs.map((doc) => doc.id));
 				});
 		}
