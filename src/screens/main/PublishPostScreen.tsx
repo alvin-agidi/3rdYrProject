@@ -14,9 +14,10 @@ import { PressableButton } from "../../components/PressableButton";
 import globalStyles from "../../globalStyles";
 import { ResizeMode, Video } from "expo-av";
 import { TextField } from "../../components/TextField";
+import { detectorURL } from "../../config";
 
 async function detectExercises(videoURL: string) {
-	return await fetch("https://f614-35-237-44-38.ngrok-free.app", {
+	return await fetch(detectorURL, {
 		method: "POST",
 		mode: "cors",
 		headers: {
