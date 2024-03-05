@@ -38,6 +38,7 @@ export default StyleSheet.create({
 		alignSelf: "flex-end",
 		textAlign: "right",
 		justifyContent: "flex-end",
+		color: "grey",
 	},
 	noResultsText: {
 		textAlign: "center",

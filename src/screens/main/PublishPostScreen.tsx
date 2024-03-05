@@ -69,7 +69,7 @@ export default function PublishPost(props: any) {
 
 	function savePostData(mediaURL: string): void {
 		navigation.popToTop();
-		navigation.navigate("Your Profile", {
+		navigation.navigate("Profile", {
 			uid: firebase.auth().currentUser!.uid,
 		});
 		firebase
@@ -111,9 +111,7 @@ export default function PublishPost(props: any) {
 										.collection("posts")
 										.doc(doc.id)
 										.collection("exercises")
-										.add({
-											exercise: exercise.exercise,
-										});
+										.add(exercise);
 								}
 							});
 						}
