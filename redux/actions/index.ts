@@ -208,6 +208,7 @@ export function fetchPostExercises(uid: string, postID: string) {
 			.collection("posts")
 			.doc(postID)
 			.collection("exercises")
+			.orderBy("start", "asc")
 			.get()
 			.then((snapshot) => {
 				return resolve(snapshot.docs.map((doc) => doc.data()));
