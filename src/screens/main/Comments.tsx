@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	FlatList,
 	View,
@@ -94,6 +94,39 @@ export default function Comments(props: any) {
 			setPostID(props.route.params.postID);
 		}
 	}, [props.route.params.postID]);
+
+	const renderItem = useCallback(
+		({ item }) => (
+			<View style={styles.comment}>
+				<View style={styles.commentText}>
+					<Text
+						style={globalStyles.bold}
+						onPress={() => {
+							navigation.popToTop();
+							navigation.navigate("Profile", {
+								uid: item.creator.uid,
+							});
+						}}
+					>
+						{item.creator.username}
+					</Text>
+					<Text style={styles.commentText}>{item.text}</Text>
+				</View>
+				<Text style={globalStyles.date}>{item.createdAt}</Text>
+			</View>
+		),
+		[]
+	);
+
+	const ListEmptyComponent = useCallback(
+		() => (
+			<View style={styles.noResults}>
+				<Icon name="comment-off-outline" size={80} color="white" />
+				<Text style={globalStyles.noResultsText}>No comments</Text>
+			</View>
+		),
+		[]
+	);
 	return (
 		<KeyboardAvoidingView
 			style={globalStyles.container}
@@ -106,39 +139,11 @@ export default function Comments(props: any) {
 				data={comments}
 				contentContainerStyle={{
 					gap: 5,
+					flexGrow: 1,
 				}}
 				style={styles.comments}
-				renderItem={({ item }) => (
-					<View style={styles.comment}>
-						<View style={styles.commentText}>
-							<Text
-								style={globalStyles.bold}
-								onPress={() => {
-									navigation.popToTop();
-									navigation.navigate("Profile", {
-										uid: item.creator.uid,
-									});
-								}}
-							>
-								{item.creator.username}
-							</Text>
-							<Text style={styles.commentText}>{item.text}</Text>
-						</View>
-						<Text style={globalStyles.date}>{item.createdAt}</Text>
-					</View>
-				)}
-				ListEmptyComponent={() => (
-					<View style={styles.noResults}>
-						<Icon
-							name="comment-off-outline"
-							size={80}
-							color="white"
-						/>
-						<Text style={globalStyles.noResultsText}>
-							No comments
-						</Text>
-					</View>
-				)}
+				renderItem={renderItem}
+				ListEmptyComponent={ListEmptyComponent}
 			/>
 			<TextField
 				placeholder="Comment"
@@ -155,10 +160,8 @@ export default function Comments(props: any) {
 const styles = StyleSheet.create({
 	noResults: {
 		flex: 1,
-		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 250,
 	},
 	comments: {
 		flex: 1,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -17,6 +17,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Label } from "../../components/Label";
 import { generateThumbnail } from "../../../redux/actions";
 import { connect } from "react-redux";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 function Profile(props: any) {
 	const navigation = useNavigation();
@@ -30,6 +31,7 @@ function Profile(props: any) {
 	const [isMyPT, setIsMyPT] = useState(false);
 	const [isClient, setIsClient] = useState(false);
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	function getUser(): void {
 		if (isCurrentUser) {
@@ -52,53 +54,59 @@ function Profile(props: any) {
 
 	function getPosts() {
 		return new Promise((resolve) => {
-			if (isCurrentUser) {
-				return resolve(props.posts);
-			} else {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(props.route.params.uid)
-					.collection("posts")
-					.orderBy("createdAt", "desc")
-					.get()
-					.then((snapshot) => {
-						return resolve(
-							snapshot.docs.map((doc) => {
-								const id = doc.id;
-								const data = doc.data();
-								var createdAt = (
-									data.createdAt ??
-									firebase.firestore.Timestamp.now()
-								)
-									.toDate()
-									.toISOString();
-								return {
-									id,
-									...data,
-									createdAt,
-									thumbnailURI: "",
-								};
-							})
-						);
-					});
-			}
-		}).then((tempPosts: any) => {
-			Promise.all(
-				tempPosts.map((post: any) => {
-					if (post.isVideo && !post.thumbnailURI) {
-						return new Promise((resolve) => {
-							generateThumbnail(post.mediaURL).then(
-								(thumbnailURI) => {
-									return resolve({ ...post, thumbnailURI });
-								}
+			return new Promise((resolve) => {
+				if (isCurrentUser) {
+					return resolve(props.posts);
+				} else {
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(props.route.params.uid)
+						.collection("posts")
+						.orderBy("createdAt", "desc")
+						.get()
+						.then((snapshot) => {
+							return resolve(
+								snapshot.docs.map((doc) => {
+									const id = doc.id;
+									const data = doc.data();
+									var createdAt = (
+										data.createdAt ??
+										firebase.firestore.Timestamp.now()
+									)
+										.toDate()
+										.toISOString();
+									return {
+										id,
+										...data,
+										createdAt,
+										thumbnailURI: "",
+									};
+								})
 							);
 						});
-					}
-					return post;
-				})
-			).then((posts) => {
-				setPosts(posts);
+				}
+			}).then((tempPosts: any) => {
+				Promise.all(
+					tempPosts.map((post: any) => {
+						if (post.isVideo && !post.thumbnailURI) {
+							return new Promise((resolve) => {
+								generateThumbnail(post.mediaURL).then(
+									(thumbnailURI) => {
+										return resolve({
+											...post,
+											thumbnailURI,
+										});
+									}
+								);
+							});
+						}
+						return post;
+					})
+				).then((posts) => {
+					setPosts(posts);
+					resolve(null);
+				});
 			});
 		});
 	}
@@ -144,6 +152,7 @@ function Profile(props: any) {
 	}
 
 	useEffect(() => {
+		setIsLoading(true);
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
 		);
@@ -152,11 +161,16 @@ function Profile(props: any) {
 		getFollowers();
 		getClients();
 		getPTs();
+		setIsLoading(false);
 	}, [props.route.params.uid]);
 
 	useEffect(() => {
-		getPosts();
-	}, []);
+		(async () => {
+			setIsLoading(true);
+			await getPosts();
+			setIsLoading(false);
+		})();
+	}, [props.route.params.uid, props.posts]);
 
 	useEffect(() => {
 		getFollowing();
@@ -282,6 +296,41 @@ function Profile(props: any) {
 		firebase.auth().signOut();
 	}
 
+	const renderItem = useCallback(
+		({ item }) => (
+			<TouchableOpacity
+				style={styles.imageBox}
+				onPress={() => {
+					navigation.navigate("Post", {
+						uid: props.route.params.uid,
+						postID: item.id,
+					});
+				}}
+			>
+				<Image
+					source={{
+						uri: item.isVideo ? item.thumbnailURI : item.mediaURL,
+					}}
+					style={styles.image}
+				/>
+			</TouchableOpacity>
+		),
+		[]
+	);
+
+	const ListEmptyComponent = useCallback(
+		() =>
+			isLoading ? (
+				<LoadingIndicator />
+			) : (
+				<View style={styles.noResults}>
+					<Icon name="image-off-outline" size={80} color="white" />
+					<Text style={globalStyles.noResultsText}>No posts</Text>
+				</View>
+			),
+		[isLoading]
+	);
+
 	if (user === undefined) return <View />;
 	return (
 		<View style={styles.profile}>
@@ -341,39 +390,11 @@ function Profile(props: any) {
 				horizontal={false}
 				numColumns={3}
 				data={posts}
-				contentContainerStyle={{ gap: 2 }}
+				contentContainerStyle={{ gap: 2, flexGrow: 1 }}
 				columnWrapperStyle={{ gap: 2 }}
 				style={styles.gallery}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						style={styles.imageBox}
-						onPress={() => {
-							navigation.navigate("Post", {
-								uid: props.route.params.uid,
-								postID: item.id,
-							});
-						}}
-					>
-						<Image
-							source={{
-								uri: item.isVideo
-									? item.thumbnailURI
-									: item.mediaURL,
-							}}
-							style={styles.image}
-						/>
-					</TouchableOpacity>
-				)}
-				ListEmptyComponent={() => (
-					<View style={styles.noResults}>
-						<Icon
-							name="image-off-outline"
-							size={80}
-							color="white"
-						/>
-						<Text style={globalStyles.noResultsText}>No posts</Text>
-					</View>
-				)}
+				renderItem={renderItem}
+				ListEmptyComponent={ListEmptyComponent}
 			/>
 			{isCurrentUser ? (
 				<PressableButton onPress={signOut} text="Sign out" />
@@ -393,8 +414,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		justifyContent: "space-around",
 		backgroundColor: "none",
-		// borderColor: "deepskyblue",
-		// borderWidth: 2,
 		borderRadius: 5,
 		overflow: "hidden",
 		flexWrap: "wrap",
@@ -435,10 +454,8 @@ const styles = StyleSheet.create({
 	},
 	noResults: {
 		flex: 1,
-		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 120,
 	},
 });
 

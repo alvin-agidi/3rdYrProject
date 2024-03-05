@@ -1,4 +1,4 @@
-import React, { Component, useState } from "react";
+import React, { Component, useCallback, useState } from "react";
 import {
 	StyleSheet,
 	View,
@@ -43,6 +43,46 @@ function Search(props: any) {
 			});
 	}
 
+	const renderItem = useCallback(
+		({ item }) => (
+			<TouchableOpacity
+				onPress={() =>
+					navigation.navigate("Profile", {
+						uid: item.uid,
+					})
+				}
+				style={styles.result}
+			>
+				<Text style={styles.user}>{item.username}</Text>
+				<View style={globalStyles.labelList}>
+					{firebase.auth().currentUser!.uid === item.uid ? (
+						<Label text="You" />
+					) : null}
+					{props.clients.includes(item.uid) ? (
+						<Label text="Your client" />
+					) : null}
+					{props.PTs.includes(item.uid) ? (
+						<Label text="Your PT" />
+					) : null}
+					{props.following.includes(item.uid) ? (
+						<Label text="Following" />
+					) : null}
+				</View>
+			</TouchableOpacity>
+		),
+		[]
+	);
+
+	const ListEmptyComponent = useCallback(
+		() => (
+			<View style={styles.noResults}>
+				<Icon name="account-off-outline" size={80} color="white" />
+				<Text style={globalStyles.noResultsText}>No results</Text>
+			</View>
+		),
+		[]
+	);
+
 	return (
 		<View style={globalStyles.container}>
 			<TextField
@@ -58,45 +98,10 @@ function Search(props: any) {
 				style={styles.results}
 				contentContainerStyle={{
 					gap: 2,
+					flexGrow: 1,
 				}}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						onPress={() =>
-							navigation.navigate("Profile", {
-								uid: item.uid,
-							})
-						}
-						style={styles.result}
-					>
-						<Text style={styles.user}>{item.username}</Text>
-						<View style={globalStyles.labelList}>
-							{firebase.auth().currentUser!.uid === item.uid ? (
-								<Label text="You" />
-							) : null}
-							{props.clients.includes(item.uid) ? (
-								<Label text="Your client" />
-							) : null}
-							{props.PTs.includes(item.uid) ? (
-								<Label text="Your PT" />
-							) : null}
-							{props.following.includes(item.uid) ? (
-								<Label text="Following" />
-							) : null}
-						</View>
-					</TouchableOpacity>
-				)}
-				ListEmptyComponent={() => (
-					<View style={styles.noResults}>
-						<Icon
-							name="account-off-outline"
-							size={80}
-							color="white"
-						/>
-						<Text style={globalStyles.noResultsText}>
-							No results
-						</Text>
-					</View>
-				)}
+				renderItem={renderItem}
+				ListEmptyComponent={ListEmptyComponent}
 			/>
 		</View>
 	);
@@ -144,10 +149,8 @@ const styles = StyleSheet.create({
 	},
 	noResults: {
 		flex: 1,
-		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 240,
 	},
 	result: {
 		flex: 1,

@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useCallback, Component, useEffect, useState } from "react";
 import {
 	FlatList,
 	View,
@@ -24,6 +24,36 @@ const Stack = createNativeStackNavigator();
 function Notifications(props: any) {
 	const navigation = useNavigation();
 
+	const renderItem = useCallback(
+		({ item }) => (
+			<TouchableOpacity
+				onPress={() => {
+					navigation.navigate(item.navPostID ? "Post" : "Profile", {
+						uid: item.navUID,
+						postID: item.navPostID,
+					});
+				}}
+			>
+				<View style={styles.notification}>
+					<Text style={globalStyles.bold}>{item.title}</Text>
+					<Text>{item.body}</Text>
+					<Text style={globalStyles.date}>{item.createdAt}</Text>
+				</View>
+			</TouchableOpacity>
+		),
+		[]
+	);
+
+	const ListEmptyComponent = useCallback(
+		() => (
+			<View style={styles.noResults}>
+				<Icon name="bell-off-outline" size={80} color="white" />
+				<Text style={globalStyles.noResultsText}>No notifications</Text>
+			</View>
+		),
+		[]
+	);
+
 	return (
 		<View style={globalStyles.container}>
 			<FlatList
@@ -32,37 +62,11 @@ function Notifications(props: any) {
 				data={props.notifications}
 				contentContainerStyle={{
 					gap: 5,
+					flexGrow: 1,
 				}}
 				style={styles.notifications}
-				renderItem={({ item }) => (
-					<TouchableOpacity
-						onPress={() => {
-							navigation.navigate(
-								item.navPostID ? "Post" : "Profile",
-								{
-									uid: item.navUID,
-									postID: item.navPostID,
-								}
-							);
-						}}
-					>
-						<View style={styles.notification}>
-							<Text style={globalStyles.bold}>{item.title}</Text>
-							<Text>{item.body}</Text>
-							<Text style={globalStyles.date}>
-								{item.createdAt}
-							</Text>
-						</View>
-					</TouchableOpacity>
-				)}
-				ListEmptyComponent={() => (
-					<View style={styles.noResults}>
-						<Icon name="bell-off-outline" size={80} color="white" />
-						<Text style={globalStyles.noResultsText}>
-							No notifications
-						</Text>
-					</View>
-				)}
+				renderItem={renderItem}
+				ListEmptyComponent={ListEmptyComponent}
 			/>
 		</View>
 	);
@@ -105,10 +109,8 @@ class NotificationsScreen extends Component {
 const styles = StyleSheet.create({
 	noResults: {
 		flex: 1,
-		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 250,
 	},
 	notifications: {
 		flex: 1,
