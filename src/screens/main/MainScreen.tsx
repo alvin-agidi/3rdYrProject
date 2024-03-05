@@ -102,7 +102,7 @@ export class Main extends Component {
 					}}
 				/>
 				<Tab.Screen
-					name="Your Profile"
+					name="ProfileScreen"
 					component={ProfileScreen}
 					options={{
 						tabBarIcon: ({ color, size = 25 }) => (
