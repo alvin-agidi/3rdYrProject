@@ -2,13 +2,13 @@ import React, { Component } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import "firebase/compat/firestore";
 import "firebase/compat/database";
 import MainScreen from "./src/screens/main/MainScreen";
 import { Provider } from "react-redux";
 import rootReducer from "./redux/reducers";
 import { configureStore } from "@reduxjs/toolkit";
 import { LandingScreen } from "./src/screens/auth/LandingScreen";
-
 
 const store = configureStore({
 	reducer: rootReducer,
@@ -26,6 +26,9 @@ const firebaseConfig = {
 
 if (firebase.apps.length === 0) {
 	firebase.initializeApp(firebaseConfig);
+	firebase
+		.firestore()
+		.settings({ experimentalAutoDetectLongPolling: true, merge: true });
 }
 
 export class App extends Component<{}, any> {
