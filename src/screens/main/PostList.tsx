@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
 	View,
 	Text,
@@ -21,10 +21,14 @@ import {
 import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
 import { connect } from "react-redux";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 export function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
+	const [videoRefs, setVideoRefs] = useState([]);
+	const videoRef = useRef(null);
+	const [isLoading, setIsLoading] = useState(true);
 
 	function addLikeInfo() {
 		setPosts((posts: any) =>
@@ -43,54 +47,63 @@ export function PostList(props: any) {
 	}
 
 	useEffect(() => {
-		if (
-			props.route.params &&
-			props.route.params.uid &&
-			props.route.params.postID
-		) {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.collection("posts")
-				.doc(props.route.params.postID)
-				.get()
-				.then((doc) => {
-					var data = doc.data();
-					data!.id = doc.id;
-					data!.createdAt = data!.createdAt.toDate().toISOString();
-					Promise.all([
-						fetchPostLikes(
-							props.route.params.uid,
-							props.route.params.postID
-						).then((likes) => {
-							data!.likes = likes;
-						}),
-						fetchFollowingUser(props.route.params.uid).then(
-							(user) => {
-								data!.user = user;
-							}
-						),
-						fetchPostExercises(
-							props.route.params.uid,
-							props.route.params.postID
-						).then((exercises) => {
-							data!.exercises = exercises;
-						}),
-					]).then(() => {
-						setPosts(() => [data]);
-						addLikeInfo();
-					});
+		(async () => {
+			setIsLoading(true);
+			if (
+				props.route.params &&
+				props.route.params.uid &&
+				props.route.params.postID
+			) {
+				await new Promise((resolve) => {
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(props.route.params.uid)
+						.collection("posts")
+						.doc(props.route.params.postID)
+						.get()
+						.then((doc) => {
+							var data = doc.data();
+							data!.id = doc.id;
+							data!.createdAt = data!.createdAt
+								.toDate()
+								.toISOString();
+							Promise.all([
+								fetchPostLikes(
+									props.route.params.uid,
+									props.route.params.postID
+								).then((likes) => {
+									data!.likes = likes;
+								}),
+								fetchFollowingUser(props.route.params.uid).then(
+									(user) => {
+										data!.user = user;
+									}
+								),
+								fetchPostExercises(
+									props.route.params.uid,
+									props.route.params.postID
+								).then((exercises) => {
+									data!.exercises = exercises;
+								}),
+							]).then(() => {
+								setPosts(() => [data]);
+								addLikeInfo();
+								resolve(null);
+							});
+						});
 				});
-		} else if (props.followingLoaded === props.following.length) {
-			setPosts(() => props.followingPosts);
-			addLikeInfo();
-			setPosts((posts: any) =>
-				posts.sort((x: any, y: any) => {
-					return y.createdAt.localeCompare(x.createdAt);
-				})
-			);
-		}
+			} else if (props.followingLoaded === props.following.length) {
+				setPosts(() => props.followingPosts);
+				addLikeInfo();
+				setPosts((posts: any) =>
+					posts.sort((x: any, y: any) => {
+						return y.createdAt.localeCompare(x.createdAt);
+					})
+				);
+			}
+			setIsLoading(false);
+		})();
 	}, [props.following, props.followingLoaded, props.followingPosts]);
 
 	function toggleLike(userID: string, postID: string, isLiked: boolean) {
@@ -141,146 +154,167 @@ export function PostList(props: any) {
 		);
 	}
 
+	const renderItem = useCallback(
+		({ item }) => (
+			<View style={styles.post}>
+				{item.isVideo ? (
+					<Video
+						ref={videoRef}
+						style={styles.media}
+						source={{ uri: item.mediaURL }}
+						resizeMode={ResizeMode.COVER}
+						shouldPlay
+						isLooping
+						isMuted
+					/>
+				) : (
+					<Image
+						style={styles.media}
+						source={{ uri: item.mediaURL }}
+					/>
+				)}
+				<View style={styles.postDesc}>
+					<View style={styles.postHeader}>
+						<View style={styles.postBanner}>
+							<TouchableOpacity
+								onPress={() => {
+									navigation.navigate("Profile", {
+										uid: item.user.uid,
+									});
+								}}
+								style={styles.postUsername}
+							>
+								<Text style={globalStyles.bold}>
+									{item.user.username}
+								</Text>
+							</TouchableOpacity>
+							{props.clients &&
+							props.clients.includes(item.user.uid) ? (
+								<Label text="Your client" />
+							) : null}
+							{props.PTs && props.PTs.includes(item.user.uid) ? (
+								<Label text="Your PT" />
+							) : null}
+							{item.exercisesDetected ? (
+								<TouchableOpacity
+									style={styles.postIconBox}
+									onPress={() => {
+										toggleShowRoutine(item.id);
+									}}
+								>
+									<Icon
+										name="dumbbell"
+										color="black"
+										size={30}
+									/>
+								</TouchableOpacity>
+							) : null}
+							<TouchableOpacity
+								style={styles.postIconBox}
+								onPress={() => {
+									navigation.navigate("Comments", {
+										postID: item.id,
+										uid: item.user.uid,
+									});
+								}}
+							>
+								<Icon
+									name="comment-outline"
+									size={30}
+									color="black"
+								/>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.postIconBox}
+								onPress={() => {
+									toggleLike(
+										item.user.uid,
+										item.id,
+										item.isLiked
+									);
+								}}
+							>
+								<Icon
+									name={
+										item.isLiked
+											? "cards-heart"
+											: "heart-outline"
+									}
+									color="black"
+									size={30}
+								/>
+
+								<Text style={styles.postIconText}>
+									{item.likeCount} like
+									{item.likeCount != 1 ? "s" : ""}
+								</Text>
+							</TouchableOpacity>
+						</View>
+						{item.showRoutine && item.exercisesDetected ? (
+							<View style={styles.postRoutineBox}>
+								<FlatList
+									horizontal={false}
+									numColumns={1}
+									data={item.exercises}
+									contentContainerStyle={{
+										gap: 5,
+										flexGrow: 1,
+									}}
+									style={globalStyles.labelList}
+									renderItem={({ item: exercise }) => (
+										<TouchableOpacity
+											onPress={async () => {
+												await videoRef.current.playFromPositionAsync(
+													exercise.start * 1000
+												);
+											}}
+										>
+											<Label
+												text={
+													exercise.exercise +
+													" @ " +
+													exercise.start +
+													"s"
+												}
+											/>
+										</TouchableOpacity>
+									)}
+								/>
+							</View>
+						) : null}
+					</View>
+					<Text>{item.caption}</Text>
+					<Text style={globalStyles.date}>
+						{new Date(item.createdAt).toLocaleString()}
+					</Text>
+				</View>
+			</View>
+		),
+		[]
+	);
+
+	const ListEmptyComponent = useCallback(
+		() =>
+			isLoading ? (
+				<LoadingIndicator />
+			) : (
+				<View style={styles.noResults}>
+					<Icon name="image-off-outline" size={80} color="white" />
+					<Text style={globalStyles.noResultsText}>No posts</Text>
+				</View>
+			),
+		[]
+	);
+
 	return (
 		<View style={styles.postList}>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
-				contentContainerStyle={{ gap: 5 }}
+				contentContainerStyle={{ gap: 5, flexGrow: 1 }}
 				data={posts}
-				renderItem={({ item }) => (
-					<View style={styles.post}>
-						{item.isVideo ? (
-							<Video
-								style={styles.media}
-								source={{ uri: item.mediaURL }}
-								resizeMode={ResizeMode.COVER}
-								shouldPlay
-								isLooping
-								isMuted
-							/>
-						) : (
-							<Image
-								style={styles.media}
-								source={{ uri: item.mediaURL }}
-							/>
-						)}
-						<View style={styles.postDesc}>
-							<View style={styles.postHeader}>
-								<View style={styles.postBanner}>
-									<TouchableOpacity
-										onPress={() => {
-											navigation.navigate("Profile", {
-												uid: item.user.uid,
-											});
-										}}
-										style={styles.postUsername}
-									>
-										<Text style={globalStyles.bold}>
-											{item.user.username}
-										</Text>
-									</TouchableOpacity>
-									{props.clients &&
-									props.clients.includes(item.user.uid) ? (
-										<Label text="Your client" />
-									) : null}
-									{props.PTs &&
-									props.PTs.includes(item.user.uid) ? (
-										<Label text="Your PT" />
-									) : null}
-									{item.exercisesDetected ? (
-										<TouchableOpacity
-											style={styles.postIconBox}
-											onPress={() => {
-												toggleShowRoutine(item.id);
-											}}
-										>
-											<Icon
-												name="dumbbell"
-												color="black"
-												size={30}
-											/>
-										</TouchableOpacity>
-									) : null}
-									<TouchableOpacity
-										style={styles.postIconBox}
-										onPress={() => {
-											navigation.navigate("Comments", {
-												postID: item.id,
-												uid: item.user.uid,
-											});
-										}}
-									>
-										<Icon
-											name="comment-outline"
-											size={30}
-											color="black"
-										/>
-									</TouchableOpacity>
-									<TouchableOpacity
-										style={styles.postIconBox}
-										onPress={() => {
-											toggleLike(
-												item.user.uid,
-												item.id,
-												item.isLiked
-											);
-										}}
-									>
-										<Icon
-											name={
-												item.isLiked
-													? "cards-heart"
-													: "heart-outline"
-											}
-											color="black"
-											size={30}
-										/>
-
-										<Text style={styles.postIconText}>
-											{item.likeCount} like
-											{item.likeCount != 1 ? "s" : ""}
-										</Text>
-									</TouchableOpacity>
-								</View>
-								{item.showRoutine && item.exercisesDetected ? (
-									<View style={styles.postRoutineBox}>
-										<FlatList
-											horizontal={false}
-											numColumns={1}
-											data={item.exercises}
-											contentContainerStyle={{
-												gap: 5,
-											}}
-											style={globalStyles.labelList}
-											renderItem={({
-												item: exercise,
-											}) => (
-												<Label
-													text={exercise.exercise}
-												/>
-											)}
-										/>
-									</View>
-								) : null}
-							</View>
-							<Text>{item.caption}</Text>
-							<Text style={globalStyles.date}>
-								{new Date(item.createdAt).toLocaleString()}
-							</Text>
-						</View>
-					</View>
-				)}
-				ListEmptyComponent={() => (
-					<View style={styles.noResults}>
-						<Icon
-							name="image-off-outline"
-							size={80}
-							color="white"
-						/>
-						<Text style={globalStyles.noResultsText}>No posts</Text>
-					</View>
-				)}
+				renderItem={renderItem}
+				ListEmptyComponent={ListEmptyComponent}
 			/>
 		</View>
 	);
@@ -352,10 +386,8 @@ const styles = StyleSheet.create({
 	},
 	noResults: {
 		flex: 1,
-		alignSelf: "stretch",
 		justifyContent: "center",
 		alignItems: "center",
-		marginTop: 250,
 	},
 });
 

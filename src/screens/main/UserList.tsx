@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	FlatList,
 	View,
@@ -17,10 +17,12 @@ import { useNavigation } from "@react-navigation/native";
 import { PressableButton } from "../../components/PressableButton";
 import { Label } from "../../components/Label";
 import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 export default function UserList(props: any) {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any>([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	function fetchPosts(uid: string) {
 		return new Promise((resolve) => {
@@ -98,12 +100,112 @@ export default function UserList(props: any) {
 	}
 
 	useEffect(() => {
-		Promise.all(
-			props.route.params.users.map((uid: string) => fetchUser(uid))
-		).then((users) => {
-			setUsers(users);
-		});
+		(async () => {
+			setIsLoading(true);
+			await Promise.all(
+				props.route.params.users.map((uid: string) => fetchUser(uid))
+			).then((users) => {
+				setUsers(users);
+			});
+			setIsLoading(false);
+		})();
 	}, [props.clients, props.PTs]);
+
+	const renderItem = useCallback(
+		({ item: user }) => (
+			<View style={styles.user}>
+				<View style={styles.username}>
+					<Text style={{ ...globalStyles.bold, fontSize: 25 }}>
+						{user.username}
+					</Text>
+				</View>
+				<FlatList
+					horizontal={false}
+					numColumns={1}
+					data={user.posts}
+					contentContainerStyle={{
+						gap: 5,
+					}}
+					style={styles.highlightPosts}
+					renderItem={({ item: post }) => (
+						<TouchableOpacity
+							onPress={() => {
+								navigation.navigate("Post", {
+									uid: user.uid,
+									postID: post.id,
+								});
+							}}
+						>
+							<View style={styles.highlightPost}>
+								<Image
+									source={{
+										uri: post.isVideo
+											? post.thumbnailURI
+											: post.mediaURL,
+									}}
+									style={styles.image}
+								/>
+								<View style={styles.highlightPostDesc}>
+									<Text style={styles.caption}>
+										{post.caption}
+									</Text>
+									<FlatList
+										horizontal={false}
+										numColumns={1}
+										data={post.exercises}
+										contentContainerStyle={{
+											gap: 5,
+										}}
+										style={globalStyles.labelList}
+										renderItem={({ item: exercise }) => (
+											<Label text={exercise.exercise} />
+										)}
+									/>
+									<Text style={globalStyles.date}>
+										{post.createdAt}
+									</Text>
+								</View>
+							</View>
+						</TouchableOpacity>
+					)}
+					ListEmptyComponent={() => (
+						<View style={styles.noResults}>
+							<Icon
+								name="camera-off-outline"
+								size={80}
+								color="white"
+							/>
+							<Text style={globalStyles.noResultsText}>
+								No posts
+							</Text>
+						</View>
+					)}
+				/>
+				<PressableButton
+					text="View profile"
+					onPress={() => {
+						navigation.navigate("Profile", {
+							uid: user.uid,
+						});
+					}}
+				/>
+			</View>
+		),
+		[]
+	);
+
+	const ListEmptyComponent = useCallback(
+		() =>
+			isLoading ? (
+				<LoadingIndicator />
+			) : (
+				<View style={styles.noResults}>
+					<Icon name="account-off-outline" size={80} color="white" />
+					<Text style={globalStyles.noResultsText}>No users</Text>
+				</View>
+			),
+		[isLoading]
+	);
 
 	return (
 		<View style={globalStyles.container}>
@@ -113,103 +215,11 @@ export default function UserList(props: any) {
 				data={users}
 				contentContainerStyle={{
 					gap: 5,
+					flexGrow: 1,
 				}}
 				style={styles.users}
-				renderItem={({ item: user }) => (
-					<View style={styles.user}>
-						<View style={styles.username}>
-							<Text
-								style={{ ...globalStyles.bold, fontSize: 25 }}
-							>
-								{user.username}
-							</Text>
-						</View>
-						<FlatList
-							horizontal={false}
-							numColumns={1}
-							data={user.posts}
-							contentContainerStyle={{
-								gap: 5,
-							}}
-							style={styles.highlightPosts}
-							renderItem={({ item: post }) => (
-								<TouchableOpacity
-									onPress={() => {
-										navigation.navigate("Post", {
-											uid: user.uid,
-											postID: post.id,
-										});
-									}}
-								>
-									<View style={styles.highlightPost}>
-										<Image
-											source={{
-												uri: post.isVideo
-													? post.thumbnailURI
-													: post.mediaURL,
-											}}
-											style={styles.image}
-										/>
-										<View style={styles.highlightPostDesc}>
-											<Text style={styles.caption}>
-												{post.caption}
-											</Text>
-											<FlatList
-												horizontal={false}
-												numColumns={1}
-												data={post.exercises}
-												contentContainerStyle={{
-													gap: 5,
-												}}
-												style={globalStyles.labelList}
-												renderItem={({
-													item: exercise,
-												}) => (
-													<Label
-														text={exercise.exercise}
-													/>
-												)}
-											/>
-											<Text style={globalStyles.date}>
-												{post.createdAt}
-											</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-							)}
-							ListEmptyComponent={() => (
-								<View style={styles.noResults}>
-									<Icon
-										name="camera-off-outline"
-										size={80}
-										color="white"
-									/>
-									<Text style={globalStyles.noResultsText}>
-										No posts
-									</Text>
-								</View>
-							)}
-						/>
-						{/* <PressableButton
-							text="View profile"
-							onPress={() => {
-								navigation.navigate("Profile", {
-									uid: user.uid,
-								});
-							}}
-						/> */}
-					</View>
-				)}
-				ListEmptyComponent={() => (
-					<View style={styles.noResults}>
-						<Icon
-							name="account-off-outline"
-							size={80}
-							color="white"
-						/>
-						<Text style={globalStyles.noResultsText}>No users</Text>
-					</View>
-				)}
+				renderItem={renderItem}
+				ListEmptyComponent={ListEmptyComponent}
 			/>
 		</View>
 	);
@@ -220,7 +230,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
-		margin: 10,
 	},
 	users: {
 		flex: 1,
