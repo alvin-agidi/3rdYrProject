@@ -26,9 +26,8 @@ import { LoadingIndicator } from "../../components/LoadingIndicator";
 export function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
-	const [videoRefs, setVideoRefs] = useState([]);
-	const videoRef = useRef(null);
 	const [isLoading, setIsLoading] = useState(true);
+	var videoRefs = {};
 
 	function addLikeInfo() {
 		setPosts((posts: any) =>
@@ -49,6 +48,7 @@ export function PostList(props: any) {
 	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
+			this.videoRefs = {};
 			if (
 				props.route.params &&
 				props.route.params.uid &&
@@ -89,6 +89,7 @@ export function PostList(props: any) {
 							]).then(() => {
 								setPosts(() => [data]);
 								addLikeInfo();
+								// addVideoRef();
 								resolve(null);
 							});
 						});
@@ -96,6 +97,7 @@ export function PostList(props: any) {
 			} else if (props.followingLoaded === props.following.length) {
 				setPosts(() => props.followingPosts);
 				addLikeInfo();
+				// addVideoRef();
 				setPosts((posts: any) =>
 					posts.sort((x: any, y: any) => {
 						return y.createdAt.localeCompare(x.createdAt);
@@ -159,7 +161,9 @@ export function PostList(props: any) {
 			<View style={styles.post}>
 				{item.isVideo ? (
 					<Video
-						ref={videoRef}
+						ref={(videoRef) => {
+							this.videoRefs[item.id] = videoRef;
+						}}
 						style={styles.media}
 						source={{ uri: item.mediaURL }}
 						resizeMode={ResizeMode.COVER}
@@ -264,7 +268,9 @@ export function PostList(props: any) {
 									renderItem={({ item: exercise }) => (
 										<TouchableOpacity
 											onPress={async () => {
-												await videoRef.current.playFromPositionAsync(
+												await this.videoRefs[
+													item.id
+												].playFromPositionAsync(
 													exercise.start * 1000
 												);
 											}}
