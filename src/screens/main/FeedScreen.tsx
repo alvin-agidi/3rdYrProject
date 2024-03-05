@@ -17,47 +17,47 @@ const appConfig = require("../../../app.json");
 const Stack = createNativeStackNavigator();
 
 export class FeedScreen extends Component {
-	async componentDidMount() {
-		var token;
+	// async componentDidMount() {
+	// 	var token;
 
-		if (Platform.OS === "android") {
-			await Notifications.setNotificationChannelAsync("default", {
-				name: "default",
-				importance: Notifications.AndroidImportance.MAX,
-				vibrationPattern: [0, 250, 250, 250],
-				lightColor: "#FF231F7C",
-			});
-		}
-		if (isDevice) {
-			const { status: existingStatus } =
-				await Notifications.getPermissionsAsync();
-			if (existingStatus !== "granted") {
-				const { status } =
-					await Notifications.requestPermissionsAsync();
-				if (status !== "granted") {
-					console.log(
-						"Failed to get push token for push notification!"
-					);
-					return;
-				}
-			}
-			const token = (
-				await Notifications.getExpoPushTokenAsync({
-					projectId: appConfig?.expo?.extra?.eas?.projectId,
-				})
-			).data;
-			// console.log(token);
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(firebase.auth().currentUser!.uid)
-				.collection("notificationTokens")
-				.doc(token)
-				.set({});
-		} else {
-			console.log("Must use physical device for Push Notifications");
-		}
-	}
+	// 	if (Platform.OS === "android") {
+	// 		await Notifications.setNotificationChannelAsync("default", {
+	// 			name: "default",
+	// 			importance: Notifications.AndroidImportance.MAX,
+	// 			vibrationPattern: [0, 250, 250, 250],
+	// 			lightColor: "#FF231F7C",
+	// 		});
+	// 	}
+	// 	if (isDevice) {
+	// 		const { status: existingStatus } =
+	// 			await Notifications.getPermissionsAsync();
+	// 		if (existingStatus !== "granted") {
+	// 			const { status } =
+	// 				await Notifications.requestPermissionsAsync();
+	// 			if (status !== "granted") {
+	// 				console.log(
+	// 					"Failed to get push token for push notification!"
+	// 				);
+	// 				return;
+	// 			}
+	// 		}
+	// 		const token = (
+	// 			await Notifications.getExpoPushTokenAsync({
+	// 				projectId: appConfig?.expo?.extra?.eas?.projectId,
+	// 			})
+	// 		).data;
+	// 		// console.log(token);
+	// 		firebase
+	// 			.firestore()
+	// 			.collection("users")
+	// 			.doc(firebase.auth().currentUser!.uid)
+	// 			.collection("notificationTokens")
+	// 			.doc(token)
+	// 			.set({});
+	// 	} else {
+	// 		console.log("Must use physical device for Push Notifications");
+	// 	}
+	// }
 
 	render() {
 		return (
@@ -93,9 +93,6 @@ export class FeedScreen extends Component {
 }
 
 const mapStateToProps = (store: any) => ({
-	following: store.userState.following,
-	followingLoaded: store.followingState.followingLoaded,
-	followingPosts: store.followingState.followingPosts,
 	clients: store.userState.clients,
 	PTs: store.userState.PTs,
 });
