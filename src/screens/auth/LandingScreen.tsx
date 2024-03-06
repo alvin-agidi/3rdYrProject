@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/core";
 import { SignInScreen } from "./SignInScreen";
 import { RegisterScreen } from "./RegisterScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import styles from "../../globalStyles";
+import globalStyles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 
 const Stack = createNativeStackNavigator();
@@ -12,8 +12,8 @@ const Stack = createNativeStackNavigator();
 function Landing() {
 	const navigation = useNavigation();
 	return (
-		<View style={{ ...styles.container, justifyContent: "center" }}>
-			<Text style={styles.logo}>ΛCTIV</Text>
+		<View style={{ ...globalStyles.container, justifyContent: "center" }}>
+			<Text style={globalStyles.logo}>ΛCTIV</Text>
 			<PressableButton
 				onPress={() => navigation.navigate("Register")}
 				text="Register"

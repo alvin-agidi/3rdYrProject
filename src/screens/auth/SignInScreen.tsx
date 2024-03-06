@@ -6,6 +6,7 @@ import "firebase/compat/database";
 import styles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
 import { ValidatedTextField } from "../../components/ValidatedTextField";
+import globalStyles from "../../globalStyles";
 
 export class SignInScreen extends Component<{}, any> {
 	constructor(props: any) {
@@ -31,6 +32,7 @@ export class SignInScreen extends Component<{}, any> {
 	render() {
 		return (
 			<View style={styles.container}>
+				<Text style={globalStyles.logo}>ΛCTIV</Text>
 				<ValidatedTextField
 					placeholder="Email"
 					inputMode="email"
