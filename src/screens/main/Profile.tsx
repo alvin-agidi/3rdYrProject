@@ -323,7 +323,7 @@ function Profile(props: any) {
 			isLoading ? (
 				<LoadingIndicator />
 			) : (
-				<View style={styles.noResults}>
+				<View style={globalStyles.noResults}>
 					<Icon name="image-off-outline" size={80} color="white" />
 					<Text style={globalStyles.noResultsText}>No posts</Text>
 				</View>
@@ -451,11 +451,6 @@ const styles = StyleSheet.create({
 		flex: 1,
 		aspectRatio: 1 / 1,
 		borderRadius: 5,
-	},
-	noResults: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
 	},
 });
 

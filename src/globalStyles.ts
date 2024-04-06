@@ -40,6 +40,11 @@ export default StyleSheet.create({
 		justifyContent: "flex-end",
 		color: "grey",
 	},
+	noResults: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+	},
 	noResultsText: {
 		textAlign: "center",
 		color: "white",

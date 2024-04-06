@@ -125,6 +125,7 @@ export default function UserList(props: any) {
 					data={user.posts}
 					contentContainerStyle={{
 						gap: 5,
+						flexGrow: 1,
 					}}
 					style={styles.highlightPosts}
 					renderItem={({ item: post }) => (
@@ -169,7 +170,7 @@ export default function UserList(props: any) {
 						</TouchableOpacity>
 					)}
 					ListEmptyComponent={() => (
-						<View style={styles.noResults}>
+						<View style={globalStyles.noResults}>
 							<Icon
 								name="camera-off-outline"
 								size={80}
@@ -199,7 +200,7 @@ export default function UserList(props: any) {
 			isLoading ? (
 				<LoadingIndicator />
 			) : (
-				<View style={styles.noResults}>
+				<View style={globalStyles.noResults}>
 					<Icon name="account-off-outline" size={80} color="white" />
 					<Text style={globalStyles.noResultsText}>No users</Text>
 				</View>
@@ -226,11 +227,6 @@ export default function UserList(props: any) {
 }
 
 const styles = StyleSheet.create({
-	noResults: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
 	users: {
 		flex: 1,
 		padding: 5,

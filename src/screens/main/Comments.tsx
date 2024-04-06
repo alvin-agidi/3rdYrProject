@@ -120,7 +120,7 @@ export default function Comments(props: any) {
 
 	const ListEmptyComponent = useCallback(
 		() => (
-			<View style={styles.noResults}>
+			<View style={globalStyles.noResults}>
 				<Icon name="comment-off-outline" size={80} color="white" />
 				<Text style={globalStyles.noResultsText}>No comments</Text>
 			</View>
@@ -158,11 +158,6 @@ export default function Comments(props: any) {
 }
 
 const styles = StyleSheet.create({
-	noResults: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
 	comments: {
 		flex: 1,
 		padding: 5,

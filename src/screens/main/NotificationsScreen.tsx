@@ -46,7 +46,7 @@ function Notifications(props: any) {
 
 	const ListEmptyComponent = useCallback(
 		() => (
-			<View style={styles.noResults}>
+			<View style={globalStyles.noResults}>
 				<Icon name="bell-off-outline" size={80} color="white" />
 				<Text style={globalStyles.noResultsText}>No notifications</Text>
 			</View>
@@ -107,11 +107,6 @@ class NotificationsScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-	noResults: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
-	},
 	notifications: {
 		flex: 1,
 		padding: 5,

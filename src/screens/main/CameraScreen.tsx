@@ -59,7 +59,7 @@ function CameraComponent() {
 		hasMicrophonePermission === undefined
 	) {
 		return (
-			<View style={styles.noResults}>
+			<View style={globalStyles.noResults}>
 				<Icon name="camera-outline" size={80} color="white" />
 				<Text style={globalStyles.noResultsText}>
 					Requesting camera permissions
@@ -68,7 +68,7 @@ function CameraComponent() {
 		);
 	} else if (!hasCameraPermission) {
 		return (
-			<View style={styles.noResults}>
+			<View style={globalStyles.noResults}>
 				<Icon name="camera-off-outline" size={80} color="white" />
 				<Text style={globalStyles.noResultsText}>
 					No camera permissions
@@ -281,11 +281,5 @@ const styles = StyleSheet.create({
 		flex: 1,
 		alignSelf: "stretch",
 		borderRadius: 5,
-	},
-	noResults: {
-		flex: 1,
-		alignSelf: "stretch",
-		justifyContent: "center",
-		alignItems: "center",
 	},
 });
