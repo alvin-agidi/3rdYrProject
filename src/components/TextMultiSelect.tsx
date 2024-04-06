@@ -7,7 +7,12 @@ import {
 	Text,
 } from "react-native";
 
-export function TextToggle(props: any): JSX.Element {
+export function TextMultiSelect(props: {
+	selected: any[];
+	setSelected: any;
+	onPress: any;
+	options: any[];
+}): JSX.Element {
 	useEffect(() => {
 		props.onPress();
 	}, [props.selected]);
@@ -18,6 +23,7 @@ export function TextToggle(props: any): JSX.Element {
 			horizontal={true}
 			numColumns={1}
 			data={props.options}
+			extraData={props.selected}
 			contentContainerStyle={{
 				gap: 5,
 			}}
@@ -25,13 +31,18 @@ export function TextToggle(props: any): JSX.Element {
 			renderItem={({ item, index }) => (
 				<TouchableOpacity
 					onPress={() => {
-						props.setSelected(index);
+						props.setSelected((selected: any) => {
+							selected.indexOf(index) === -1
+								? selected.push(index)
+								: selected.splice(selected.indexOf(index), 1);
+							return [...selected];
+						});
 					}}
 				>
 					<View
 						style={{
 							...styles.btn,
-							...(index == props.selected
+							...(props.selected.includes(index)
 								? styles.selected
 								: null),
 						}}
