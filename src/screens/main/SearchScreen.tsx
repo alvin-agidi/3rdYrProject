@@ -14,32 +14,121 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import { TextField } from "../../components/TextField";
+import { TextToggle } from "../../components/TextToggle";
 import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
 import Profile from "./Profile";
 import PostList from "./PostList";
 import Comments from "./Comments";
 import UserList from "./UserList";
+import { PostSummaryList } from "./PostSummaryList";
+import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 
 const Stack = createNativeStackNavigator();
 
 function Search(props: any) {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any>([]);
+	const [posts, setPosts] = useState<any>([]);
+	const [queryString, setQueryString] = useState("");
+	const [selected, setSelected] = useState(0);
+	const searchOptions = ["Users", "Posts"];
+	const searchOptionIcons = ["account-off-outline", "image-off-outline"];
+	const searchFunctions = [fetchUsers, fetchPosts];
 
 	function fetchUsers(queryString: string): void {
-		if (!queryString) return setUsers([]);
+		setUsers([]);
+		if (!queryString) return;
 		firebase
 			.firestore()
 			.collection("users")
 			.where("username", ">=", queryString)
 			.where("username", "<=", queryString + "~")
-			.onSnapshot((snapshot) => {
+			.get()
+			.then((snapshot) => {
 				var users = snapshot.docs.map((doc) => {
 					const uid = doc.id;
 					return { uid, ...doc.data() };
 				});
 				setUsers(users);
+			});
+	}
+
+	// async function fetchPosts(): Promise<void> {
+	// 	if (!queryString) return setPosts([]);
+	// 	const posts = await new Promise((resolve) => {
+	// 		firebase
+	// 			.firestore()
+	// 			.collection("users")
+	// 			.get()
+	// 			.then(async (snapshot) => {
+	// 				snapshot.docs.map(async (user) => {
+	// 					firebase
+	// 						.firestore()
+	// 						.collection("users")
+	// 						.doc(user.id)
+	// 						.collection("posts")
+	// 						// .where("caption", ">=", queryString)
+	// 						// .where("caption", "<=", queryString + "~")
+	// 						.get()
+	// 						.then(async (snapshot) => {
+	// 							var posts = await Promise.all(
+	// 								snapshot.docs.map(async (doc) => {
+	// 									var post = doc.data();
+	// 									// post.uid = user.id;
+	// 									// console.log(user.id);
+	// 									// // post.exercises =
+	// 									// // 	await fetchPostExercises(
+	// 									// // 		user.id,
+	// 									// // 		post.id
+	// 									// // 	);
+	// 									// if (
+	// 									// 	post.isVideo &&
+	// 									// 	!post.thumbnailURI
+	// 									// ) {
+	// 									// 	post.thumbnailURI =
+	// 									// 		await generateThumbnail(
+	// 									// 			post.mediaURL
+	// 									// 		);
+	// 									// }
+	// 									return post;
+	// 								})
+	// 							);
+	// 							resolve(posts);
+	// 						});
+	// 				});
+	// 			});
+	// 	});
+	// 	setPosts(posts);
+	// }
+
+	async function fetchPosts(queryString: string): Promise<void> {
+		setPosts([]);
+		if (!queryString) return;
+		firebase
+			.firestore()
+			.collection("users")
+			.get()
+			.then((snapshot) => {
+				snapshot.docs.map((user) => {
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(user.id)
+						.collection("posts")
+						.where("caption", ">=", queryString)
+						.where("caption", "<=", queryString + "~")
+						.get()
+						.then((snapshot) => {
+							const newPosts = snapshot.docs.map((doc) => {
+								var data = doc.data();
+								data!.id = doc.id;
+								data!.createdAt = data!.createdAt.toDate();
+								return data;
+							});
+							setPosts((posts: any) => [...posts, ...newPosts]);
+						});
+				});
 			});
 	}
 
@@ -75,8 +164,12 @@ function Search(props: any) {
 
 	const ListEmptyComponent = useCallback(
 		() => (
-			<View style={styles.noResults}>
-				<Icon name="account-off-outline" size={80} color="white" />
+			<View style={globalStyles.noResults}>
+				<Icon
+					name={searchOptionIcons[selected]}
+					size={80}
+					color="white"
+				/>
 				<Text style={globalStyles.noResultsText}>No results</Text>
 			</View>
 		),
@@ -86,23 +179,38 @@ function Search(props: any) {
 	return (
 		<View style={globalStyles.container}>
 			<TextField
-				placeholder="Search users"
-				onChangeText={(queryString: any) => fetchUsers(queryString)}
+				placeholder={"Search " + searchOptions[selected].toLowerCase()}
+				onChangeText={(string: any) => {
+					setQueryString(string);
+					searchFunctions[selected](string);
+				}}
 				style={globalStyles.textInput}
 				iconName="magnify"
 			/>
-			<FlatList
-				horizontal={false}
-				numColumns={1}
-				data={users}
-				style={styles.results}
-				contentContainerStyle={{
-					gap: 2,
-					flexGrow: 1,
+			<TextToggle
+				options={searchOptions}
+				selected={selected}
+				setSelected={setSelected}
+				onPress={() => {
+					searchFunctions[selected](queryString);
 				}}
-				renderItem={renderItem}
-				ListEmptyComponent={ListEmptyComponent}
 			/>
+			{selected == 0 ? (
+				<FlatList
+					horizontal={false}
+					numColumns={1}
+					data={users}
+					style={styles.results}
+					contentContainerStyle={{
+						gap: 2,
+						flexGrow: 1,
+					}}
+					renderItem={renderItem}
+					ListEmptyComponent={ListEmptyComponent}
+				/>
+			) : (
+				<PostSummaryList posts={posts} />
+			)}
 		</View>
 	);
 }
@@ -146,11 +254,6 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		backgroundColor: "lightgrey",
 		flexDirection: "column",
-	},
-	noResults: {
-		flex: 1,
-		justifyContent: "center",
-		alignItems: "center",
 	},
 	result: {
 		flex: 1,
