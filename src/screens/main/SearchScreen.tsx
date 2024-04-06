@@ -28,7 +28,6 @@ import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
 import { TextMultiSelect } from "../../components/TextMultiSelect";
-import { escapeLeadingUnderscores, resolveModuleName } from "typescript";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,7 +39,6 @@ function Search(props: any) {
 	const [queryString, setQueryString] = useState("");
 	const [selected, setSelected] = useState(0);
 	const searchOptions = ["Users", "Posts"];
-	const searchOptionIcons = ["account-off-outline", "image-off-outline"];
 	const searchFunctions = [fetchUsers, fetchPosts];
 	const [selectedExercises, setSelectedExercises] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -69,8 +67,6 @@ function Search(props: any) {
 		return new Promise(async (resolve) => {
 			setPosts([]);
 			setFilteredPosts([]);
-			// console.log(queryString);
-			// console.log(selectedExercises);
 			if (!queryString && !selectedExercises.length) return resolve();
 			setIsLoading(true);
 
@@ -128,8 +124,6 @@ function Search(props: any) {
 					);
 				}
 			}
-
-			// console.log("fetching new posts");
 
 			setPosts(posts);
 			setFilteredPosts(filterPosts(posts));
@@ -189,11 +183,11 @@ function Search(props: any) {
 			) : (
 				<View style={globalStyles.noResults}>
 					<Icon
-						name={searchOptionIcons[selected]}
+						name={"account-off-outline"}
 						size={80}
 						color="white"
 					/>
-					<Text style={globalStyles.noResultsText}>No results</Text>
+					<Text style={globalStyles.noResultsText}>No users</Text>
 				</View>
 			),
 		[isLoading]
