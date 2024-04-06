@@ -13,6 +13,7 @@ import "firebase/compat/firestore";
 import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
 import { useNavigation } from "@react-navigation/native";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 export function PostSummaryList(props: any) {
 	const navigation = useNavigation();
@@ -20,12 +21,12 @@ export function PostSummaryList(props: any) {
 	const renderItem = useCallback(
 		({ item: post }) => (
 			<TouchableOpacity
-			// onPress={() => {
-			// 	navigation.navigate("Post", {
-			// 		uid: post.uid,
-			// 		postID: post.id,
-			// 	});
-			// }}
+				onPress={() => {
+					navigation.navigate("Post", {
+						uid: post.uid,
+						postID: post.id,
+					});
+				}}
 			>
 				<View style={styles.highlightPost}>
 					<Image
@@ -38,7 +39,7 @@ export function PostSummaryList(props: any) {
 					/>
 					<View style={styles.highlightPostDesc}>
 						<Text style={styles.caption}>{post.caption}</Text>
-						{/* <FlatList
+						<FlatList
 							horizontal={false}
 							numColumns={1}
 							data={post.exercises}
@@ -49,7 +50,7 @@ export function PostSummaryList(props: any) {
 							renderItem={({ item: exercise }) => (
 								<Label text={exercise.exercise} />
 							)}
-						/> */}
+						/>
 						<Text style={globalStyles.date}>
 							{post.createdAt.toLocaleString()}
 						</Text>
@@ -61,13 +62,16 @@ export function PostSummaryList(props: any) {
 	);
 
 	const ListEmptyComponent = useCallback(
-		() => (
-			<View style={globalStyles.noResults}>
-				<Icon name="image-off-outline" size={80} color="white" />
-				<Text style={globalStyles.noResultsText}>No posts</Text>
-			</View>
-		),
-		[]
+		() =>
+			props.isLoading ? (
+				<LoadingIndicator />
+			) : (
+				<View style={globalStyles.noResults}>
+					<Icon name="image-off-outline" size={80} color="white" />
+					<Text style={globalStyles.noResultsText}>No posts</Text>
+				</View>
+			),
+		[props.isLoading]
 	);
 
 	return (
@@ -93,10 +97,10 @@ const styles = StyleSheet.create({
 		width: 100,
 	},
 	highlightPosts: {
-		gap: 2,
+		flex: 1,
+		alignSelf: "stretch",
 		borderRadius: 10,
 		backgroundColor: "lightgrey",
-		alignSelf: "stretch",
 	},
 	highlightPost: {
 		padding: 5,
