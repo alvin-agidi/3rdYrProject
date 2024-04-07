@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
 	StyleSheet,
 	FlatList,
@@ -7,60 +7,69 @@ import {
 	Text,
 } from "react-native";
 
-export function TextMultiSelect(props: {
-	selected: any[];
-	setSelected: any;
-	onPress: any;
-	options: any[];
-}): JSX.Element {
+export function TextMultiSelect(props: any): JSX.Element {
 	useEffect(() => {
 		props.onPress();
 	}, [props.selected]);
 
 	return (
-		<FlatList
-			{...props}
-			horizontal={true}
-			numColumns={1}
-			data={props.options}
-			extraData={props.selected}
-			contentContainerStyle={{
-				gap: 5,
-			}}
-			style={styles.textToggle}
-			renderItem={({ item, index }) => (
-				<TouchableOpacity
-					onPress={() => {
-						props.setSelected((selected: any) => {
-							selected.indexOf(index) === -1
-								? selected.push(index)
-								: selected.splice(selected.indexOf(index), 1);
-							return [...selected];
-						});
-					}}
-				>
-					<View
-						style={{
-							...styles.btn,
-							...(props.selected.includes(index)
-								? styles.selected
-								: null),
+		<View style={styles.textMultiSelect}>
+			{props.label ? (
+				<Text style={styles.label}>{props.label}</Text>
+			) : null}
+			<FlatList
+				{...props}
+				horizontal={true}
+				numColumns={1}
+				data={props.options}
+				extraData={props.selected}
+				contentContainerStyle={{
+					gap: 5,
+				}}
+				renderItem={({ item, index }) => (
+					<TouchableOpacity
+						onPress={() => {
+							props.setSelected((selected: any) => {
+								selected.indexOf(index) === -1
+									? selected.push(index)
+									: selected.splice(
+											selected.indexOf(index),
+											1
+									  );
+								return [...selected];
+							});
 						}}
 					>
-						<Text style={styles.text}>{item}</Text>
-					</View>
-				</TouchableOpacity>
-			)}
-		/>
+						<View
+							style={{
+								...styles.btn,
+								...(props.selected.includes(index)
+									? styles.selected
+									: null),
+							}}
+						>
+							<Text style={styles.text}>{item}</Text>
+						</View>
+					</TouchableOpacity>
+				)}
+			/>
+		</View>
 	);
 }
 
 const styles = StyleSheet.create({
-	textToggle: {
+	textMultiSelect: {
 		backgroundColor: "white",
 		padding: 5,
 		borderRadius: 10,
-		flexGrow: 0,
+		gap: 5,
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	label: {
+		fontSize: 15,
+		fontWeight: "bold",
+		color: "deepskyblue",
 	},
 	text: {
 		fontSize: 15,

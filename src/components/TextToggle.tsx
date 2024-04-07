@@ -13,34 +13,38 @@ export function TextToggle(props: any): JSX.Element {
 	}, [props.selected]);
 
 	return (
-		<FlatList
-			{...props}
-			horizontal={true}
-			numColumns={1}
-			data={props.options}
-			contentContainerStyle={{
-				gap: 5,
-			}}
-			style={styles.textToggle}
-			renderItem={({ item, index }) => (
-				<TouchableOpacity
-					onPress={() => {
-						props.setSelected(index);
-					}}
-				>
-					<View
-						style={{
-							...styles.btn,
-							...(index == props.selected
-								? styles.selected
-								: null),
+		<View style={styles.textToggle}>
+			{props.label ? (
+				<Text style={styles.label}>{props.label}</Text>
+			) : null}
+			<FlatList
+				{...props}
+				horizontal={true}
+				numColumns={1}
+				data={props.options}
+				contentContainerStyle={{
+					gap: 5,
+				}}
+				renderItem={({ item, index }) => (
+					<TouchableOpacity
+						onPress={() => {
+							props.setSelected(index);
 						}}
 					>
-						<Text style={styles.text}>{item}</Text>
-					</View>
-				</TouchableOpacity>
-			)}
-		/>
+						<View
+							style={{
+								...styles.btn,
+								...(index == props.selected
+									? styles.selected
+									: null),
+							}}
+						>
+							<Text style={styles.text}>{item}</Text>
+						</View>
+					</TouchableOpacity>
+				)}
+			/>
+		</View>
 	);
 }
 
@@ -49,7 +53,14 @@ const styles = StyleSheet.create({
 		backgroundColor: "white",
 		padding: 5,
 		borderRadius: 10,
-		flexGrow: 0,
+		gap: 5,
+		flexDirection: "row",
+		alignItems: "center",
+	},
+	label: {
+		fontSize: 15,
+		fontWeight: "bold",
+		color: "deepskyblue",
 	},
 	text: {
 		fontSize: 15,
