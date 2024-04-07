@@ -14,6 +14,7 @@ import globalStyles from "../../globalStyles";
 import { Label } from "../../components/Label";
 import { useNavigation } from "@react-navigation/native";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
+import { NoResults } from "../../components/NoResults";
 
 export function PostSummaryList(props: any) {
 	const navigation = useNavigation();
@@ -66,10 +67,7 @@ export function PostSummaryList(props: any) {
 			props.isLoading ? (
 				<LoadingIndicator />
 			) : (
-				<View style={globalStyles.noResults}>
-					<Icon name="image-off-outline" size={80} color="white" />
-					<Text style={globalStyles.noResultsText}>No posts</Text>
-				</View>
+				<NoResults icon="image-off-outline" text="No posts" />
 			),
 		[props.isLoading]
 	);

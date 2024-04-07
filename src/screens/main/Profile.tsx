@@ -18,6 +18,7 @@ import { Label } from "../../components/Label";
 import { generateThumbnail } from "../../../redux/actions";
 import { connect } from "react-redux";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
+import { NoResults } from "../../components/NoResults";
 
 function Profile(props: any) {
 	const navigation = useNavigation();
@@ -323,10 +324,7 @@ function Profile(props: any) {
 			isLoading ? (
 				<LoadingIndicator />
 			) : (
-				<View style={globalStyles.noResults}>
-					<Icon name="image-off-outline" size={80} color="white" />
-					<Text style={globalStyles.noResultsText}>No posts</Text>
-				</View>
+				<NoResults icon="image-off-outline" text="No posts" />
 			),
 		[isLoading]
 	);

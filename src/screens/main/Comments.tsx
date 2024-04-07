@@ -10,13 +10,14 @@ import {
 } from "react-native";
 import firebase from "firebase/compat/app";
 import globalStyles from "../../globalStyles";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { TextField } from "../../components/TextField";
 import { PressableButton } from "../../components/PressableButton";
 import { useNavigation } from "@react-navigation/native";
+import { NoResults } from "../../components/NoResults";
 
 export default function Comments(props: any) {
 	const navigation = useNavigation();
@@ -119,12 +120,7 @@ export default function Comments(props: any) {
 	);
 
 	const ListEmptyComponent = useCallback(
-		() => (
-			<View style={globalStyles.noResults}>
-				<Icon name="comment-off-outline" size={80} color="white" />
-				<Text style={globalStyles.noResultsText}>No comments</Text>
-			</View>
-		),
+		() => <NoResults icon="comment-off-outline" text="No comments" />,
 		[]
 	);
 	return (

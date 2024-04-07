@@ -21,6 +21,7 @@ import Comments from "./Comments";
 import UserList from "./UserList";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
+import { NoResults } from "../../components/NoResults";
 
 const Stack = createNativeStackNavigator();
 
@@ -69,12 +70,7 @@ function Notifications(props: any) {
 	);
 
 	const ListEmptyComponent = useCallback(
-		() => (
-			<View style={globalStyles.noResults}>
-				<Icon name="bell-off-outline" size={80} color="white" />
-				<Text style={globalStyles.noResultsText}>No notifications</Text>
-			</View>
-		),
+		() => <NoResults icon="bell-off-outline" text="No notifications" />,
 		[]
 	);
 

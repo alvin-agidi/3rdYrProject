@@ -19,6 +19,7 @@ import { Label } from "../../components/Label";
 import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { PostSummaryList } from "./PostSummaryList";
+import { NoResults } from "../../components/NoResults";
 
 export default function UserList(props: any) {
 	const navigation = useNavigation();
@@ -139,10 +140,7 @@ export default function UserList(props: any) {
 			isLoading ? (
 				<LoadingIndicator />
 			) : (
-				<View style={globalStyles.noResults}>
-					<Icon name="account-off-outline" size={80} color="white" />
-					<Text style={globalStyles.noResultsText}>No users</Text>
-				</View>
+				<NoResults icon="account-off-outline" text="No users" />
 			),
 		[isLoading]
 	);
