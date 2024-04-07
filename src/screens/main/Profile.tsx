@@ -17,6 +17,7 @@ import { generateThumbnail } from "../../../redux/actions";
 import { connect } from "react-redux";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { NoResults } from "../../components/NoResults";
+import UserSummary from "./UserSummary";
 
 function Profile(props: any) {
 	const navigation = useNavigation();
@@ -327,14 +328,9 @@ function Profile(props: any) {
 		[isLoading]
 	);
 
-	if (user === undefined) return <View />;
 	return (
 		<View style={styles.profile}>
-			<View style={styles.usernameBox}>
-				<Text style={styles.username}>{user.username}</Text>
-				{isCurrentUser ? <Label text="You" /> : null}
-				{user.isPT ? <Label text="PT" /> : null}
-			</View>
+			<UserSummary uid={props.route.params.uid} />
 			<View style={styles.infoBox}>
 				<Text style={styles.info}>
 					{followers.length} follower
@@ -367,19 +363,32 @@ function Profile(props: any) {
 			) : (
 				<PressableButton
 					onPress={toggleFollow}
-					text={isFollowing ? "Following" : "Follow"}
+					backgroundColor={isFollowing ? "grey" : "deepskyblue"}
+					text={isFollowing ? "Unfollow" : "Follow"}
 				/>
 			)}
 			{props.currentUser.isPT && !isCurrentUser ? (
 				<PressableButton
 					onPress={toggleIsClient}
+					backgroundColor={isClient ? "grey" : "deepskyblue"}
 					text={isClient ? "Remove as client" : "Add as client"}
 				/>
 			) : null}
 			{isMyPT ? (
 				<PressableButton
 					onPress={toggleIsMyPT}
+					backgroundColor="red"
 					text="Remove as my PT"
+				/>
+			) : null}
+			{!isCurrentUser ? (
+				<PressableButton
+					onPress={() =>
+						navigation.navigate("Chat", {
+							uid: props.route.params.uid,
+						})
+					}
+					text="Message"
 				/>
 			) : null}
 			<FlatList
