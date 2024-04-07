@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, TextInput, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import globalStyles from "../globalStyles";
+import { PressableButton } from "./PressableButton";
 
 export function TextField(props: any): JSX.Element {
 	const [color, setColor] = useState("skyblue");
@@ -19,14 +20,20 @@ export function TextField(props: any): JSX.Element {
 				}}
 				onFocus={() => setColor("deepskyblue")}
 			/>
+			{props.buttonText ? (
+				<PressableButton
+					text={props.buttonText}
+					onPress={props.onPressButton}
+				/>
+			) : null}
 		</View>
 	);
 }
 
 const styles = StyleSheet.create({
 	textField: {
-		gap: 5,
 		flexDirection: "row",
+		gap: 5,
 		alignItems: "center",
 	},
 });
