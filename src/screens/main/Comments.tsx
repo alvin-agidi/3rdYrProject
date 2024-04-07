@@ -18,12 +18,14 @@ import { TextField } from "../../components/TextField";
 import { PressableButton } from "../../components/PressableButton";
 import { useNavigation } from "@react-navigation/native";
 import { NoResults } from "../../components/NoResults";
+import { LoadingIndicator } from "../../components/LoadingIndicator";
 
 export default function Comments(props: any) {
 	const navigation = useNavigation();
 	const [comments, setComments] = useState<any>([]);
 	const [text, setText] = useState("");
 	const [postID, setPostID] = useState("");
+	const [isLoading, setIsLoading] = useState(false);
 
 	function sendComment() {
 		if (text) {
@@ -90,7 +92,9 @@ export default function Comments(props: any) {
 							.toLocaleString();
 						return { id, ...data, createdAt };
 					});
+					setIsLoading(true);
 					fetchCommentCreators(comments);
+					setIsLoading(false);
 				});
 			setPostID(props.route.params.postID);
 		}
@@ -120,7 +124,12 @@ export default function Comments(props: any) {
 	);
 
 	const ListEmptyComponent = useCallback(
-		() => <NoResults icon="comment-off-outline" text="No comments" />,
+		() =>
+			isLoading ? (
+				<LoadingIndicator />
+			) : (
+				<NoResults icon="comment-off-outline" text="No comments" />
+			),
 		[]
 	);
 	return (
@@ -144,11 +153,13 @@ export default function Comments(props: any) {
 			<TextField
 				placeholder="Comment"
 				iconName="comment-outline"
+				multiline={true}
 				onChangeText={(text: string) => {
 					setText(text);
 				}}
+				buttonText="Send"
+				onPressButton={sendComment}
 			/>
-			<PressableButton text="Send" onPress={sendComment} />
 		</KeyboardAvoidingView>
 	);
 }
@@ -172,6 +183,5 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: "row",
 		gap: 5,
-		alignContent: "center",
 	},
 });
