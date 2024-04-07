@@ -18,6 +18,7 @@ import { PressableButton } from "../../components/PressableButton";
 import { Label } from "../../components/Label";
 import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
+import { PostSummaryList } from "./PostSummaryList";
 
 export default function UserList(props: any) {
 	const navigation = useNavigation();
@@ -41,12 +42,12 @@ export default function UserList(props: any) {
 							snapshot.docs.map((doc) => {
 								const id = doc.id;
 								const data = doc.data();
+								data.uid = uid;
 								const createdAt = (
 									data.createdAt ??
 									firebase.firestore.Timestamp.now()
-								)
-									.toDate()
-									.toLocaleString();
+								).toDate();
+								// .toLocaleString();
 								return {
 									id,
 									...data,
@@ -119,69 +120,7 @@ export default function UserList(props: any) {
 						{user.username}
 					</Text>
 				</View>
-				<FlatList
-					horizontal={false}
-					numColumns={1}
-					data={user.posts}
-					contentContainerStyle={{
-						gap: 5,
-						flexGrow: 1,
-					}}
-					style={styles.highlightPosts}
-					renderItem={({ item: post }) => (
-						<TouchableOpacity
-							onPress={() => {
-								navigation.navigate("Post", {
-									uid: user.uid,
-									postID: post.id,
-								});
-							}}
-						>
-							<View style={styles.highlightPost}>
-								<Image
-									source={{
-										uri: post.isVideo
-											? post.thumbnailURI
-											: post.mediaURL,
-									}}
-									style={styles.image}
-								/>
-								<View style={styles.highlightPostDesc}>
-									<Text style={styles.caption}>
-										{post.caption}
-									</Text>
-									<FlatList
-										horizontal={false}
-										numColumns={1}
-										data={post.exercises}
-										contentContainerStyle={{
-											gap: 5,
-										}}
-										style={globalStyles.labelList}
-										renderItem={({ item: exercise }) => (
-											<Label text={exercise.exercise} />
-										)}
-									/>
-									<Text style={globalStyles.date}>
-										{post.createdAt}
-									</Text>
-								</View>
-							</View>
-						</TouchableOpacity>
-					)}
-					ListEmptyComponent={() => (
-						<View style={globalStyles.noResults}>
-							<Icon
-								name="camera-off-outline"
-								size={80}
-								color="white"
-							/>
-							<Text style={globalStyles.noResultsText}>
-								No posts
-							</Text>
-						</View>
-					)}
-				/>
+				<PostSummaryList posts={user.posts} />
 				<PressableButton
 					text="View profile"
 					onPress={() => {
