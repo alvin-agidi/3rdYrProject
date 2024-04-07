@@ -1,10 +1,10 @@
-import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { initializeApp } from "firebase-admin/app";
 // import { getAuth } from "firebase-admin/auth";
 import { getMessaging } from "firebase-admin/messaging";
 import { log } from "firebase-functions/logger";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import { setGlobalOptions } from "firebase-functions/v2";
-import { getFirestore } from "firebase-admin/firestore";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
 var firebaseConfig = {
 	apiKey: "AIzaSyAUV8eOm74mhlr3eEHZ8VZr74UYB2rNGJY",
@@ -41,7 +41,7 @@ export const sendFollowerNotification = onDocumentCreated(
 				.get()
 		).docs.map((doc) => doc.id);
 
-		log(notificationTokens);
+		// log(notificationTokens);
 
 		const follower = (
 			await firestore
@@ -53,7 +53,6 @@ export const sendFollowerNotification = onDocumentCreated(
 		const notification = {
 			title: "You have a new follower!",
 			body: follower.username + " is now following you.",
-			dismissed: false,
 			navUID: event.params.followerUid,
 			navPostID: null,
 		};
@@ -64,7 +63,7 @@ export const sendFollowerNotification = onDocumentCreated(
 			.collection("notifications")
 			.add({
 				...notification,
-				createdAt: firestore.FieldValue.serverTimestamp(),
+				createdAt: FieldValue.serverTimestamp(),
 			});
 
 		// const messages = [];
