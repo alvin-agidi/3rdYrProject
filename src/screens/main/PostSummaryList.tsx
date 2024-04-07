@@ -28,7 +28,7 @@ export function PostSummaryList(props: any) {
 					});
 				}}
 			>
-				<View style={styles.highlightPost}>
+				<View style={styles.post}>
 					<Image
 						source={{
 							uri: post.isVideo
@@ -37,7 +37,7 @@ export function PostSummaryList(props: any) {
 						}}
 						style={styles.image}
 					/>
-					<View style={styles.highlightPostDesc}>
+					<View style={styles.postDesc}>
 						<Text style={styles.caption}>{post.caption}</Text>
 						<FlatList
 							horizontal={false}
@@ -80,10 +80,10 @@ export function PostSummaryList(props: any) {
 			numColumns={1}
 			data={props.posts}
 			contentContainerStyle={{
-				gap: 5,
+				gap: 2,
 				flexGrow: 1,
 			}}
-			style={styles.highlightPosts}
+			style={styles.posts}
 			renderItem={renderItem}
 			ListEmptyComponent={ListEmptyComponent}
 		/>
@@ -96,19 +96,20 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 		width: 100,
 	},
-	highlightPosts: {
+	posts: {
 		flex: 1,
 		alignSelf: "stretch",
 		borderRadius: 10,
+		gap: 2,
 		backgroundColor: "lightgrey",
 	},
-	highlightPost: {
+	post: {
 		padding: 5,
 		gap: 5,
 		flexDirection: "row",
 		backgroundColor: "white",
 	},
-	highlightPostDesc: {
+	postDesc: {
 		flex: 1,
 		gap: 5,
 		justifyContent: "space-between",

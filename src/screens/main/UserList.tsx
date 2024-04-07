@@ -182,30 +182,4 @@ const styles = StyleSheet.create({
 	username: {
 		paddingHorizontal: 5,
 	},
-	image: {
-		aspectRatio: 1 / 1,
-		borderRadius: 5,
-		width: 100,
-	},
-	highlightPosts: {
-		gap: 2,
-		backgroundColor: "lightgrey",
-		borderRadius: 5,
-		alignSelf: "stretch",
-	},
-	highlightPost: {
-		paddingTop: 5,
-		paddingBottom: 5,
-		gap: 5,
-		flexDirection: "row",
-		backgroundColor: "white",
-	},
-	highlightPostDesc: {
-		flex: 1,
-		gap: 5,
-		justifyContent: "space-between",
-	},
-	caption: {
-		flex: 1,
-	},
 });
