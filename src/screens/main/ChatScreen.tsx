@@ -21,7 +21,7 @@ export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
 	const [text, setText] = useState("");
 	const [chatID, setChatID] = useState("");
-	const [user, setUser] = useState<any>(null);
+	// const [user, setUser] = useState<any>();
 	const [isLoading, setIsLoading] = useState(false);
 
 	function sendMessage() {
@@ -39,18 +39,18 @@ export default function ChatScreen(props: any) {
 		}
 	}
 
-	function fetchUser() {
-		return new Promise((resolve) => {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.get()
-				.then((doc) => {
-					resolve(setUser({ ...doc.data() }));
-				});
-		});
-	}
+	// function fetchUser() {
+	// 	return new Promise((resolve) => {
+	// 		firebase
+	// 			.firestore()
+	// 			.collection("users")
+	// 			.doc(props.route.params.uid)
+	// 			.get()
+	// 			.then((doc) => {
+	// 				resolve(setUser({ ...doc.data() }));
+	// 			});
+	// 	});
+	// }
 
 	function fetchChatID() {
 		return new Promise((resolve) => {
@@ -126,7 +126,7 @@ export default function ChatScreen(props: any) {
 	}, [chatID]);
 
 	useEffect(() => {
-		fetchUser();
+		// fetchUser();
 		fetchChatID();
 	}, [props.route.params.uid]);
 
@@ -163,7 +163,7 @@ export default function ChatScreen(props: any) {
 		<View style={globalStyles.container}>
 			<UserSummary uid={props.route.params.uid} />
 			<KeyboardAvoidingView
-				style={styles.container}
+				style={globalStyles.kav}
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
 			>
@@ -186,8 +186,9 @@ export default function ChatScreen(props: any) {
 					onChangeText={(text: string) => {
 						setText(text);
 					}}
+					value={text}
 					buttonText="Send"
-					onPressButton={(text: string) => {
+					onPressButton={() => {
 						sendMessage();
 						setText("");
 					}}
@@ -223,12 +224,6 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		gap: 5,
 		alignContent: "center",
-	},
-	container: {
-		flex: 1,
-		gap: 10,
-		alignItems: "center",
-		alignSelf: "stretch",
 	},
 	username: {
 		paddingHorizontal: 5,

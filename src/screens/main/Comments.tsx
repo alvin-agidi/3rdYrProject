@@ -15,7 +15,6 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { TextField } from "../../components/TextField";
-import { PressableButton } from "../../components/PressableButton";
 import { useNavigation } from "@react-navigation/native";
 import { NoResults } from "../../components/NoResults";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
@@ -133,34 +132,40 @@ export default function Comments(props: any) {
 		[]
 	);
 	return (
-		<KeyboardAvoidingView
-			style={globalStyles.container}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
-		>
-			<FlatList
-				horizontal={false}
-				numColumns={1}
-				data={comments}
-				contentContainerStyle={{
-					gap: 5,
-					flexGrow: 1,
-				}}
-				style={styles.comments}
-				renderItem={renderItem}
-				ListEmptyComponent={ListEmptyComponent}
-			/>
-			<TextField
-				placeholder="Comment"
-				iconName="comment-outline"
-				multiline={true}
-				onChangeText={(text: string) => {
-					setText(text);
-				}}
-				buttonText="Send"
-				onPressButton={sendComment}
-			/>
-		</KeyboardAvoidingView>
+		<View style={globalStyles.container}>
+			<KeyboardAvoidingView
+				style={globalStyles.kav}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
+			>
+				<FlatList
+					horizontal={false}
+					numColumns={1}
+					data={comments}
+					contentContainerStyle={{
+						gap: 5,
+						flexGrow: 1,
+					}}
+					style={styles.comments}
+					renderItem={renderItem}
+					ListEmptyComponent={ListEmptyComponent}
+				/>
+				<TextField
+					placeholder="Comment"
+					iconName="comment-outline"
+					multiline={true}
+					onChangeText={(text: string) => {
+						setText(text);
+					}}
+					value={text}
+					buttonText="Send"
+					onPressButton={() => {
+						sendComment();
+						setText("");
+					}}
+				/>
+			</KeyboardAvoidingView>
+		</View>
 	);
 }
 

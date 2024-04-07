@@ -4,6 +4,7 @@ import {
 	Image,
 	KeyboardAvoidingView,
 	Platform,
+	View,
 } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -121,33 +122,37 @@ export default function PublishPost(props: any) {
 	}
 
 	return (
-		<KeyboardAvoidingView
-			style={globalStyles.container}
-			behavior={Platform.OS === "ios" ? "padding" : "height"}
-			keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
-		>
-			{isVideo ? (
-				<Video
-					style={styles.media}
-					source={{ uri: mediaUri }}
-					useNativeControls
-					resizeMode={ResizeMode.CONTAIN}
-					isLooping
-					shouldPlay
+		<View style={globalStyles.container}>
+			<KeyboardAvoidingView
+				style={globalStyles.kav}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
+			>
+				{isVideo ? (
+					<Video
+						style={styles.media}
+						source={{ uri: mediaUri }}
+						useNativeControls
+						resizeMode={ResizeMode.CONTAIN}
+						isLooping
+						shouldPlay
+					/>
+				) : (
+					<Image source={{ uri: mediaUri }} style={styles.media} />
+				)}
+				<TextField
+					placeholder="Write a caption"
+					onChangeText={(caption: string) => {
+						setCaption(caption);
+					}}
+					multiline={true}
+					style={globalStyles.textInput}
+					iconName="comment-outline"
+					buttonText="Publish"
+					onPressButton={uploadMedia}
 				/>
-			) : (
-				<Image source={{ uri: mediaUri }} style={styles.media} />
-			)}
-			<TextField
-				placeholder="Write a caption"
-				onChangeText={(caption: string) => {
-					setCaption(caption);
-				}}
-				style={globalStyles.textInput}
-				iconName="comment-outline"
-			/>
-			<PressableButton onPress={uploadMedia} text="Publish" />
-		</KeyboardAvoidingView>
+			</KeyboardAvoidingView>
+		</View>
 	);
 }
 

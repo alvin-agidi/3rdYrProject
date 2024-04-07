@@ -51,4 +51,10 @@ export default StyleSheet.create({
 		flexDirection: "row",
 		flexWrap: "wrap",
 	},
+	kav: {
+		flex: 1,
+		gap: 10,
+		alignItems: "center",
+		alignSelf: "stretch",
+	},
 });
