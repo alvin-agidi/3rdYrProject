@@ -227,6 +227,7 @@ export function fetchNotifications(uid: string) {
 			.onSnapshot((snapshot) => {
 				const notifications = snapshot.docs.map((doc) => {
 					const data = doc.data();
+					data.id = doc.id;
 					const createdAt = (
 						data.createdAt ?? firebase.firestore.Timestamp.now()
 					)
