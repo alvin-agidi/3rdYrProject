@@ -28,6 +28,7 @@ import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
 import { TextMultiSelect } from "../../components/TextMultiSelect";
+import { NoResults } from "../../components/NoResults";
 
 const Stack = createNativeStackNavigator();
 
@@ -40,6 +41,9 @@ function Search(props: any) {
 	const [selected, setSelected] = useState(0);
 	const searchOptions = ["Users", "Posts"];
 	const searchFunctions = [fetchUsers, fetchPosts];
+	const sortOptions = ["Date (asc.)", "Date (desc.)"];
+	const [selectedSort, setSelectedSort] = useState(0);
+	const sortFunctions = [sortDateAsc, sortDateDesc];
 	const [selectedExercises, setSelectedExercises] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -146,6 +150,20 @@ function Search(props: any) {
 		});
 	}
 
+	function sortDateAsc(a: any, b: any) {
+		return b.createdAt - a.createdAt;
+	}
+
+	function sortDateDesc(a: any, b: any) {
+		return a.createdAt - b.createdAt;
+	}
+
+	function sortFilteredPosts() {
+		setFilteredPosts((filterPosts) =>
+			filteredPosts.sort(sortFunctions[selectedSort])
+		);
+	}
+
 	const renderItem = useCallback(
 		({ item }) => (
 			<TouchableOpacity
@@ -181,14 +199,7 @@ function Search(props: any) {
 			isLoading ? (
 				<LoadingIndicator />
 			) : (
-				<View style={globalStyles.noResults}>
-					<Icon
-						name={"account-off-outline"}
-						size={80}
-						color="white"
-					/>
-					<Text style={globalStyles.noResultsText}>No users</Text>
-				</View>
+				<NoResults icon="account-off-outline" text="No users" />
 			),
 		[isLoading]
 	);
@@ -205,6 +216,7 @@ function Search(props: any) {
 				iconName="magnify"
 			/>
 			<TextToggle
+				label="For"
 				options={searchOptions}
 				selected={selected}
 				setSelected={setSelected}
@@ -219,6 +231,7 @@ function Search(props: any) {
 			>
 				{selected == 1 ? (
 					<TextMultiSelect
+						label="Filter"
 						options={exercises}
 						selected={selectedExercises}
 						setSelected={setSelectedExercises}
@@ -235,6 +248,17 @@ function Search(props: any) {
 							} else {
 								setFilteredPosts(filterPosts(posts));
 							}
+						}}
+					/>
+				) : null}
+				{selected == 1 ? (
+					<TextToggle
+						label="Sort"
+						options={sortOptions}
+						selected={selectedSort}
+						setSelected={setSelectedSort}
+						onPress={() => {
+							sortFilteredPosts();
 						}}
 					/>
 				) : null}
