@@ -9,7 +9,6 @@ import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import PublishPostScreen from "./PublishPostScreen";
-import { connect } from "react-redux";
 import { PressableButton } from "../../components/PressableButton";
 import globalStyles from "../../globalStyles";
 

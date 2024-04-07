@@ -8,7 +8,6 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import globalStyles from "../../globalStyles";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";

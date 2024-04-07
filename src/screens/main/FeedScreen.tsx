@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { Platform } from "react-native";
 import { connect } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import ProfileScreen from "./ProfileScreen";
 import Comments from "./Comments";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";

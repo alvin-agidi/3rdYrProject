@@ -5,7 +5,6 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
-	Touchable,
 } from "react-native";
 import globalStyles from "../../globalStyles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";

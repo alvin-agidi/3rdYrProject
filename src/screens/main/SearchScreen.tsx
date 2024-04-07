@@ -13,7 +13,6 @@ import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { connect } from "react-redux";
 import { TextField } from "../../components/TextField";
 import { TextToggle } from "../../components/TextToggle";
