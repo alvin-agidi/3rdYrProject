@@ -14,14 +14,16 @@ export default StyleSheet.create({
 		backgroundColor: "white",
 		borderColor: "skyblue",
 		borderWidth: 2,
-		alignSelf: "stretch",
 		flex: 1,
+		paddingTop: 10,
+		paddingBottom: 10,
 	},
 	button: {
 		borderRadius: 5,
 		padding: 10,
 		backgroundColor: "deepskyblue",
 		alignItems: "center",
+		justifyContent: "center",
 		width: "auto",
 	},
 	buttonText: {

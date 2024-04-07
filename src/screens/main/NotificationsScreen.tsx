@@ -21,6 +21,7 @@ import UserList from "./UserList";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { NoResults } from "../../components/NoResults";
+import ChatScreen from "./ChatScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -110,6 +111,7 @@ class NotificationsScreen extends Component {
 				<Stack.Screen name="Profile" component={Profile} />
 				<Stack.Screen name="Post" component={PostList} />
 				<Stack.Screen name="Comments" component={Comments} />
+				<Stack.Screen name="Chat" component={ChatScreen} />
 				<Stack.Screen
 					name="Your Clients"
 					component={UserList}

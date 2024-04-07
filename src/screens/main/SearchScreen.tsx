@@ -28,6 +28,8 @@ import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
 import { TextMultiSelect } from "../../components/TextMultiSelect";
 import { NoResults } from "../../components/NoResults";
+import ChatScreen from "./ChatScreen";
+import UserSummary from "./UserSummary";
 
 const Stack = createNativeStackNavigator();
 
@@ -173,21 +175,7 @@ function Search(props: any) {
 				}
 				style={styles.result}
 			>
-				<Text style={styles.user}>{item.username}</Text>
-				<View style={globalStyles.labelList}>
-					{firebase.auth().currentUser!.uid === item.uid ? (
-						<Label text="You" />
-					) : null}
-					{props.clients.includes(item.uid) ? (
-						<Label text="Your client" />
-					) : null}
-					{props.PTs.includes(item.uid) ? (
-						<Label text="Your PT" />
-					) : null}
-					{props.following.includes(item.uid) ? (
-						<Label text="Following" />
-					) : null}
-				</View>
+				<UserSummary uid={item.uid} />
 			</TouchableOpacity>
 		),
 		[]
@@ -302,6 +290,7 @@ export class SearchScreen extends Component {
 				<Stack.Screen name="Profile" component={Profile} />
 				<Stack.Screen name="Post" component={PostList} />
 				<Stack.Screen name="Comments" component={Comments} />
+				<Stack.Screen name="Chat" component={ChatScreen} />
 				<Stack.Screen
 					name="Your Clients"
 					component={UserList}
@@ -339,6 +328,7 @@ const styles = StyleSheet.create({
 	},
 	user: {
 		fontSize: 20,
+		fontWeight: "bold",
 		flex: 1,
 	},
 	container: {
