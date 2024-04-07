@@ -349,24 +349,25 @@ function Profile(props: any) {
 					</Text>
 				) : null}
 			</View>
-			{isCurrentUser && props.currentUser.isPT ? (
+			{isCurrentUser && props.currentUser.isPT && clients.length ? (
 				<PressableButton
 					onPress={() => navigation.navigate("Your Clients")}
 					text="View your clients"
 				/>
 			) : null}
-			{isCurrentUser ? (
+			{isCurrentUser && PTs.length ? (
 				<PressableButton
 					onPress={() => navigation.navigate("Your PTs")}
 					text="View your personal trainers"
 				/>
-			) : (
+			) : null}
+			{!isCurrentUser ? (
 				<PressableButton
 					onPress={toggleFollow}
 					backgroundColor={isFollowing ? "grey" : "deepskyblue"}
 					text={isFollowing ? "Unfollow" : "Follow"}
 				/>
-			)}
+			) : null}
 			{props.currentUser.isPT && !isCurrentUser ? (
 				<PressableButton
 					onPress={toggleIsClient}
