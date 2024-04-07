@@ -5,6 +5,7 @@ import {
 	StyleSheet,
 	Text,
 	TouchableOpacity,
+	Touchable,
 } from "react-native";
 import globalStyles from "../../globalStyles";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -18,11 +19,23 @@ import PostList from "./PostList";
 import { connect } from "react-redux";
 import Comments from "./Comments";
 import UserList from "./UserList";
+import firebase from "firebase/compat/app";
+import "firebase/compat/firestore";
 
 const Stack = createNativeStackNavigator();
 
 function Notifications(props: any) {
 	const navigation = useNavigation();
+
+	function dismissNotification(id: string): void {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(firebase.auth().currentUser!.uid)
+			.collection("notifications")
+			.doc(id)
+			.delete();
+	}
 
 	const renderItem = useCallback(
 		({ item }) => (
@@ -34,10 +47,21 @@ function Notifications(props: any) {
 					});
 				}}
 			>
-				<View style={styles.notification}>
-					<Text style={globalStyles.bold}>{item.title}</Text>
-					<Text>{item.body}</Text>
-					<Text style={globalStyles.date}>{item.createdAt}</Text>
+				<View style={styles.notificationBody}>
+					<View style={styles.notification}>
+						<Text style={globalStyles.bold}>{item.title}</Text>
+						<View style={{ flex: 1 }}>
+							<Text>{item.body}</Text>
+							<Text style={globalStyles.date}>
+								{item.createdAt}
+							</Text>
+						</View>
+					</View>
+					<TouchableOpacity
+						onPress={() => dismissNotification(item.id)}
+					>
+						<Icon name="window-close" size={25} />
+					</TouchableOpacity>
 				</View>
 			</TouchableOpacity>
 		),
@@ -126,6 +150,16 @@ const styles = StyleSheet.create({
 		flex: 1,
 		justifyContent: "flex-start",
 		gap: 5,
+	},
+
+	notificationBody: {
+		justifyContent: "space-between",
+		flexDirection: "row",
+		alignItems: "center",
+		borderRadius: 5,
+		paddingRight: 5,
+		gap: 5,
+		backgroundColor: "red",
 	},
 });
 

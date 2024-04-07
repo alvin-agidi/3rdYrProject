@@ -251,6 +251,7 @@ const styles = StyleSheet.create({
 	highlightPosts: {
 		gap: 2,
 		backgroundColor: "lightgrey",
+		borderRadius: 5,
 		alignSelf: "stretch",
 	},
 	highlightPost: {

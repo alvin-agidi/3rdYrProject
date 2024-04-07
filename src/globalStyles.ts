@@ -44,6 +44,7 @@ export default StyleSheet.create({
 		flex: 1,
 		justifyContent: "center",
 		alignItems: "center",
+		margin: 10,
 	},
 	noResultsText: {
 		textAlign: "center",
