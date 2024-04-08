@@ -21,7 +21,6 @@ import UserSummary from "./UserSummary";
 
 function Profile(props: any) {
 	const navigation = useNavigation();
-	const [user, setUser] = useState<any>();
 	const [posts, setPosts] = useState<any>([]);
 	const [following, setFollowing] = useState<any>([]);
 	const [followers, setFollowers] = useState<any>([]);
@@ -32,25 +31,6 @@ function Profile(props: any) {
 	const [isClient, setIsClient] = useState(false);
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
-
-	function getUser(): void {
-		if (isCurrentUser) {
-			setUser(props.currentUser);
-		} else {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.get()
-				.then((snapshot) => {
-					if (snapshot.exists) {
-						setUser(snapshot.data());
-					} else {
-						console.log("User does not exist");
-					}
-				});
-		}
-	}
 
 	function getPosts() {
 		return new Promise((resolve) => {
@@ -156,7 +136,6 @@ function Profile(props: any) {
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
 		);
-		getUser();
 		getFollowing();
 		getFollowers();
 		getClients();

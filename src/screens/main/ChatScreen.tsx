@@ -21,7 +21,6 @@ export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
 	const [text, setText] = useState("");
 	const [chatID, setChatID] = useState("");
-	// const [user, setUser] = useState<any>();
 	const [isLoading, setIsLoading] = useState(false);
 
 	function sendMessage() {
@@ -38,19 +37,6 @@ export default function ChatScreen(props: any) {
 				});
 		}
 	}
-
-	// function fetchUser() {
-	// 	return new Promise((resolve) => {
-	// 		firebase
-	// 			.firestore()
-	// 			.collection("users")
-	// 			.doc(props.route.params.uid)
-	// 			.get()
-	// 			.then((doc) => {
-	// 				resolve(setUser({ ...doc.data() }));
-	// 			});
-	// 	});
-	// }
 
 	function fetchChatID() {
 		return new Promise((resolve) => {
