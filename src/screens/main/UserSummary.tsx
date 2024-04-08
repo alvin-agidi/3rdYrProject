@@ -8,7 +8,6 @@ import { connect } from "react-redux";
 
 function UserSummary(props: any) {
 	const [user, setUser] = useState<any>();
-	const [isLoading, setIsLoading] = useState(false);
 
 	function getUser(): void {
 		if (props.uid === firebase.auth().currentUser!.uid) {
@@ -26,9 +25,7 @@ function UserSummary(props: any) {
 	}
 
 	useEffect(() => {
-		setIsLoading(true);
 		getUser();
-		setIsLoading(false);
 	}, [props.uid]);
 
 	return user ? (

@@ -211,6 +211,8 @@ const styles = StyleSheet.create({
 		padding: 5,
 		borderRadius: 5,
 		gap: 5,
+		maxWidth: "75%",
+		flexWrap: "wrap",
 		backgroundColor: "white",
 	},
 	theirMessage: {
@@ -220,12 +222,7 @@ const styles = StyleSheet.create({
 		alignSelf: "flex-end",
 	},
 	messageText: {
-		flex: 1,
+		flexShrink: 1,
 		flexDirection: "row",
-		gap: 5,
-		alignContent: "center",
-	},
-	username: {
-		paddingHorizontal: 5,
 	},
 });

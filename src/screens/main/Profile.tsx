@@ -378,7 +378,7 @@ function Profile(props: any) {
 			{isMyPT ? (
 				<PressableButton
 					onPress={toggleIsMyPT}
-					backgroundColor="red"
+					backgroundColor={isMyPT ? "grey" : "deepskyblue"}
 					text="Remove as my PT"
 				/>
 			) : null}
