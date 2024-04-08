@@ -412,15 +412,6 @@ const styles = StyleSheet.create({
 	imageBox: {
 		flex: 1 / 3,
 	},
-	usernameBox: {
-		gap: 5,
-		flexDirection: "row",
-	},
-	username: {
-		flex: 1,
-		fontSize: 30,
-		fontWeight: "bold",
-	},
 	info: {
 		fontSize: 20,
 		padding: 5,

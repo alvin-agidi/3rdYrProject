@@ -2,7 +2,6 @@ import React, { Component, useCallback, useState } from "react";
 import {
 	StyleSheet,
 	View,
-	Text,
 	FlatList,
 	TouchableOpacity,
 	KeyboardAvoidingView,
@@ -15,9 +14,8 @@ import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { connect } from "react-redux";
 import { TextField } from "../../components/TextField";
-import { TextToggle } from "../../components/TextToggle";
+import { TextSelect } from "../../components/TextSelect";
 import globalStyles from "../../globalStyles";
-import { Label } from "../../components/Label";
 import Profile from "./Profile";
 import PostList from "./PostList";
 import Comments from "./Comments";
@@ -26,7 +24,6 @@ import { PostSummaryList } from "./PostSummaryList";
 import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
-import { TextMultiSelect } from "../../components/TextMultiSelect";
 import { NoResults } from "../../components/NoResults";
 import ChatScreen from "./ChatScreen";
 import UserSummary from "./UserSummary";
@@ -202,7 +199,7 @@ function Search(props: any) {
 				style={globalStyles.textInput}
 				iconName="magnify"
 			/>
-			<TextToggle
+			<TextSelect
 				label="For"
 				options={searchOptions}
 				selected={selected}
@@ -217,11 +214,12 @@ function Search(props: any) {
 				keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
 			>
 				{selected == 1 ? (
-					<TextMultiSelect
+					<TextSelect
 						label="Filter"
 						options={exercises}
 						selected={selectedExercises}
 						setSelected={setSelectedExercises}
+						multiSelect={true}
 						onPress={async () => {
 							if (!posts.length && selectedExercises.length) {
 								await fetchPosts(queryString);
@@ -239,7 +237,7 @@ function Search(props: any) {
 					/>
 				) : null}
 				{selected == 1 ? (
-					<TextToggle
+					<TextSelect
 						label="Sort"
 						options={sortOptions}
 						selected={selectedSort}

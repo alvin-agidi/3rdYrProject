@@ -20,8 +20,10 @@ export function ValidatedTextField(props: any): JSX.Element {
 		const isValid = props.validRegex.test(text);
 		if (!isValid) {
 			setValidationMessage(props.validationMessage);
+			setColor("red");
 		} else {
 			setValidationMessage("");
+			setColor("deepskyblue");
 		}
 	}
 
