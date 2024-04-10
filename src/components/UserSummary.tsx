@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { Label } from "../../components/Label";
+import { Label } from "./Label";
 import { connect } from "react-redux";
 
 function UserSummary(props: any) {

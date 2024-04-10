@@ -7,18 +7,18 @@ import {
 	Image,
 	TouchableOpacity,
 } from "react-native";
-import globalStyles from "../../globalStyles";
+import globalStyles from "../globalStyles";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
-import { PressableButton } from "../../components/PressableButton";
-import { Label } from "../../components/Label";
-import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
-import { LoadingIndicator } from "../../components/LoadingIndicator";
+import { PressableButton } from "./PressableButton";
+import { Label } from "./Label";
+import { fetchPostExercises, generateThumbnail } from "../../redux/actions";
+import { LoadingIndicator } from "./LoadingIndicator";
 import { PostSummaryList } from "./PostSummaryList";
-import { NoResults } from "../../components/NoResults";
+import { NoResults } from "./NoResults";
 
 export default function UserList(props: any) {
 	const navigation = useNavigation();

@@ -16,17 +16,17 @@ import { connect } from "react-redux";
 import { TextField } from "../../components/TextField";
 import { TextSelect } from "../../components/TextSelect";
 import globalStyles from "../../globalStyles";
-import Profile from "./Profile";
-import PostList from "./PostList";
-import Comments from "./Comments";
-import UserList from "./UserList";
-import { PostSummaryList } from "./PostSummaryList";
+import Profile from "../../components/Profile";
+import PostList from "../../components/PostList";
+import Comments from "../../components/Comments";
+import UserList from "../../components/UserList";
+import { PostSummaryList } from "../../components/PostSummaryList";
 import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
 import { NoResults } from "../../components/NoResults";
 import ChatScreen from "./ChatScreen";
-import UserSummary from "./UserSummary";
+import UserSummary from "../../components/UserSummary";
 
 const Stack = createNativeStackNavigator();
 

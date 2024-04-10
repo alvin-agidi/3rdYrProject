@@ -17,12 +17,12 @@ import {
 	fetchPostLikes,
 	fetchFollowingUser,
 	fetchPostExercises,
-} from "../../../redux/actions";
-import globalStyles from "../../globalStyles";
-import { Label } from "../../components/Label";
+} from "../../redux/actions";
+import globalStyles from "../globalStyles";
+import { Label } from "./Label";
 import { connect } from "react-redux";
-import { LoadingIndicator } from "../../components/LoadingIndicator";
-import { NoResults } from "../../components/NoResults";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { NoResults } from "./NoResults";
 
 export function PostList(props: any) {
 	const navigation = useNavigation();

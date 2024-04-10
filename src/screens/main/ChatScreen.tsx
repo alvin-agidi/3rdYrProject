@@ -15,7 +15,7 @@ import "firebase/compat/firestore";
 import { TextField } from "../../components/TextField";
 import { NoResults } from "../../components/NoResults";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
-import UserSummary from "./UserSummary";
+import UserSummary from "../../components/UserSummary";
 
 export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);

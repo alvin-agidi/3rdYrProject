@@ -8,7 +8,7 @@ import MainScreen from "./src/screens/main/MainScreen";
 import { Provider } from "react-redux";
 import rootReducer from "./redux/reducers";
 import { configureStore } from "@reduxjs/toolkit";
-import { LandingScreen } from "./src/screens/auth/LandingScreen";
+import { LandingScreen } from "./src/screens/landing/LandingScreen";
 
 const store = configureStore({
 	reducer: rootReducer,

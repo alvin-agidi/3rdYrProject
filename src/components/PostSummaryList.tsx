@@ -9,11 +9,11 @@ import {
 } from "react-native";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import globalStyles from "../../globalStyles";
-import { Label } from "../../components/Label";
+import globalStyles from "../globalStyles";
+import { Label } from "./Label";
 import { useNavigation } from "@react-navigation/native";
-import { LoadingIndicator } from "../../components/LoadingIndicator";
-import { NoResults } from "../../components/NoResults";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { NoResults } from "./NoResults";
 
 export function PostSummaryList(props: any) {
 	const navigation = useNavigation();

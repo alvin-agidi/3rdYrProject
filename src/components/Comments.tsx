@@ -9,15 +9,15 @@ import {
 	Keyboard,
 } from "react-native";
 import firebase from "firebase/compat/app";
-import globalStyles from "../../globalStyles";
+import globalStyles from "../globalStyles";
 
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
-import { TextField } from "../../components/TextField";
+import { TextField } from "./TextField";
 import { useNavigation } from "@react-navigation/native";
-import { NoResults } from "../../components/NoResults";
-import { LoadingIndicator } from "../../components/LoadingIndicator";
+import { NoResults } from "./NoResults";
+import { LoadingIndicator } from "./LoadingIndicator";
 
 export default function Comments(props: any) {
 	const navigation = useNavigation();

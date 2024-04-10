@@ -10,13 +10,13 @@ import {
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { PressableButton } from "../../components/PressableButton";
+import { PressableButton } from "./PressableButton";
 import { useNavigation } from "@react-navigation/native";
-import { Label } from "../../components/Label";
-import { generateThumbnail } from "../../../redux/actions";
+import { Label } from "./Label";
+import { generateThumbnail } from "../../redux/actions";
 import { connect } from "react-redux";
-import { LoadingIndicator } from "../../components/LoadingIndicator";
-import { NoResults } from "../../components/NoResults";
+import { LoadingIndicator } from "./LoadingIndicator";
+import { NoResults } from "./NoResults";
 import UserSummary from "./UserSummary";
 
 function Profile(props: any) {
