@@ -12,7 +12,6 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { PressableButton } from "./PressableButton";
 import { useNavigation } from "@react-navigation/native";
-import { Label } from "./Label";
 import { generateThumbnail } from "../../redux/actions";
 import { connect } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";

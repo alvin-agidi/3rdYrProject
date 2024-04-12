@@ -279,6 +279,7 @@ export function generateThumbnail(mediaURL: any) {
 	return new Promise((resolve) => {
 		return VideoThumbnails.getThumbnailAsync(mediaURL, {
 			time: 100,
+			quality: 0.5,
 		}).then((thumbnail) => resolve(thumbnail.uri));
 	});
 }

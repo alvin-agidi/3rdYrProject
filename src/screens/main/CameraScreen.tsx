@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator();
 
 function CameraComponent() {
 	const navigation = useNavigation();
-	var cameraRef = useRef(null);
+	const cameraRef = useRef();
 	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
 	const [isVideoMode, setVideoMode] = useState(true);
 	const [hasCameraPermission, setHasCameraPermission] = useState(false);
