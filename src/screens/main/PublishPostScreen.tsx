@@ -11,7 +11,6 @@ import "firebase/compat/auth";
 import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
-import { PressableButton } from "../../components/PressableButton";
 import globalStyles from "../../globalStyles";
 import { ResizeMode, Video } from "expo-av";
 import { TextField } from "../../components/TextField";

@@ -21,7 +21,6 @@ export function TextSelect(props: any): JSX.Element {
 							selected.indexOf(index) === -1
 								? selected.push(index)
 								: selected.splice(selected.indexOf(index), 1);
-							// console.log(selected);
 							return [...selected];
 						});
 					} else {

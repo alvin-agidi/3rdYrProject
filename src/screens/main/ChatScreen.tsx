@@ -112,7 +112,6 @@ export default function ChatScreen(props: any) {
 	}, [chatID]);
 
 	useEffect(() => {
-		// fetchUser();
 		fetchChatID();
 	}, [props.route.params.uid]);
 

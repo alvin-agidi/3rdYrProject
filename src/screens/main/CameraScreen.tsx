@@ -201,7 +201,6 @@ function CameraComponent() {
 				<Icon
 					name="camera-flip-outline"
 					size={50}
-					// color="skyblue"
 					onPress={switchCameraDirection}
 				/>
 				{isVideoMode ? (
@@ -216,12 +215,7 @@ function CameraComponent() {
 						onPress={isRecording ? stopVideo : startVideo}
 					/>
 				) : (
-					<Icon
-						name="circle-outline"
-						size={80}
-						// color="skyblue"
-						onPress={takePhoto}
-					/>
+					<Icon name="circle-outline" size={80} onPress={takePhoto} />
 				)}
 				<Icon
 					name={isVideoMode ? "camera-outline" : "video-outline"}

@@ -421,6 +421,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		backgroundColor: "white",
 		textAlign: "center",
+		fontWeight: "bold",
 	},
 	image: {
 		flex: 1,

@@ -49,7 +49,6 @@ export function PostList(props: any) {
 	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
-			this.videoRefs = {};
 			if (
 				props.route.params &&
 				props.route.params.uid &&
@@ -90,7 +89,6 @@ export function PostList(props: any) {
 							]).then(() => {
 								setPosts(() => [data]);
 								addLikeInfo();
-								// addVideoRef();
 								resolve(null);
 							});
 						});
@@ -98,7 +96,6 @@ export function PostList(props: any) {
 			} else if (props.followingLoaded === props.following.length) {
 				setPosts(() => props.followingPosts);
 				addLikeInfo();
-				// addVideoRef();
 				setPosts((posts: any) =>
 					posts.sort((x: any, y: any) => {
 						return y.createdAt.localeCompare(x.createdAt);
