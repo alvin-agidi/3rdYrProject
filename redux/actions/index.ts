@@ -283,3 +283,24 @@ export function generateThumbnail(mediaURL: any) {
 		}).then((thumbnail) => resolve(thumbnail.uri));
 	});
 }
+
+export function dateoAge(date: Date): string {
+	const now = new Date();
+	const diff = Math.abs(now.getTime() - date.getTime()) / 1000;
+
+	if (diff < 60) {
+		return Math.round(diff) + " seconds";
+	} else if (diff < 60 * 60) {
+		return Math.round(diff / 60) + " minutes";
+	} else if (diff < 60 * 60 * 24) {
+		return Math.round(diff / (60 * 60)) + " hours";
+	} else if (diff < 60 * 60 * 24 * 7) {
+		return Math.round(diff / (60 * 60 * 24)) + " days";
+	} else if (diff < 60 * 60 * 24 * 7 * 4) {
+		return Math.round(diff / (60 * 60 * 24 * 7)) + " weeks";
+	} else if (diff < 60 * 60 * 24 * 30 * 12) {
+		return Math.round(diff / (60 * 60 * 24 * 30)) + " months";
+	} else {
+		return Math.round(diff / (60 * 60 * 24 * 365)) + " years";
+	}
+}
