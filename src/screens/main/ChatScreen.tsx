@@ -16,6 +16,7 @@ import { TextField } from "../../components/TextField";
 import { NoResults } from "../../components/NoResults";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import UserSummary from "../../components/UserSummary";
+import { dateToAge } from "../../../redux/actions";
 
 export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
@@ -89,12 +90,12 @@ export default function ChatScreen(props: any) {
 						const messages = snapshot.docs.map((doc) => {
 							const data = doc.data();
 							const id = doc.id;
-							const createdAt = (
-								data.createdAt ??
-								firebase.firestore.Timestamp.now()
-							)
-								.toDate()
-								.toLocaleString();
+							const createdAt = dateToAge(
+								(
+									data.createdAt ??
+									firebase.firestore.Timestamp.now()
+								).toDate()
+							);
 							return { id, ...data, createdAt };
 						});
 						resolve(setMessages(messages));

@@ -17,6 +17,7 @@ import {
 	fetchPostLikes,
 	fetchFollowingUser,
 	fetchPostExercises,
+	dateToAge,
 } from "../../redux/actions";
 import globalStyles from "../globalStyles";
 import { Label } from "./Label";
@@ -66,9 +67,9 @@ export function PostList(props: any) {
 						.then((doc) => {
 							var data = doc.data();
 							data!.id = doc.id;
-							data!.createdAt = data!.createdAt
-								.toDate()
-								.toISOString();
+							data!.createdAt = dateToAge(
+								data!.createdAt.toDate()
+							);
 							Promise.all([
 								fetchPostLikes(
 									props.route.params.uid,
@@ -90,7 +91,6 @@ export function PostList(props: any) {
 							]).then(() => {
 								setPosts(() => [data]);
 								addLikeInfo();
-								addVideoRef();
 								resolve(null);
 							});
 						});
@@ -98,7 +98,6 @@ export function PostList(props: any) {
 			} else if (props.followingLoaded === props.following.length) {
 				setPosts(() => props.followingPosts);
 				addLikeInfo();
-				addVideoRef();
 				setPosts((posts: any) =>
 					posts.sort((x: any, y: any) => {
 						return y.createdAt.localeCompare(x.createdAt);
@@ -291,9 +290,7 @@ export function PostList(props: any) {
 						) : null}
 					</View>
 					<Text>{item.caption}</Text>
-					<Text style={globalStyles.date}>
-						{new Date(item.createdAt).toLocaleString()}
-					</Text>
+					<Text style={globalStyles.date}>{item.createdAt}</Text>
 				</View>
 			</View>
 		),

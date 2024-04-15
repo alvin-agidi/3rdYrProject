@@ -52,11 +52,11 @@ export function fetchUserPosts(uid: string) {
 				var posts = snapshot.docs.map((doc) => {
 					const id = doc.id;
 					const data = doc.data();
-					var createdAt = (
-						data.createdAt ?? firebase.firestore.Timestamp.now()
-					)
-						.toDate()
-						.toISOString();
+					var createdAt = dateToAge(
+						(
+							data.createdAt ?? firebase.firestore.Timestamp.now()
+						).toDate()
+					);
 					return { id, ...data, createdAt };
 				});
 				dispatch({
@@ -135,12 +135,12 @@ export function fetchFollowingUserPosts(uid: string) {
 						var posts = snapshot.docs.map((doc: any) => {
 							const data = doc.data();
 							const id = doc.id;
-							const createdAt = (
-								data.createdAt ??
-								firebase.firestore.Timestamp.now()
-							)
-								.toDate()
-								.toISOString();
+							const createdAt = dateToAge(
+								(
+									data.createdAt ??
+									firebase.firestore.Timestamp.now()
+								).toDate()
+							);
 							return {
 								...data,
 								id,
@@ -284,23 +284,28 @@ export function generateThumbnail(mediaURL: any) {
 	});
 }
 
-export function dateoAge(date: Date): string {
+export function dateToAge(date: Date): string {
 	const now = new Date();
-	const diff = Math.abs(now.getTime() - date.getTime()) / 1000;
+	const age = Math.abs(now.getTime() - date.getTime()) / 1000;
+	var output = "";
 
-	if (diff < 60) {
-		return Math.round(diff) + " seconds";
-	} else if (diff < 60 * 60) {
-		return Math.round(diff / 60) + " minutes";
-	} else if (diff < 60 * 60 * 24) {
-		return Math.round(diff / (60 * 60)) + " hours";
-	} else if (diff < 60 * 60 * 24 * 7) {
-		return Math.round(diff / (60 * 60 * 24)) + " days";
-	} else if (diff < 60 * 60 * 24 * 7 * 4) {
-		return Math.round(diff / (60 * 60 * 24 * 7)) + " weeks";
-	} else if (diff < 60 * 60 * 24 * 30 * 12) {
-		return Math.round(diff / (60 * 60 * 24 * 30)) + " months";
+	if (Math.floor(age) == 0) {
+		return "now";
+	} else if (age < 60) {
+		output = Math.round(age) + " second";
+	} else if (age < 60 * 60) {
+		output = Math.round(age / 60) + " minute";
+	} else if (age < 60 * 60 * 24) {
+		output = Math.round(age / (60 * 60)) + " hour";
+	} else if (age < 60 * 60 * 24 * 7) {
+		output = Math.round(age / (60 * 60 * 24)) + " day";
+	} else if (age < 60 * 60 * 24 * 7 * 4) {
+		output = Math.round(age / (60 * 60 * 24 * 7)) + " week";
+	} else if (age < 60 * 60 * 24 * 30 * 12) {
+		output = Math.round(age / (60 * 60 * 24 * 30)) + " month";
 	} else {
-		return Math.round(diff / (60 * 60 * 24 * 365)) + " years";
+		output = Math.round(age / (60 * 60 * 24 * 365)) + " year";
 	}
+
+	return output + (output.substring(0, 2) == "1 " ? "" : "s");
 }

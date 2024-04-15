@@ -47,7 +47,6 @@ export default function UserList(props: any) {
 									data.createdAt ??
 									firebase.firestore.Timestamp.now()
 								).toDate();
-								// .toLocaleString();
 								return {
 									id,
 									...data,

@@ -18,6 +18,7 @@ import { TextField } from "./TextField";
 import { useNavigation } from "@react-navigation/native";
 import { NoResults } from "./NoResults";
 import { LoadingIndicator } from "./LoadingIndicator";
+import { dateToAge } from "../../redux/actions";
 
 export default function Comments(props: any) {
 	const navigation = useNavigation();
@@ -84,11 +85,12 @@ export default function Comments(props: any) {
 					const comments = snapshot.docs.map((doc) => {
 						const data = doc.data();
 						const id = doc.id;
-						const createdAt = (
-							data.createdAt ?? firebase.firestore.Timestamp.now()
-						)
-							.toDate()
-							.toLocaleString();
+						const createdAt = dateToAge(
+							(
+								data.createdAt ??
+								firebase.firestore.Timestamp.now()
+							).toDate()
+						);
 						return { id, ...data, createdAt };
 					});
 					setIsLoading(true);

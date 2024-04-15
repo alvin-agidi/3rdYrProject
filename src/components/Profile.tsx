@@ -12,7 +12,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { PressableButton } from "./PressableButton";
 import { useNavigation } from "@react-navigation/native";
-import { generateThumbnail } from "../../redux/actions";
+import { dateToAge, generateThumbnail } from "../../redux/actions";
 import { connect } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
@@ -49,12 +49,12 @@ function Profile(props: any) {
 								snapshot.docs.map((doc) => {
 									const id = doc.id;
 									const data = doc.data();
-									var createdAt = (
-										data.createdAt ??
-										firebase.firestore.Timestamp.now()
-									)
-										.toDate()
-										.toISOString();
+									const createdAt = dateToAge(
+										(
+											data.createdAt ??
+											firebase.firestore.Timestamp.now()
+										).toDate()
+									);
 									return {
 										id,
 										...data,

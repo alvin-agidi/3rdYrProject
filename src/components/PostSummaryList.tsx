@@ -14,6 +14,7 @@ import { Label } from "./Label";
 import { useNavigation } from "@react-navigation/native";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
+import { dateToAge } from "../../redux/actions";
 
 export function PostSummaryList(props: any) {
 	const navigation = useNavigation();
@@ -52,7 +53,7 @@ export function PostSummaryList(props: any) {
 							)}
 						/>
 						<Text style={globalStyles.date}>
-							{post.createdAt.toLocaleString()}
+							{dateToAge(post.createdAt)}
 						</Text>
 					</View>
 				</View>
