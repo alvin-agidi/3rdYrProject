@@ -17,6 +17,7 @@ import { connect } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
 import UserSummary from "./UserSummary";
+import globalStyles from "../globalStyles";
 
 function Profile(props: any) {
 	const navigation = useNavigation();
@@ -307,7 +308,7 @@ function Profile(props: any) {
 	);
 
 	return (
-		<View style={styles.profile}>
+		<View style={globalStyles.container}>
 			<UserSummary uid={props.route.params.uid} />
 			<View style={styles.infoBox}>
 				<Text style={styles.info}>
@@ -388,11 +389,6 @@ function Profile(props: any) {
 }
 
 const styles = StyleSheet.create({
-	profile: {
-		flex: 1,
-		gap: 10,
-		padding: 10,
-	},
 	infoBox: {
 		gap: 2,
 		flexDirection: "row",

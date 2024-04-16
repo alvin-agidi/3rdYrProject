@@ -131,7 +131,7 @@ export default function Comments(props: any) {
 			) : (
 				<NoResults icon="comment-off-outline" text="No comments" />
 			),
-		[]
+		[isLoading]
 	);
 	return (
 		<View style={globalStyles.container}>
@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
 		padding: 5,
 		backgroundColor: "lightgrey",
 		borderRadius: 10,
-		alignSelf: "stretch",
 	},
 	comment: {
 		flex: 1,

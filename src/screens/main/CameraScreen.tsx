@@ -144,7 +144,7 @@ function CameraComponent() {
 
 	if (media) {
 		return (
-			<View style={styles.container}>
+			<View style={globalStyles.container}>
 				{isVideoMode ? (
 					<Video
 						style={styles.media}
@@ -190,13 +190,15 @@ function CameraComponent() {
 	}
 
 	return (
-		<View style={styles.container}>
-			<Camera
-				style={styles.camera}
-				ref={cameraRef}
-				type={cameraDirection}
-				autoFocus={AutoFocus.on}
-			/>
+		<View style={globalStyles.container}>
+			<View style={styles.cameraBox}>
+				<Camera
+					style={styles.camera}
+					ref={cameraRef}
+					type={cameraDirection}
+					autoFocus={AutoFocus.on}
+				/>
+			</View>
 			<View style={styles.iconBox}>
 				<Icon
 					name="camera-flip-outline"
@@ -255,15 +257,13 @@ export default class CameraScreen extends Component {
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: "center",
-		padding: 5,
-		gap: 5,
-	},
 	camera: {
-		alignSelf: "stretch",
 		flex: 1,
+	},
+	cameraBox: {
+		flex: 1,
+		borderRadius: 5,
+		overflow: "hidden",
 	},
 	iconBox: {
 		flexDirection: "row",
@@ -272,7 +272,6 @@ const styles = StyleSheet.create({
 	},
 	media: {
 		flex: 1,
-		alignSelf: "stretch",
 		borderRadius: 5,
 	},
 });

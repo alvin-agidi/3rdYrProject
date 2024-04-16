@@ -38,7 +38,7 @@ function UserSummary(props: any) {
 				props.PTs.includes(props.uid) ? (
 					<Label text="Your PT" />
 				) : (
-					<Label text=" PT" />
+					<Label text="PT" />
 				)
 			) : null}
 			{props.clients.includes(props.uid) ? (

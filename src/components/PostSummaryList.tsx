@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
 	},
 	posts: {
 		flex: 1,
-		alignSelf: "stretch",
 		borderRadius: 10,
 		gap: 2,
 		backgroundColor: "lightgrey",

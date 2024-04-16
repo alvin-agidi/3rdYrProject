@@ -28,8 +28,8 @@ import { NoResults } from "./NoResults";
 export function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
-	const [isLoading, setIsLoading] = useState(true);
-	var videoRefs = {};
+	const [isLoading, setIsLoading] = useState(false);
+	var videoRefs: any = {};
 
 	function addLikeInfo() {
 		setPosts((posts: any) =>
@@ -47,16 +47,24 @@ export function PostList(props: any) {
 		);
 	}
 
+	function sortPosts() {
+		setPosts((posts: any) =>
+			posts.sort((x: any, y: any) => {
+				return y.createdAt.localeCompare(x.createdAt);
+			})
+		);
+	}
+
 	useEffect(() => {
 		(async () => {
-			setIsLoading(true);
-			this.videoRefs = {};
+			videoRefs = {};
 			if (
 				props.route.params &&
 				props.route.params.uid &&
 				props.route.params.postID
 			) {
 				await new Promise((resolve) => {
+					setIsLoading(true);
 					firebase
 						.firestore()
 						.collection("users")
@@ -91,20 +99,20 @@ export function PostList(props: any) {
 							]).then(() => {
 								setPosts(() => [data]);
 								addLikeInfo();
+								setIsLoading(false);
 								resolve(null);
 							});
 						});
+					// .catch(() => {
+					// 	setIsLoading(false);
+					// 	resolve(null);
+					// });
 				});
 			} else if (props.followingLoaded === props.following.length) {
 				setPosts(() => props.followingPosts);
 				addLikeInfo();
-				setPosts((posts: any) =>
-					posts.sort((x: any, y: any) => {
-						return y.createdAt.localeCompare(x.createdAt);
-					})
-				);
+				sortPosts();
 			}
-			setIsLoading(false);
 		})();
 	}, [props.following, props.followingLoaded, props.followingPosts]);
 
@@ -162,7 +170,7 @@ export function PostList(props: any) {
 				{item.isVideo ? (
 					<Video
 						ref={(videoRef) => {
-							this.videoRefs[item.id] = videoRef;
+							videoRefs[item.id] = videoRef;
 						}}
 						style={styles.media}
 						source={{ uri: item.mediaURL }}
@@ -268,7 +276,7 @@ export function PostList(props: any) {
 									renderItem={({ item: exercise }) => (
 										<TouchableOpacity
 											onPress={async () => {
-												await this.videoRefs[
+												await videoRefs[
 													item.id
 												].playFromPositionAsync(
 													exercise.start * 1000
@@ -304,17 +312,18 @@ export function PostList(props: any) {
 			) : (
 				<NoResults icon="image-off-outline" text="No posts" />
 			),
-		[]
+		[isLoading]
 	);
 
 	return (
-		<View style={styles.postList}>
+		<View style={globalStyles.container}>
 			<FlatList
 				horizontal={false}
 				numColumns={1}
 				contentContainerStyle={{ gap: 5, flexGrow: 1 }}
 				data={posts}
 				renderItem={renderItem}
+				style={styles.postList}
 				ListEmptyComponent={ListEmptyComponent}
 			/>
 		</View>
@@ -325,11 +334,14 @@ const styles = StyleSheet.create({
 	postList: {
 		flex: 1,
 		padding: 5,
+		backgroundColor: "lightgrey",
+		borderRadius: 10,
+		gap: 5,
 	},
 	post: {
 		flex: 1,
 		borderRadius: 5,
-		backgroundColor: "lightgrey",
+		backgroundColor: "white",
 	},
 	postDesc: {
 		flex: 1,

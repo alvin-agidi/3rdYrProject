@@ -134,7 +134,6 @@ const styles = StyleSheet.create({
 		backgroundColor: "lightgrey",
 		borderRadius: 10,
 		gap: 5,
-		alignSelf: "stretch",
 	},
 	title: {
 		fontSize: 15,

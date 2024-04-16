@@ -307,7 +307,6 @@ export class SearchScreen extends Component {
 const styles = StyleSheet.create({
 	results: {
 		flex: 1,
-		alignSelf: "stretch",
 		borderRadius: 10,
 		backgroundColor: "lightgrey",
 	},
@@ -332,8 +331,7 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		gap: 10,
-		alignSelf: "stretch",
-		alignItems: "center",
+		alignItems: "stretch",
 	},
 });
 

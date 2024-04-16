@@ -39,42 +39,47 @@ export default function ChatScreen(props: any) {
 		}
 	}
 
+	// function fetchChatID() {
+	// 	return new Promise((resolve) => {
+	// 		firebase
+	// 			.firestore()
+	// 			.collection("users")
+	// 			.doc(firebase.auth().currentUser!.uid)
+	// 			.collection("chats")
+	// 			.doc(props.route.params.uid)
+	// 			.get()
+	// 			.then((doc) => {
+	// 				resolve(setChatID(doc!.data()!.chatID));
+	// 			})
+	// 			.catch(() => {
+	// 				firebase
+	// 					.firestore()
+	// 					.collection("chats")
+	// 					.add({})
+	// 					.then((doc) => {
+	// 						resolve(setChatID(doc.id));
+	// 						firebase
+	// 							.firestore()
+	// 							.collection("users")
+	// 							.doc(firebase.auth().currentUser!.uid)
+	// 							.collection("chats")
+	// 							.doc(props.route.params.uid)
+	// 							.set({ chatID: doc.id });
+	// 						firebase
+	// 							.firestore()
+	// 							.collection("users")
+	// 							.doc(props.route.params.uid)
+	// 							.collection("chats")
+	// 							.doc(firebase.auth().currentUser!.uid)
+	// 							.set({ chatID: doc.id });
+	// 					});
+	// 			});
+	// 	});
+	// }
+
 	function fetchChatID() {
-		return new Promise((resolve) => {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(firebase.auth().currentUser!.uid)
-				.collection("chats")
-				.doc(props.route.params.uid)
-				.get()
-				.then((doc) => {
-					resolve(setChatID(doc!.data()!.chatID));
-				})
-				.catch(() => {
-					firebase
-						.firestore()
-						.collection("chats")
-						.add({})
-						.then((doc) => {
-							resolve(setChatID(doc.id));
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(firebase.auth().currentUser!.uid)
-								.collection("chats")
-								.doc(props.route.params.uid)
-								.set({ chatID: doc.id });
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(props.route.params.uid)
-								.collection("chats")
-								.doc(firebase.auth().currentUser!.uid)
-								.set({ chatID: doc.id });
-						});
-				});
-		});
+		var ids = [firebase.auth().currentUser!.uid, props.route.params.uid];
+		setChatID(ids.sort().join(""));
 	}
 
 	function fetchMessages() {
@@ -142,7 +147,7 @@ export default function ChatScreen(props: any) {
 			) : (
 				<NoResults icon="chat-outline" text="Send a message" />
 			),
-		[]
+		[isLoading]
 	);
 
 	return (
@@ -190,7 +195,6 @@ const styles = StyleSheet.create({
 		padding: 5,
 		backgroundColor: "lightgrey",
 		borderRadius: 10,
-		alignSelf: "stretch",
 	},
 	message: {
 		flex: 1,

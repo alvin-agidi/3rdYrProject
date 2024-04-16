@@ -5,7 +5,7 @@ export default StyleSheet.create({
 		flex: 1,
 		padding: 10,
 		gap: 10,
-		alignItems: "center",
+		alignItems: "stretch",
 	},
 	textInput: {
 		padding: 10,
@@ -35,6 +35,7 @@ export default StyleSheet.create({
 		fontSize: 70,
 		fontWeight: "bold",
 		color: "deepskyblue",
+		textAlign: "center",
 	},
 	date: {
 		alignSelf: "flex-end",
@@ -54,7 +55,6 @@ export default StyleSheet.create({
 	kav: {
 		flex: 1,
 		gap: 10,
-		alignItems: "center",
-		alignSelf: "stretch",
+		alignItems: "stretch",
 	},
 });

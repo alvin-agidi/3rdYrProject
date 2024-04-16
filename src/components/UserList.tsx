@@ -167,7 +167,6 @@ const styles = StyleSheet.create({
 		padding: 5,
 		backgroundColor: "lightgrey",
 		borderRadius: 10,
-		alignSelf: "stretch",
 	},
 	user: {
 		padding: 5,
