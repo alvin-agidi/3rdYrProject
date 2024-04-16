@@ -48,18 +48,16 @@ function Profile(props: any) {
 						.then((snapshot) => {
 							return resolve(
 								snapshot.docs.map((doc) => {
-									const id = doc.id;
 									const data = doc.data();
-									const createdAt = dateToAge(
+									data.id = doc.id;
+									data.createdAt = dateToAge(
 										(
 											data.createdAt ??
 											firebase.firestore.Timestamp.now()
 										).toDate()
 									);
 									return {
-										id,
 										...data,
-										createdAt,
 										thumbnailURI: "",
 									};
 								})

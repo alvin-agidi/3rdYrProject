@@ -158,7 +158,6 @@ export default function PublishPost(props: any) {
 const styles = StyleSheet.create({
 	media: {
 		flex: 1,
-		alignSelf: "stretch",
 		borderRadius: 5,
 	},
 });

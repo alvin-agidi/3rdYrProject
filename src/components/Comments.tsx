@@ -84,14 +84,14 @@ export default function Comments(props: any) {
 				.onSnapshot((snapshot) => {
 					const comments = snapshot.docs.map((doc) => {
 						const data = doc.data();
-						const id = doc.id;
-						const createdAt = dateToAge(
+						data.id = doc.id;
+						data.createdAt = dateToAge(
 							(
 								data.createdAt ??
 								firebase.firestore.Timestamp.now()
 							).toDate()
 						);
-						return { id, ...data, createdAt };
+						return data;
 					});
 					setIsLoading(true);
 					fetchCommentCreators(comments);

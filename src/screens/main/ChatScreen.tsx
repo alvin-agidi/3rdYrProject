@@ -94,14 +94,14 @@ export default function ChatScreen(props: any) {
 					.onSnapshot((snapshot) => {
 						const messages = snapshot.docs.map((doc) => {
 							const data = doc.data();
-							const id = doc.id;
-							const createdAt = dateToAge(
+							data.id = doc.id;
+							data.createdAt = dateToAge(
 								(
 									data.createdAt ??
 									firebase.firestore.Timestamp.now()
 								).toDate()
 							);
-							return { id, ...data, createdAt };
+							return data;
 						});
 						resolve(setMessages(messages));
 					});

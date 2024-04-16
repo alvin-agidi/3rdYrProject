@@ -14,7 +14,6 @@ import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { PressableButton } from "./PressableButton";
-import { Label } from "./Label";
 import { fetchPostExercises, generateThumbnail } from "../../redux/actions";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { PostSummaryList } from "./PostSummaryList";
