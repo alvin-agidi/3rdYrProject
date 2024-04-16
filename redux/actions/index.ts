@@ -133,9 +133,9 @@ export function fetchFollowingUserPosts(uid: string) {
 					// uid = snapshot.docs[0].ref.path.split("/")[1];
 					fetchFollowingUser(uid).then((user: any) => {
 						var posts = snapshot.docs.map((doc: any) => {
-							const data = doc.data();
-							const id = doc.id;
-							const createdAt = dateToAge(
+							var data = doc.data();
+							data.id = doc.id;
+							data.createdAt = dateToAge(
 								(
 									data.createdAt ??
 									firebase.firestore.Timestamp.now()
@@ -143,8 +143,6 @@ export function fetchFollowingUserPosts(uid: string) {
 							);
 							return {
 								...data,
-								id,
-								createdAt,
 								user,
 							};
 						});
@@ -226,14 +224,14 @@ export function fetchNotifications(uid: string) {
 			.orderBy("createdAt", "desc")
 			.onSnapshot((snapshot) => {
 				const notifications = snapshot.docs.map((doc) => {
-					const data = doc.data();
+					var data = doc.data();
 					data.id = doc.id;
-					const createdAt = (
-						data.createdAt ?? firebase.firestore.Timestamp.now()
-					)
-						.toDate()
-						.toLocaleString();
-					return { ...data, createdAt };
+					data.createdAt = dateToAge(
+						(
+							data.createdAt ?? firebase.firestore.Timestamp.now()
+						).toDate()
+					);
+					return data;
 				});
 				dispatch({
 					type: NOTIFICATIONS_STATE_CHANGE,
