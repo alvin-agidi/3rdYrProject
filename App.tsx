@@ -41,32 +41,32 @@ export class App extends Component<{}, any> {
 
 	componentDidMount(): void {
 		firebase.auth().onAuthStateChanged((user) => {
-			if (!user) {
+			if (user) {
 				this.setState({
-					signedIn: false,
+					signedIn: true,
 				});
 			} else {
 				this.setState({
-					signedIn: true,
+					signedIn: false,
 				});
 			}
 		});
 	}
 
 	render() {
-		if (!this.state.signedIn) {
+		if (this.state.signedIn) {
 			return (
-				<NavigationContainer>
-					<LandingScreen />
-				</NavigationContainer>
+				<Provider store={store}>
+					<NavigationContainer>
+						<MainScreen />
+					</NavigationContainer>
+				</Provider>
 			);
 		}
 		return (
-			<Provider store={store}>
-				<NavigationContainer>
-					<MainScreen />
-				</NavigationContainer>
-			</Provider>
+			<NavigationContainer>
+				<LandingScreen />
+			</NavigationContainer>
 		);
 	}
 }
