@@ -236,24 +236,19 @@ function CameraComponent() {
 	);
 }
 
-export default class CameraScreen extends Component {
-	render() {
-		return (
-			<Stack.Navigator
-				initialRouteName="Camera"
-				screenOptions={{
-					headerTintColor: "deepskyblue",
-					headerTitleStyle: { color: "black" },
-				}}
-			>
-				<Stack.Screen name="Camera" component={CameraComponent} />
-				<Stack.Screen
-					name="Publish Post"
-					component={PublishPostScreen}
-				/>
-			</Stack.Navigator>
-		);
-	}
+export default function CameraScreen() {
+	return (
+		<Stack.Navigator
+			initialRouteName="Camera"
+			screenOptions={{
+				headerTintColor: "deepskyblue",
+				headerTitleStyle: { color: "black" },
+			}}
+		>
+			<Stack.Screen name="Camera" component={CameraComponent} />
+			<Stack.Screen name="Publish Post" component={PublishPostScreen} />
+		</Stack.Navigator>
+	);
 }
 
 const styles = StyleSheet.create({

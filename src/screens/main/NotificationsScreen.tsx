@@ -15,7 +15,7 @@ import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import Profile from "../../components/Profile";
 import PostList from "../../components/PostList";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import Comments from "../../components/Comments";
 import UserList from "../../components/UserList";
 import firebase from "firebase/compat/app";
@@ -92,39 +92,38 @@ function Notifications(props: any) {
 	);
 }
 
-class NotificationsScreen extends Component {
-	render() {
-		return (
-			<Stack.Navigator
-				initialRouteName="Notifications"
-				screenOptions={{
-					headerTintColor: "deepskyblue",
-					headerTitleStyle: { color: "black" },
-				}}
-			>
-				<Stack.Screen
-					name="Notifications"
-					children={(props) => (
-						<Notifications {...props} {...this.props} />
-					)}
-				/>
-				<Stack.Screen name="Profile" component={Profile} />
-				<Stack.Screen name="Post" component={PostList} />
-				<Stack.Screen name="Comments" component={Comments} />
-				<Stack.Screen name="Chat" component={ChatScreen} />
-				<Stack.Screen
-					name="Your Clients"
-					component={UserList}
-					initialParams={{ users: this.props.clients }}
-				/>
-				<Stack.Screen
-					name="Your PTs"
-					component={UserList}
-					initialParams={{ users: this.props.PTs }}
-				/>
-			</Stack.Navigator>
-		);
-	}
+export default function NotificationsScreen() {
+	const clients = useSelector((state: any) => state.userState.clients);
+	const PTs = useSelector((state: any) => state.userState.PTs);
+
+	return (
+		<Stack.Navigator
+			initialRouteName="Notifications"
+			screenOptions={{
+				headerTintColor: "deepskyblue",
+				headerTitleStyle: { color: "black" },
+			}}
+		>
+			<Stack.Screen
+				name="Notifications"
+				children={(props) => <Notifications {...props} />}
+			/>
+			<Stack.Screen name="Profile" component={Profile} />
+			<Stack.Screen name="Post" component={PostList} />
+			<Stack.Screen name="Comments" component={Comments} />
+			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen
+				name="Your Clients"
+				component={UserList}
+				initialParams={{ users: clients }}
+			/>
+			<Stack.Screen
+				name="Your PTs"
+				component={UserList}
+				initialParams={{ users: PTs }}
+			/>
+		</Stack.Navigator>
+	);
 }
 
 const styles = StyleSheet.create({
@@ -158,9 +157,3 @@ const styles = StyleSheet.create({
 		backgroundColor: "red",
 	},
 });
-
-const mapStateToProps = (store: any) => ({
-	notifications: store.userState.notifications,
-});
-
-export default connect(mapStateToProps, null)(NotificationsScreen);

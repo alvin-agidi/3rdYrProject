@@ -12,7 +12,7 @@ import "firebase/compat/storage";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/core";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { TextField } from "../../components/TextField";
 import { TextSelect } from "../../components/TextSelect";
 import globalStyles from "../../globalStyles";
@@ -30,7 +30,7 @@ import UserSummary from "../../components/UserSummary";
 
 const Stack = createNativeStackNavigator();
 
-function Search(props: any) {
+function Search() {
 	const navigation = useNavigation();
 	const [users, setUsers] = useState<any[]>([]);
 	const [posts, setPosts] = useState<any[]>([]);
@@ -271,37 +271,35 @@ function Search(props: any) {
 	);
 }
 
-export class SearchScreen extends Component {
-	render() {
-		return (
-			<Stack.Navigator
-				initialRouteName="Search"
-				screenOptions={{
-					headerTintColor: "deepskyblue",
-					headerTitleStyle: { color: "black" },
-				}}
-			>
-				<Stack.Screen
-					name="Search"
-					children={(props) => <Search {...props} {...this.props} />}
-				/>
-				<Stack.Screen name="Profile" component={Profile} />
-				<Stack.Screen name="Post" component={PostList} />
-				<Stack.Screen name="Comments" component={Comments} />
-				<Stack.Screen name="Chat" component={ChatScreen} />
-				<Stack.Screen
-					name="Your Clients"
-					component={UserList}
-					initialParams={{ users: this.props.clients }}
-				/>
-				<Stack.Screen
-					name="Your PTs"
-					component={UserList}
-					initialParams={{ users: this.props.PTs }}
-				/>
-			</Stack.Navigator>
-		);
-	}
+export default function SearchScreen() {
+	const clients = useSelector((state: any) => state.userState.clients);
+	const PTs = useSelector((state: any) => state.userState.PTs);
+
+	return (
+		<Stack.Navigator
+			initialRouteName="Search"
+			screenOptions={{
+				headerTintColor: "deepskyblue",
+				headerTitleStyle: { color: "black" },
+			}}
+		>
+			<Stack.Screen name="Search" children={(props) => <Search />} />
+			<Stack.Screen name="Profile" component={Profile} />
+			<Stack.Screen name="Post" component={PostList} />
+			<Stack.Screen name="Comments" component={Comments} />
+			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen
+				name="Your Clients"
+				component={UserList}
+				initialParams={{ users: clients }}
+			/>
+			<Stack.Screen
+				name="Your PTs"
+				component={UserList}
+				initialParams={{ users: PTs }}
+			/>
+		</Stack.Navigator>
+	);
 }
 
 const styles = StyleSheet.create({
@@ -334,11 +332,3 @@ const styles = StyleSheet.create({
 		alignItems: "stretch",
 	},
 });
-
-const mapStateToProps = (store: any) => ({
-	following: store.userState.following,
-	clients: store.userState.clients,
-	PTs: store.userState.PTs,
-});
-
-export default connect(mapStateToProps, null)(SearchScreen);

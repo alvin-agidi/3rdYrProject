@@ -13,30 +13,43 @@ import "firebase/compat/firestore";
 import { PressableButton } from "./PressableButton";
 import { useNavigation } from "@react-navigation/native";
 import { dateToAge, generateThumbnail } from "../../redux/actions";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
 import UserSummary from "./UserSummary";
 import globalStyles from "../globalStyles";
 
-function Profile(props: any) {
+export default function Profile(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 	const [following, setFollowing] = useState<any>([]);
 	const [followers, setFollowers] = useState<any>([]);
-	const [clients, setClients] = useState<any>([]);
-	const [PTs, setPTs] = useState<any>([]);
 	const [isFollowing, setIsFollowing] = useState(false);
 	const [isMyPT, setIsMyPT] = useState(false);
 	const [isClient, setIsClient] = useState(false);
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const currentUser = useSelector(
+		(state: any) => state.userState.currentUser
+	);
+	const currentUserPosts = useSelector((state: any) => state.userState.posts);
+	const currentUserFollowing = useSelector(
+		(state: any) => state.userState.following
+	);
+	const currentUserFollowers = useSelector(
+		(state: any) => state.userState.followers
+	);
+	const currentUserClients = useSelector(
+		(state: any) => state.userState.clients
+	);
+	const currentUserPTs = useSelector((state: any) => state.userState.PTs);
 
 	function getPosts() {
 		return new Promise((resolve) => {
 			return new Promise((resolve) => {
 				if (isCurrentUser) {
-					return resolve(props.posts);
+					setPosts(currentUserPosts);
+					return resolve(currentUserPosts);
 				} else {
 					firebase
 						.firestore()
@@ -91,7 +104,7 @@ function Profile(props: any) {
 
 	function getFollowing(): void {
 		if (isCurrentUser) {
-			setFollowing(props.following);
+			setFollowing(currentUserFollowing);
 		} else {
 			firebase
 				.firestore()
@@ -107,7 +120,7 @@ function Profile(props: any) {
 
 	function getFollowers(): void {
 		if (isCurrentUser) {
-			setFollowers(props.followers);
+			setFollowers(currentUserFollowers);
 		} else {
 			firebase
 				.firestore()
@@ -121,24 +134,15 @@ function Profile(props: any) {
 		}
 	}
 
-	function getClients(): void {
-		setClients(props.clients);
-	}
-
-	function getPTs(): void {
-		setPTs(props.PTs);
-	}
-
 	useEffect(() => {
-		setIsLoading(true);
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
 		);
+	}, []);
+
+	useEffect(() => {
 		getFollowing();
 		getFollowers();
-		getClients();
-		getPTs();
-		setIsLoading(false);
 	}, [props.route.params.uid]);
 
 	useEffect(() => {
@@ -147,19 +151,15 @@ function Profile(props: any) {
 			await getPosts();
 			setIsLoading(false);
 		})();
-	}, [props.route.params.uid, props.posts]);
+	}, [props.route.params.uid, currentUserPosts]);
 
 	useEffect(() => {
 		getFollowing();
 		getFollowers();
-		if (isCurrentUser) {
-			getClients();
-			getPTs();
-		}
-		setIsMyPT(props.PTs.includes(props.route.params.uid));
-		setIsClient(props.clients.includes(props.route.params.uid));
-		setIsFollowing(props.following.includes(props.route.params.uid));
-	}, [props.following, props.followers, props.clients, props.PTs]);
+		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
+		setIsClient(currentUserClients.includes(props.route.params.uid));
+		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));
+	}, [currentUserFollowing, currentUserFollowers, currentUserClients, currentUserPTs]);
 
 	function toggleFollow() {
 		if (isFollowing) {
@@ -316,23 +316,24 @@ function Profile(props: any) {
 				<Text style={styles.info}>{following.length} following</Text>
 				{isCurrentUser ? (
 					<Text style={styles.info}>
-						{PTs.length} PT{PTs.length !== 1 ? "s" : ""}
+						{currentUserPTs.length} PT
+						{currentUserPTs.length !== 1 ? "s" : ""}
 					</Text>
 				) : null}
-				{isCurrentUser && props.currentUser.isPT ? (
+				{isCurrentUser && currentUser.isPT ? (
 					<Text style={styles.info}>
-						{clients.length} client
-						{clients.length !== 1 ? "s" : ""}
+						{currentUserClients.length} client
+						{currentUserClients.length !== 1 ? "s" : ""}
 					</Text>
 				) : null}
 			</View>
-			{isCurrentUser && props.currentUser.isPT && clients.length ? (
+			{isCurrentUser && currentUser.isPT && currentUserClients.length ? (
 				<PressableButton
 					onPress={() => navigation.navigate("Your Clients")}
 					text="View your clients"
 				/>
 			) : null}
-			{isCurrentUser && PTs.length ? (
+			{isCurrentUser && currentUserPTs.length ? (
 				<PressableButton
 					onPress={() => navigation.navigate("Your PTs")}
 					text="View your personal trainers"
@@ -345,7 +346,7 @@ function Profile(props: any) {
 					text={isFollowing ? "Unfollow" : "Follow"}
 				/>
 			) : null}
-			{props.currentUser.isPT && !isCurrentUser ? (
+			{currentUser.isPT && !isCurrentUser ? (
 				<PressableButton
 					onPress={toggleIsClient}
 					backgroundColor={isClient ? "grey" : "deepskyblue"}
@@ -423,14 +424,3 @@ const styles = StyleSheet.create({
 		borderRadius: 5,
 	},
 });
-
-const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
-	posts: store.userState.posts,
-	following: store.userState.following,
-	followers: store.userState.followers,
-	clients: store.userState.clients,
-	PTs: store.userState.PTs,
-});
-
-export default connect(mapStateToProps, null)(Profile);

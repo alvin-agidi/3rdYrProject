@@ -21,15 +21,24 @@ import {
 } from "../../redux/actions";
 import globalStyles from "../globalStyles";
 import { Label } from "./Label";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
 
-export function PostList(props: any) {
+export default function PostList(props: any) {
 	const navigation = useNavigation();
 	const [posts, setPosts] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	var videoRefs: any = {};
+	const following = useSelector((state: any) => state.userState.following);
+	const followingLoaded = useSelector(
+		(state: any) => state.followingState.followingLoaded
+	);
+	const followingPosts = useSelector(
+		(state: any) => state.followingState.followingPosts
+	);
+	const clients = useSelector((state: any) => state.userState.clients);
+	const PTs = useSelector((state: any) => state.userState.PTs);
 
 	function addLikeInfo() {
 		setPosts((posts: any) =>
@@ -103,18 +112,14 @@ export function PostList(props: any) {
 								resolve(null);
 							});
 						});
-					// .catch(() => {
-					// 	setIsLoading(false);
-					// 	resolve(null);
-					// });
 				});
-			} else if (props.followingLoaded === props.following.length) {
-				setPosts(() => props.followingPosts);
+			} else if (followingLoaded === following.length) {
+				setPosts(() => followingPosts);
 				addLikeInfo();
 				sortPosts();
 			}
 		})();
-	}, [props.following, props.followingLoaded, props.followingPosts]);
+	}, [following, followingLoaded, followingPosts]);
 
 	function toggleLike(userID: string, postID: string, isLiked: boolean) {
 		if (isLiked) {
@@ -200,11 +205,10 @@ export function PostList(props: any) {
 									{item.user.username}
 								</Text>
 							</TouchableOpacity>
-							{props.clients &&
-							props.clients.includes(item.user.uid) ? (
+							{clients && clients.includes(item.user.uid) ? (
 								<Label text="Your client" />
 							) : null}
-							{props.PTs && props.PTs.includes(item.user.uid) ? (
+							{PTs && PTs.includes(item.user.uid) ? (
 								<Label text="Your PT" />
 							) : null}
 							{item.exercisesDetected ? (
@@ -398,14 +402,3 @@ const styles = StyleSheet.create({
 		aspectRatio: 1 / 1,
 	},
 });
-
-const mapStateToProps = (store: any) => ({
-	posts: store.userState.posts,
-	following: store.userState.following,
-	followingLoaded: store.followingState.followingLoaded,
-	followingPosts: store.followingState.followingPosts,
-	clients: store.userState.clients,
-	PTs: store.userState.PTs,
-});
-
-export default connect(mapStateToProps, null)(PostList);

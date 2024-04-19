@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Platform } from "react-native";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Comments from "../../components/Comments";
 import firebase from "firebase/compat/app";
@@ -16,7 +16,7 @@ const appConfig = require("../../../app.json");
 
 const Stack = createNativeStackNavigator();
 
-export class FeedScreen extends Component {
+export default function FeedScreen() {
 	// async componentDidMount() {
 	// 	var token;
 
@@ -58,44 +58,35 @@ export class FeedScreen extends Component {
 	// 		console.log("Must use physical device for Push Notifications");
 	// 	}
 	// }
+	const clients = useSelector((state: any) => state.userState.clients);
+	const PTs = useSelector((state: any) => state.userState.PTs);
 
-	render() {
-		return (
-			<Stack.Navigator
-				initialRouteName="Feed"
-				screenOptions={{
-					headerTintColor: "deepskyblue",
-					headerTitleStyle: { color: "black" },
-				}}
-			>
-				<Stack.Screen
-					name="Feed"
-					children={(props) => (
-						<PostList {...props} {...this.props} />
-					)}
-				/>
-				<Stack.Screen name="Comments" component={Comments} />
-				<Stack.Screen name="Profile" component={Profile} />
-				<Stack.Screen name="Post" component={PostList} />
-				<Stack.Screen name="Chat" component={ChatScreen} />
-				<Stack.Screen
-					name="Your Clients"
-					component={UserList}
-					initialParams={{ users: this.props.clients }}
-				/>
-				<Stack.Screen
-					name="Your PTs"
-					component={UserList}
-					initialParams={{ users: this.props.PTs }}
-				/>
-			</Stack.Navigator>
-		);
-	}
+	return (
+		<Stack.Navigator
+			initialRouteName="Feed"
+			screenOptions={{
+				headerTintColor: "deepskyblue",
+				headerTitleStyle: { color: "black" },
+			}}
+		>
+			<Stack.Screen
+				name="Feed"
+				children={(props) => <PostList {...props} />}
+			/>
+			<Stack.Screen name="Comments" component={Comments} />
+			<Stack.Screen name="Profile" component={Profile} />
+			<Stack.Screen name="Post" component={PostList} />
+			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen
+				name="Your Clients"
+				component={UserList}
+				initialParams={{ users: clients }}
+			/>
+			<Stack.Screen
+				name="Your PTs"
+				component={UserList}
+				initialParams={{ users: PTs }}
+			/>
+		</Stack.Navigator>
+	);
 }
-
-const mapStateToProps = (store: any) => ({
-	clients: store.userState.clients,
-	PTs: store.userState.PTs,
-});
-
-export default connect(mapStateToProps, null)(FeedScreen);

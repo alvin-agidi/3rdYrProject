@@ -4,14 +4,20 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { Label } from "./Label";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 
-function UserSummary(props: any) {
+export default function UserSummary(props: any) {
 	const [user, setUser] = useState<any>();
+	const currentUser = useSelector(
+		(state: any) => state.userState.currentUser
+	);
+	const following = useSelector((state: any) => state.userState.following);
+	const clients = useSelector((state: any) => state.userState.clients);
+	const PTs = useSelector((state: any) => state.userState.PTs);
 
 	function getUser(): void {
 		if (props.uid === firebase.auth().currentUser!.uid) {
-			setUser(props.currentUser);
+			setUser(currentUser);
 		} else {
 			firebase
 				.firestore()
@@ -26,7 +32,7 @@ function UserSummary(props: any) {
 
 	useEffect(() => {
 		getUser();
-	}, [props.uid]);
+	}, [props.uid, currentUser]);
 
 	return user ? (
 		<View style={styles.usernameBox}>
@@ -35,19 +41,14 @@ function UserSummary(props: any) {
 				<Label text="You" />
 			) : null}
 			{user.isPT ? (
-				props.PTs.includes(props.uid) ? (
+				PTs.includes(props.uid) ? (
 					<Label text="Your PT" />
 				) : (
 					<Label text="PT" />
 				)
 			) : null}
-			{props.clients.includes(props.uid) ? (
-				<Label text="Your client" />
-			) : null}
-
-			{props.following.includes(props.uid) ? (
-				<Label text="Following" />
-			) : null}
+			{clients.includes(props.uid) ? <Label text="Your client" /> : null}
+			{following.includes(props.uid) ? <Label text="Following" /> : null}
 		</View>
 	) : null;
 }
@@ -63,14 +64,3 @@ const styles = StyleSheet.create({
 		fontWeight: "bold",
 	},
 });
-
-const mapStateToProps = (store: any) => ({
-	currentUser: store.userState.currentUser,
-	posts: store.userState.posts,
-	following: store.userState.following,
-	followers: store.userState.followers,
-	clients: store.userState.clients,
-	PTs: store.userState.PTs,
-});
-
-export default connect(mapStateToProps, null)(UserSummary);
