@@ -1,14 +1,14 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import "firebase/compat/database";
+import LandingScreen from "./src/screens/landing/LandingScreen";
 import MainScreen from "./src/screens/main/MainScreen";
 import { Provider } from "react-redux";
 import rootReducer from "./redux/reducers";
 import { configureStore } from "@reduxjs/toolkit";
-import { LandingScreen } from "./src/screens/landing/LandingScreen";
 
 const store = configureStore({
 	reducer: rootReducer,
@@ -31,44 +31,22 @@ if (firebase.apps.length === 0) {
 		.settings({ experimentalAutoDetectLongPolling: true, merge: true });
 }
 
-export class App extends Component<{}, any> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			signedIn: false,
-		};
-	}
+export default function App() {
+	const [signedIn, setSignedIn] = useState(false);
 
-	componentDidMount(): void {
-		firebase.auth().onAuthStateChanged((user) => {
-			if (user) {
-				this.setState({
-					signedIn: true,
-				});
-			} else {
-				this.setState({
-					signedIn: false,
-				});
-			}
-		});
-	}
+	useEffect(() => {
+		firebase.auth().onAuthStateChanged((user) => setSignedIn(user != null));
+	}, []);
 
-	render() {
-		if (this.state.signedIn) {
-			return (
-				<Provider store={store}>
-					<NavigationContainer>
-						<MainScreen />
-					</NavigationContainer>
-				</Provider>
-			);
-		}
-		return (
+	return signedIn ? (
+		<Provider store={store}>
 			<NavigationContainer>
-				<LandingScreen />
+				<MainScreen />
 			</NavigationContainer>
-		);
-	}
+		</Provider>
+	) : (
+		<NavigationContainer>
+			<LandingScreen />
+		</NavigationContainer>
+	);
 }
-
-export default App;

@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { View, TextInput, Pressable, Text, Switch } from "react-native";
+import React, { useState } from "react";
+import { View, Text } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
@@ -10,21 +10,13 @@ import { ValidatedTextField } from "../../components/ValidatedTextField";
 import { Toggle } from "../../components/Toggle";
 import globalStyles from "../../globalStyles";
 
-export class RegisterScreen extends Component<{}, any> {
-	constructor(props: any) {
-		super(props);
-		this.state = {
-			email: "",
-			username: "",
-			password: "",
-			isPT: false,
-		};
+export default function RegisterScreen() {
+	const [email, setEmail] = useState("");
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [isPT, setIsPT] = useState(false);
 
-		this.register = this.register.bind(this);
-	}
-
-	register() {
-		const { email, username, password, isPT } = this.state;
+	function register() {
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
@@ -40,51 +32,47 @@ export class RegisterScreen extends Component<{}, any> {
 			});
 	}
 
-	render() {
-		return (
-			<View style={styles.container}>
-				<Text style={globalStyles.logo}>ΛCTIV</Text>
-				<ValidatedTextField
-					placeholder="Email"
-					inputMode="email"
-					validRegex={/^[^\s@]+@[^\s@]+\.[^\s@]+$/}
-					validationMessage="Please enter a valid email."
-					onChangeText={(email: string) => {
-						this.setState({ email });
-					}}
-					iconName="email-outline"
-				/>
-				<ValidatedTextField
-					placeholder="Username"
-					validRegex={/^[a-z]+$/}
-					validationMessage="Username must only have lowercase letters."
-					onChangeText={(username: string) => {
-						username = username.toLowerCase();
-						this.setState({ username });
-					}}
-					iconName="account-outline"
-				/>
-				<ValidatedTextField
-					placeholder="Password"
-					secureTextEntry={true}
-					validRegex={/.{6,}/}
-					validationMessage="Password must have at least 6 characters."
-					textContentType="newPassword"
-					onChangeText={(password: string) => {
-						this.setState({ password });
-					}}
-					iconName="lock-outline"
-				/>
-				<Toggle
-					text="Register as a personal trainer"
-					iconName="account-supervisor-outline"
-					onValueChange={() => {
-						this.setState({ isPT: !this.state.isPT });
-					}}
-					value={this.state.isPT}
-				/>
-				<PressableButton onPress={this.register} text="Register" />
-			</View>
-		);
-	}
+	return (
+		<View style={styles.container}>
+			<Text style={globalStyles.logo}>ΛCTIV</Text>
+			<ValidatedTextField
+				placeholder="Email"
+				inputMode="email"
+				validRegex={/^[^\s@]+@[^\s@]+\.[^\s@]+$/}
+				validationMessage="Please enter a valid email."
+				onChangeText={(email: string) => setEmail(email)}
+				iconName="email-outline"
+			/>
+			<ValidatedTextField
+				placeholder="Username"
+				validRegex={/^[a-z]+$/}
+				validationMessage="Username must only have lowercase letters."
+				onChangeText={(username: string) => {
+					username = username.toLowerCase();
+					setUsername(username);
+				}}
+				iconName="account-outline"
+			/>
+			<ValidatedTextField
+				placeholder="Password"
+				secureTextEntry={true}
+				validRegex={/.{6,}/}
+				validationMessage="Password must have at least 6 characters."
+				textContentType="newPassword"
+				onChangeText={(password: string) => {
+					setPassword(password);
+				}}
+				iconName="lock-outline"
+			/>
+			<Toggle
+				text="Register as a personal trainer"
+				iconName="account-supervisor-outline"
+				onValueChange={() => {
+					setIsPT((isPT: boolean) => !isPT);
+				}}
+				value={isPT}
+			/>
+			<PressableButton onPress={register} text="Register" />
+		</View>
+	);
 }
