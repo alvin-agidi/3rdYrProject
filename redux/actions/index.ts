@@ -1,4 +1,3 @@
-import firebase from "firebase/compat/app";
 import {
 	CLEAR_DATA,
 	FOLLOWERS_STATE_CHANGE,
@@ -10,6 +9,7 @@ import {
 	CLIENTS_STATE_CHANGE,
 	PTS_STATE_CHANGE,
 } from "../constants";
+import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
@@ -28,14 +28,10 @@ export function fetchUser(uid: string) {
 			.collection("users")
 			.doc(uid)
 			.onSnapshot((snapshot) => {
-				if (snapshot.exists) {
-					dispatch({
-						type: USER_STATE_CHANGE,
-						currentUser: snapshot.data(),
-					});
-				} else {
-					console.log("User does not exist1");
-				}
+				dispatch({
+					type: USER_STATE_CHANGE,
+					currentUser: snapshot.data(),
+				});
 			});
 	};
 }
