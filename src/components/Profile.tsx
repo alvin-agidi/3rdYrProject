@@ -138,12 +138,12 @@ export default function Profile(props: any) {
 		setIsCurrentUser(
 			props.route.params.uid === firebase.auth().currentUser!.uid
 		);
-	}, []);
+	}, [props.route.params.uid]);
 
 	useEffect(() => {
 		getFollowing();
 		getFollowers();
-	}, [props.route.params.uid]);
+	}, [isCurrentUser]);
 
 	useEffect(() => {
 		(async () => {
@@ -151,7 +151,7 @@ export default function Profile(props: any) {
 			await getPosts();
 			setIsLoading(false);
 		})();
-	}, [props.route.params.uid, currentUserPosts]);
+	}, [currentUserPosts, isCurrentUser]);
 
 	useEffect(() => {
 		getFollowing();
@@ -159,7 +159,12 @@ export default function Profile(props: any) {
 		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
 		setIsClient(currentUserClients.includes(props.route.params.uid));
 		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));
-	}, [currentUserFollowing, currentUserFollowers, currentUserClients, currentUserPTs]);
+	}, [
+		currentUserFollowing,
+		currentUserFollowers,
+		currentUserClients,
+		currentUserPTs,
+	]);
 
 	function toggleFollow() {
 		if (isFollowing) {

@@ -25,8 +25,11 @@ import ChatScreen from "./ChatScreen";
 
 const Stack = createNativeStackNavigator();
 
-function Notifications(props: any) {
+function Notifications() {
 	const navigation = useNavigation();
+	const notifications = useSelector(
+		(state: any) => state.userState.notifications
+	);
 
 	function dismissNotification(id: string): void {
 		firebase
@@ -79,7 +82,7 @@ function Notifications(props: any) {
 			<FlatList
 				horizontal={false}
 				numColumns={1}
-				data={props.notifications}
+				data={notifications}
 				contentContainerStyle={{
 					gap: 5,
 					flexGrow: 1,
@@ -106,7 +109,7 @@ export default function NotificationsScreen() {
 		>
 			<Stack.Screen
 				name="Notifications"
-				children={(props) => <Notifications {...props} />}
+				children={(props) => <Notifications />}
 			/>
 			<Stack.Screen name="Profile" component={Profile} />
 			<Stack.Screen name="Post" component={PostList} />

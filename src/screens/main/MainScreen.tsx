@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
 	fetchUser,
 	fetchUserPosts,
@@ -23,20 +23,17 @@ import "firebase/compat/auth";
 const Tab = createBottomTabNavigator();
 
 export default function Main() {
-	const dispatch = useDispatch();
+	const dispatch: Dispatch<any> = useDispatch();
 
 	useEffect(() => {
-		(async () => {
-			await dispatch(clearData());
-			const uid = firebase.auth().currentUser!.uid;
-			dispatch(fetchUser(uid));
-			dispatch(fetchUserPosts(uid));
-			dispatch(fetchFollowing(uid));
-			dispatch(fetchFollowers(uid));
-			dispatch(fetchNotifications(uid));
-			dispatch(fetchClients(uid));
-			dispatch(fetchPTs(uid));
-		})();
+		dispatch(clearData());
+		dispatch(fetchUser(firebase.auth().currentUser!.uid));
+		dispatch(fetchUserPosts(firebase.auth().currentUser!.uid));
+		dispatch(fetchFollowing(firebase.auth().currentUser!.uid));
+		dispatch(fetchFollowers(firebase.auth().currentUser!.uid));
+		dispatch(fetchNotifications(firebase.auth().currentUser!.uid));
+		dispatch(fetchClients(firebase.auth().currentUser!.uid));
+		dispatch(fetchPTs(firebase.auth().currentUser!.uid));
 	}, [dispatch]);
 
 	return (

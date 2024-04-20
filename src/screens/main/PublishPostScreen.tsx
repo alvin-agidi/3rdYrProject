@@ -35,7 +35,6 @@ async function detectExercises(videoURL: string) {
 export default function PublishPost(props: any) {
 	const navigation = useNavigation();
 	const [caption, setCaption] = useState("");
-
 	const isVideo = props.route.params.isVideo;
 	const mediaUri = props.route.params.media.uri;
 
