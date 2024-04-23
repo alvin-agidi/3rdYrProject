@@ -16,9 +16,7 @@ export default function SignInScreen() {
 		firebase
 			.auth()
 			.signInWithEmailAndPassword(email, password)
-			.catch((result: any) => {
-				console.log(result);
-			});
+			.catch((result: any) => console.log(result));
 	}
 
 	return (
