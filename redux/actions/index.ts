@@ -21,18 +21,219 @@ export function clearData() {
 	};
 }
 
-export function fetchUser(uid: string) {
-	return (dispatch: any) => {
+export async function getUser(uid: string) {
+	return new Promise((resolve) => {
 		firebase
 			.firestore()
 			.collection("users")
 			.doc(uid)
-			.onSnapshot((snapshot) => {
-				dispatch({
-					type: USER_STATE_CHANGE,
-					currentUser: snapshot.data(),
-				});
+			.get()
+			.then((doc) => resolve({ uid, ...doc.data() }));
+	});
+}
+
+export async function getAllUids(): Promise<string[]> {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.get()
+			.then((snapshot) => resolve(snapshot.docs.map((doc) => doc.id)));
+	});
+}
+
+export function getFollowing(uid: string): Promise<string[]> {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("following")
+			.get()
+			.then((snapshot) => {
+				resolve(snapshot.docs.map((doc) => doc.id));
 			});
+	});
+}
+
+export function getFollowers(uid: string): Promise<string[]> {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("followers")
+			.get()
+			.then((snapshot) => resolve(snapshot.docs.map((doc) => doc.id)));
+	});
+}
+
+export function getComments(uid: string, postID: string, setComments: any) {
+	firebase
+		.firestore()
+		.collection("users")
+		.doc(uid)
+		.collection("posts")
+		.doc(postID)
+		.collection("comments")
+		.orderBy("createdAt", "desc")
+		.onSnapshot((snapshot) => {
+			const comments: any[] = snapshot.docs.map((doc) => {
+				const data = doc.data();
+				data.id = doc.id;
+				data.createdAt = dateToAge(
+					(
+						data.createdAt ?? firebase.firestore.Timestamp.now()
+					).toDate()
+				);
+				return data;
+			});
+			Promise.all(
+				comments.map((comment: any) =>
+					getUser(comment.createdBy).then((creator) => {
+						comment.creator = creator;
+					})
+				)
+			).then(() => {
+				setComments(comments);
+			});
+		});
+}
+
+export function getMessages(chatID: string, setMessages: any) {
+	firebase
+		.firestore()
+		.collection("chats")
+		.doc(chatID)
+		.collection("messages")
+		.orderBy("createdAt", "asc")
+		.onSnapshot((snapshot) => {
+			const messages = snapshot.docs.map((doc) => {
+				const data = doc.data();
+				data.id = doc.id;
+				data.createdAt = dateToAge(
+					(
+						data.createdAt ?? firebase.firestore.Timestamp.now()
+					).toDate()
+				);
+				return data;
+			});
+			setMessages(messages);
+		});
+}
+
+function addLikeInfo(post: any) {
+	post.isLiked = post.likes.includes(firebase.auth().currentUser!.uid);
+	post.likeCount = post.likes.length;
+}
+
+function sortByDate(list: any[]) {
+	list.sort((x: any, y: any) => y.createdAt.localeCompare(x.createdAt));
+}
+
+export function getPost(uid: string, postID: string, setPosts: any) {
+	firebase
+		.firestore()
+		.collection("users")
+		.doc(uid)
+		.collection("posts")
+		.doc(postID)
+		.get()
+		.then((doc) => {
+			var post: any = doc.data();
+			post!.id = doc.id;
+			post!.createdAt = dateToAge(post!.createdAt.toDate());
+			Promise.all([
+				fetchPostLikes(uid, postID).then((likes) => {
+					post!.likes = likes;
+				}),
+				getUser(uid).then((user) => {
+					post!.user = user;
+				}),
+				fetchPostExercises(uid, postID).then((exercises) => {
+					post!.exercises = exercises;
+				}),
+			]).then(() => {
+				addLikeInfo(post);
+				setPosts([post]);
+			});
+		});
+}
+
+export async function getPosts(uid: string): Promise<any[]> {
+	return new Promise((resolve) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("posts")
+			.orderBy("createdAt", "desc")
+			.get()
+			.then((snapshot) => {
+				return resolve(
+					snapshot.docs.map((doc) => {
+						const data = doc.data();
+						data.id = doc.id;
+						data.createdAt = dateToAge(
+							(
+								data.createdAt ??
+								firebase.firestore.Timestamp.now()
+							).toDate()
+						);
+						return {
+							...data,
+							thumbnailURI: "",
+						};
+					})
+				);
+			});
+	});
+}
+
+// function fetchChatID() {
+// 	return new Promise((resolve) => {
+// 		firebase
+// 			.firestore()
+// 			.collection("users")
+// 			.doc(firebase.auth().currentUser!.uid)
+// 			.collection("chats")
+// 			.doc(props.route.params.uid)
+// 			.get()
+// 			.then((doc) => {
+// 				resolve(setChatID(doc!.data()!.chatID));
+// 			})
+// 			.catch(() => {
+// 				firebase
+// 					.firestore()
+// 					.collection("chats")
+// 					.add({})
+// 					.then((doc) => {
+// 						resolve(setChatID(doc.id));
+// 						firebase
+// 							.firestore()
+// 							.collection("users")
+// 							.doc(firebase.auth().currentUser!.uid)
+// 							.collection("chats")
+// 							.doc(props.route.params.uid)
+// 							.set({ chatID: doc.id });
+// 						firebase
+// 							.firestore()
+// 							.collection("users")
+// 							.doc(props.route.params.uid)
+// 							.collection("chats")
+// 							.doc(firebase.auth().currentUser!.uid)
+// 							.set({ chatID: doc.id });
+// 					});
+// 			});
+// 	});
+// }
+
+export function fetchUser(uid: string) {
+	return async (dispatch: any) => {
+		dispatch({
+			type: USER_STATE_CHANGE,
+			currentUser: await getUser(uid),
+		});
 	};
 }
 
@@ -64,54 +265,23 @@ export function fetchUserPosts(uid: string) {
 }
 
 export function fetchFollowers(uid: string) {
-	return (dispatch: any) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.doc(uid)
-			.collection("followers")
-			.onSnapshot((snapshot) => {
-				var followers = snapshot.docs.map((doc) => doc.id);
-				dispatch({
-					type: FOLLOWERS_STATE_CHANGE,
-					followers,
-				});
-			});
+	return async (dispatch: any) => {
+		dispatch({
+			type: FOLLOWERS_STATE_CHANGE,
+			followers: await getFollowers(uid),
+		});
 	};
 }
 
 export function fetchFollowing(uid: string) {
-	return (dispatch: any) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.doc(uid)
-			.collection("following")
-			.onSnapshot((snapshot) => {
-				var following = snapshot.docs.map((doc) => doc.id);
-				dispatch({
-					type: FOLLOWING_STATE_CHANGE,
-					following,
-				});
-				for (const id of following) {
-					dispatch(fetchFollowingUserPosts(id));
-				}
-			});
+	return async (dispatch: any) => {
+		const following: string[] = await getFollowing(uid);
+		dispatch({
+			type: FOLLOWING_STATE_CHANGE,
+			following,
+		});
+		following.forEach((uid) => dispatch(fetchFollowingUserPosts(uid)));
 	};
-}
-
-export function fetchFollowingUser(uid: string) {
-	return new Promise((resolve) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.doc(uid)
-			.get()
-			.then((doc) => {
-				const uid = doc.id;
-				return resolve({ uid, ...doc.data() });
-			});
-	});
 }
 
 export function fetchFollowingUserPosts(uid: string) {
@@ -127,20 +297,21 @@ export function fetchFollowingUserPosts(uid: string) {
 						snapshot.docs[0]._delegate._document.key.path
 							.segments[6];
 					// uid = snapshot.docs[0].ref.path.split("/")[1];
-					fetchFollowingUser(uid).then((user: any) => {
+					getUser(uid).then((user: any) => {
 						var posts = snapshot.docs.map((doc: any) => {
 							var data = doc.data();
 							data.id = doc.id;
-							data.createdAt = dateToAge(
+							data.user = user;
+							return data;
+						});
+						sortByDate(posts);
+						posts.forEach((post: any) => {
+							post.createdAt = dateToAge(
 								(
-									data.createdAt ??
+									post.createdAt ??
 									firebase.firestore.Timestamp.now()
 								).toDate()
 							);
-							return {
-								...data,
-								user,
-							};
 						});
 						Promise.all([
 							...posts.map((post: any) =>
@@ -161,6 +332,7 @@ export function fetchFollowingUserPosts(uid: string) {
 								}
 							}),
 						]).then(() => {
+							posts.map(addLikeInfo);
 							dispatch({
 								type: FOLLOWING_POSTS_STATE_CHANGE,
 								posts,

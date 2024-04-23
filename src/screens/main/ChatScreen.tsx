@@ -16,7 +16,7 @@ import { TextField } from "../../components/TextField";
 import { NoResults } from "../../components/NoResults";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import UserSummary from "../../components/UserSummary";
-import { dateToAge } from "../../../redux/actions";
+import { dateToAge, getMessages } from "../../../redux/actions";
 
 export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
@@ -39,81 +39,14 @@ export default function ChatScreen(props: any) {
 		}
 	}
 
-	// function fetchChatID() {
-	// 	return new Promise((resolve) => {
-	// 		firebase
-	// 			.firestore()
-	// 			.collection("users")
-	// 			.doc(firebase.auth().currentUser!.uid)
-	// 			.collection("chats")
-	// 			.doc(props.route.params.uid)
-	// 			.get()
-	// 			.then((doc) => {
-	// 				resolve(setChatID(doc!.data()!.chatID));
-	// 			})
-	// 			.catch(() => {
-	// 				firebase
-	// 					.firestore()
-	// 					.collection("chats")
-	// 					.add({})
-	// 					.then((doc) => {
-	// 						resolve(setChatID(doc.id));
-	// 						firebase
-	// 							.firestore()
-	// 							.collection("users")
-	// 							.doc(firebase.auth().currentUser!.uid)
-	// 							.collection("chats")
-	// 							.doc(props.route.params.uid)
-	// 							.set({ chatID: doc.id });
-	// 						firebase
-	// 							.firestore()
-	// 							.collection("users")
-	// 							.doc(props.route.params.uid)
-	// 							.collection("chats")
-	// 							.doc(firebase.auth().currentUser!.uid)
-	// 							.set({ chatID: doc.id });
-	// 					});
-	// 			});
-	// 	});
-	// }
-
 	function fetchChatID() {
 		var ids = [firebase.auth().currentUser!.uid, props.route.params.uid];
 		setChatID(ids.sort().join(""));
 	}
 
-	function fetchMessages() {
-		return new Promise((resolve) => {
-			if (chatID) {
-				firebase
-					.firestore()
-					.collection("chats")
-					.doc(chatID)
-					.collection("messages")
-					.orderBy("createdAt", "asc")
-					.onSnapshot((snapshot) => {
-						const messages = snapshot.docs.map((doc) => {
-							const data = doc.data();
-							data.id = doc.id;
-							data.createdAt = dateToAge(
-								(
-									data.createdAt ??
-									firebase.firestore.Timestamp.now()
-								).toDate()
-							);
-							return data;
-						});
-						resolve(setMessages(messages));
-					});
-			} else {
-				resolve(null);
-			}
-		});
-	}
-
 	useEffect(() => {
 		setIsLoading(true);
-		fetchMessages();
+		if (chatID) getMessages(chatID, setMessages);
 		setIsLoading(false);
 	}, [chatID]);
 

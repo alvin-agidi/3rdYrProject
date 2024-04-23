@@ -52,9 +52,7 @@ export function PostSummaryList(props: any) {
 								<Label text={exercise.exercise} />
 							)}
 						/>
-						<Text style={globalStyles.date}>
-							{dateToAge(post.createdAt)}
-						</Text>
+						<Text style={globalStyles.date}>{post.createdAt}</Text>
 					</View>
 				</View>
 			</TouchableOpacity>

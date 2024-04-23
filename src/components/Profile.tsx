@@ -12,7 +12,12 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { PressableButton } from "./PressableButton";
 import { useNavigation } from "@react-navigation/native";
-import { dateToAge, generateThumbnail } from "../../redux/actions";
+import {
+	generateThumbnail,
+	getFollowers,
+	getFollowing,
+	getPosts,
+} from "../../redux/actions";
 import { useSelector } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
@@ -44,94 +49,29 @@ export default function Profile(props: any) {
 	);
 	const currentUserPTs = useSelector((state: any) => state.userState.PTs);
 
-	function getPosts() {
-		return new Promise((resolve) => {
-			return new Promise((resolve) => {
-				if (isCurrentUser) {
-					setPosts(currentUserPosts);
-					return resolve(currentUserPosts);
-				} else {
-					firebase
-						.firestore()
-						.collection("users")
-						.doc(props.route.params.uid)
-						.collection("posts")
-						.orderBy("createdAt", "desc")
-						.get()
-						.then((snapshot) => {
-							return resolve(
-								snapshot.docs.map((doc) => {
-									const data = doc.data();
-									data.id = doc.id;
-									data.createdAt = dateToAge(
-										(
-											data.createdAt ??
-											firebase.firestore.Timestamp.now()
-										).toDate()
-									);
-									return {
-										...data,
-										thumbnailURI: "",
-									};
-								})
-							);
-						});
+	async function fetchPosts() {
+		const posts = isCurrentUser
+			? currentUserPosts
+			: await getPosts(props.route.params.uid);
+		Promise.all(
+			posts.map((post: any) => {
+				if (post.isVideo && !post.thumbnailURI) {
+					return new Promise((resolve) => {
+						generateThumbnail(post.mediaURL).then(
+							(thumbnailURI) => {
+								return resolve({
+									...post,
+									thumbnailURI,
+								});
+							}
+						);
+					});
 				}
-			}).then((tempPosts: any) => {
-				Promise.all(
-					tempPosts.map((post: any) => {
-						if (post.isVideo && !post.thumbnailURI) {
-							return new Promise((resolve) => {
-								generateThumbnail(post.mediaURL).then(
-									(thumbnailURI) => {
-										return resolve({
-											...post,
-											thumbnailURI,
-										});
-									}
-								);
-							});
-						}
-						return post;
-					})
-				).then((posts) => {
-					setPosts(posts);
-					resolve(null);
-				});
-			});
+				return post;
+			})
+		).then((posts) => {
+			setPosts(posts);
 		});
-	}
-
-	function getFollowing(): void {
-		if (isCurrentUser) {
-			setFollowing(currentUserFollowing);
-		} else {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.collection("following")
-				.get()
-				.then((snapshot) => {
-					setFollowing(snapshot.docs.map((doc) => doc.id));
-				});
-		}
-	}
-
-	function getFollowers(): void {
-		if (isCurrentUser) {
-			setFollowers(currentUserFollowers);
-		} else {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.collection("followers")
-				.get()
-				.then((snapshot) => {
-					setFollowers(snapshot.docs.map((doc) => doc.id));
-				});
-		}
 	}
 
 	useEffect(() => {
@@ -141,21 +81,31 @@ export default function Profile(props: any) {
 	}, [props.route.params.uid]);
 
 	useEffect(() => {
-		getFollowing();
-		getFollowers();
+		if (isCurrentUser) {
+			setFollowing(currentUserFollowing);
+			setFollowers(currentUserFollowers);
+		} else {
+			setFollowing(getFollowing(props.route.params.uid));
+			setFollowers(getFollowers(props.route.params.uid));
+		}
 	}, [isCurrentUser]);
 
 	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
-			await getPosts();
+			await fetchPosts();
 			setIsLoading(false);
 		})();
 	}, [currentUserPosts, isCurrentUser]);
 
 	useEffect(() => {
-		getFollowing();
-		getFollowers();
+		if (isCurrentUser) {
+			setFollowing(currentUserFollowing);
+			setFollowers(currentUserFollowers);
+		} else {
+			setFollowing(getFollowing(props.route.params.uid));
+			setFollowers(getFollowers(props.route.params.uid));
+		}
 		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
 		setIsClient(currentUserClients.includes(props.route.params.uid));
 		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));

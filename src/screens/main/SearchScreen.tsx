@@ -21,7 +21,12 @@ import PostList from "../../components/PostList";
 import Comments from "../../components/Comments";
 import UserList from "../../components/UserList";
 import { PostSummaryList } from "../../components/PostSummaryList";
-import { fetchPostExercises, generateThumbnail } from "../../../redux/actions";
+import {
+	dateToAge,
+	fetchPostExercises,
+	generateThumbnail,
+	getAllUids,
+} from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
 import { NoResults } from "../../components/NoResults";
@@ -72,29 +77,15 @@ function Search() {
 			if (!queryString && !selectedExercises.length) return resolve();
 			setIsLoading(true);
 
-			const users: any[] = await new Promise((resolve) => {
-				firebase
-					.firestore()
-					.collection("users")
-					.get()
-					.then((snapshot) => {
-						resolve(
-							snapshot.docs.map((doc) => {
-								var data = doc.data();
-								data!.id = doc.id;
-								return data;
-							})
-						);
-					});
-			});
+			const uids: string[] = await getAllUids();
 
 			var posts: any[] = (
 				await Promise.all(
-					users.map((user) =>
+					uids.map((uid) =>
 						firebase
 							.firestore()
 							.collection("users")
-							.doc(user.id)
+							.doc(uid)
 							.collection("posts")
 							.where("caption", ">=", queryString)
 							.where("caption", "<=", queryString + "~")
@@ -103,8 +94,13 @@ function Search() {
 								return snapshot.docs.map((doc) => {
 									var data = doc.data();
 									data!.id = doc.id;
-									data!.uid = user.id;
-									data!.createdAt = data!.createdAt.toDate();
+									data!.uid = uid;
+									data!.createdAt = dateToAge(
+										(
+											data.createdAt ??
+											firebase.firestore.Timestamp.now()
+										).toDate()
+									);
 									return data;
 								});
 							})

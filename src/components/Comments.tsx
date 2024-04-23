@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import firebase from "firebase/compat/app";
 import globalStyles from "../globalStyles";
-
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
@@ -18,7 +17,7 @@ import { TextField } from "./TextField";
 import { useNavigation } from "@react-navigation/native";
 import { NoResults } from "./NoResults";
 import { LoadingIndicator } from "./LoadingIndicator";
-import { dateToAge } from "../../redux/actions";
+import { getComments } from "../../redux/actions";
 
 export default function Comments(props: any) {
 	const navigation = useNavigation();
@@ -45,60 +44,19 @@ export default function Comments(props: any) {
 		}
 	}
 
-	function fetchUser(uid: string) {
-		return new Promise((resolve) => {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(uid)
-				.get()
-				.then((doc) => {
-					const uid = doc.id;
-					resolve({ uid, ...doc.data() });
-				});
-		});
-	}
-
-	function fetchCommentCreators(comments: any[]) {
-		Promise.all(
-			comments.map((comment: any) =>
-				fetchUser(comment.createdBy).then((creator) => {
-					comment.creator = creator;
-				})
-			)
-		).then(() => {
-			setComments(comments);
-		});
-	}
-
 	useEffect(() => {
-		if (props.route.params.postID !== postID) {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(props.route.params.uid)
-				.collection("posts")
-				.doc(props.route.params.postID)
-				.collection("comments")
-				.orderBy("createdAt", "desc")
-				.onSnapshot((snapshot) => {
-					const comments = snapshot.docs.map((doc) => {
-						const data = doc.data();
-						data.id = doc.id;
-						data.createdAt = dateToAge(
-							(
-								data.createdAt ??
-								firebase.firestore.Timestamp.now()
-							).toDate()
-						);
-						return data;
-					});
-					setIsLoading(true);
-					fetchCommentCreators(comments);
-					setIsLoading(false);
-				});
-			setPostID(props.route.params.postID);
-		}
+		(async () => {
+			if (props.route.params.postID !== postID) {
+				setIsLoading(true);
+				getComments(
+					props.route.params.uid,
+					props.route.params.postID,
+					setComments
+				);
+				setIsLoading(false);
+				setPostID(props.route.params.postID);
+			}
+		})();
 	}, [props.route.params.postID]);
 
 	const renderItem = useCallback(

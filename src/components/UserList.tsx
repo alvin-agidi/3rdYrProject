@@ -14,7 +14,12 @@ import "firebase/compat/database";
 import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { PressableButton } from "./PressableButton";
-import { fetchPostExercises, generateThumbnail } from "../../redux/actions";
+import {
+	fetchPostExercises,
+	generateThumbnail,
+	getPosts,
+	getUser,
+} from "../../redux/actions";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { PostSummaryList } from "./PostSummaryList";
 import { NoResults } from "./NoResults";
@@ -24,88 +29,44 @@ export default function UserList(props: any) {
 	const [users, setUsers] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
-	function fetchPosts(uid: string) {
-		return new Promise((resolve) => {
-			return new Promise((resolve) => {
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(uid)
-					.collection("posts")
-					// .orderBy("exercisesDetected", "desc")
-					.orderBy("createdAt", "desc")
-					.limit(3)
-					.get()
-					.then((snapshot) => {
-						return resolve(
-							snapshot.docs.map((doc) => {
-								const id = doc.id;
-								const data = doc.data();
-								data.uid = uid;
-								const createdAt = (
-									data.createdAt ??
-									firebase.firestore.Timestamp.now()
-								).toDate();
-								return {
-									id,
-									...data,
-									user: { uid },
-									createdAt,
-								};
-							})
+	async function fetchPosts(uid: string) {
+		return new Promise(async (resolve) => {
+			const posts: any[] = (await getPosts(uid)).slice(0, 3);
+			Promise.all([
+				...posts.map((post: any) =>
+					fetchPostExercises(uid, post.id).then((exercises) => {
+						post.exercises = exercises;
+					})
+				),
+				...posts.map((post: any) => {
+					if (post.isVideo && !post.thumbnailURI) {
+						return generateThumbnail(post.mediaURL).then(
+							(thumbnailURI) => {
+								post.thumbnailURI = thumbnailURI;
+							}
 						);
-					});
-			}).then((posts: any) => {
-				Promise.all(
-					posts.map((post: any) =>
-						fetchPostExercises(post.user.uid, post.id).then(
-							(exercises) => {
-								post.exercises = exercises;
-							}
-						)
-					)
-				).then(() => {
-					Promise.all(
-						posts.map((post: any) => {
-							if (post.isVideo && !post.thumbnailURI) {
-								return generateThumbnail(post.mediaURL).then(
-									(thumbnailURI) => {
-										post.thumbnailURI = thumbnailURI;
-									}
-								);
-							}
-							return post;
-						})
-					).then(() => resolve(posts));
-				});
-			});
+					}
+				}),
+			]).then(() => resolve(posts));
 		});
 	}
 
-	function fetchUser(uid: string) {
-		return new Promise((resolve) => {
-			firebase
-				.firestore()
-				.collection("users")
-				.doc(uid)
-				.get()
-				.then((doc) => {
-					const uid = doc.id;
-					fetchPosts(uid).then((posts) =>
-						resolve({ uid, ...doc.data(), posts })
-					);
-				});
-		});
+	async function fetchUser(uid: string) {
+		const user: any = await getUser(uid);
+		user.posts = await fetchPosts(uid);
+		return user;
 	}
 
 	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
-			await Promise.all(
-				props.route.params.users.map((uid: string) => fetchUser(uid))
-			).then((users) => {
-				setUsers(users);
-			});
+			setUsers(
+				await Promise.all(
+					props.route.params.users.map((uid: string) =>
+						fetchUser(uid)
+					)
+				)
+			);
 			setIsLoading(false);
 		})();
 	}, [props.clients, props.PTs]);

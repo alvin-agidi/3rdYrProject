@@ -13,12 +13,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import {
-	fetchPostLikes,
-	fetchFollowingUser,
-	fetchPostExercises,
-	dateToAge,
-} from "../../redux/actions";
+import { getPost } from "../../redux/actions";
 import globalStyles from "../globalStyles";
 import { Label } from "./Label";
 import { useSelector } from "react-redux";
@@ -40,85 +35,23 @@ export default function PostList(props: any) {
 	const clients = useSelector((state: any) => state.userState.clients);
 	const PTs = useSelector((state: any) => state.userState.PTs);
 
-	function addLikeInfo() {
-		setPosts((posts: any) =>
-			posts.map((post: any) => {
-				const isLiked = post.likes.includes(
-					firebase.auth().currentUser!.uid
-				);
-				const likeCount = post.likes.length;
-				return {
-					...post,
-					isLiked,
-					likeCount,
-				};
-			})
-		);
-	}
-
-	function sortPosts() {
-		setPosts((posts: any) =>
-			posts.sort((x: any, y: any) => {
-				return y.createdAt.localeCompare(x.createdAt);
-			})
-		);
-	}
-
 	useEffect(() => {
-		(async () => {
-			videoRefs = {};
-			if (
-				props.route.params &&
-				props.route.params.uid &&
-				props.route.params.postID
-			) {
-				await new Promise((resolve) => {
-					setIsLoading(true);
-					firebase
-						.firestore()
-						.collection("users")
-						.doc(props.route.params.uid)
-						.collection("posts")
-						.doc(props.route.params.postID)
-						.get()
-						.then((doc) => {
-							var data = doc.data();
-							data!.id = doc.id;
-							data!.createdAt = dateToAge(
-								data!.createdAt.toDate()
-							);
-							Promise.all([
-								fetchPostLikes(
-									props.route.params.uid,
-									props.route.params.postID
-								).then((likes) => {
-									data!.likes = likes;
-								}),
-								fetchFollowingUser(props.route.params.uid).then(
-									(user) => {
-										data!.user = user;
-									}
-								),
-								fetchPostExercises(
-									props.route.params.uid,
-									props.route.params.postID
-								).then((exercises) => {
-									data!.exercises = exercises;
-								}),
-							]).then(() => {
-								setPosts(() => [data]);
-								addLikeInfo();
-								setIsLoading(false);
-								resolve(null);
-							});
-						});
-				});
-			} else if (followingLoaded === following.length) {
-				setPosts(() => followingPosts);
-				addLikeInfo();
-				sortPosts();
-			}
-		})();
+		videoRefs = {};
+		if (
+			props.route.params &&
+			props.route.params.uid &&
+			props.route.params.postID
+		) {
+			setIsLoading(true);
+			getPost(
+				props.route.params.uid,
+				props.route.params.postID,
+				setPosts
+			);
+			setIsLoading(false);
+		} else if (followingLoaded === following.length) {
+			setPosts(followingPosts);
+		}
 	}, [following, followingLoaded, followingPosts]);
 
 	function toggleLike(userID: string, postID: string, isLiked: boolean) {
