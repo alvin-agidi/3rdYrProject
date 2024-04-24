@@ -20,7 +20,7 @@ import { LoadingIndicator } from "./LoadingIndicator";
 import { getComments } from "../../redux/actions";
 
 export default function Comments(props: any) {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const [comments, setComments] = useState<any>([]);
 	const [text, setText] = useState("");
 	const [postID, setPostID] = useState("");

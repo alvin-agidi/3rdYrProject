@@ -10,7 +10,7 @@ import { PressableButton } from "../../components/PressableButton";
 const Stack = createNativeStackNavigator();
 
 function Landing() {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	return (
 		<View style={{ ...globalStyles.container, justifyContent: "center" }}>
 			<Text style={globalStyles.logo}>ΛCTIV</Text>

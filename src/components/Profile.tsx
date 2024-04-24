@@ -25,7 +25,7 @@ import UserSummary from "./UserSummary";
 import globalStyles from "../globalStyles";
 
 export default function Profile(props: any) {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const [posts, setPosts] = useState<any>([]);
 	const [following, setFollowing] = useState<any>([]);
 	const [followers, setFollowers] = useState<any>([]);

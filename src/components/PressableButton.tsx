@@ -6,6 +6,7 @@ export function PressableButton(props: any): JSX.Element {
 	return (
 		<TouchableOpacity
 			{...props}
+			accessibilityLabel={props.text}
 			style={{
 				...globalStyles.button,
 				backgroundColor: props.backgroundColor ?? "deepskyblue",

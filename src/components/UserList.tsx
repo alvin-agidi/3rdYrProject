@@ -1,17 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-	FlatList,
-	View,
-	StyleSheet,
-	Text,
-	Image,
-	TouchableOpacity,
-} from "react-native";
+import { FlatList, View, StyleSheet, Text } from "react-native";
 import globalStyles from "../globalStyles";
-import firebase from "firebase/compat/app";
-import "firebase/compat/auth";
-import "firebase/compat/database";
-import "firebase/compat/firestore";
 import { useNavigation } from "@react-navigation/native";
 import { PressableButton } from "./PressableButton";
 import {
@@ -25,7 +14,7 @@ import { PostSummaryList } from "./PostSummaryList";
 import { NoResults } from "./NoResults";
 
 export default function UserList(props: any) {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const [users, setUsers] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
 

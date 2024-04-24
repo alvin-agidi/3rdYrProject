@@ -21,7 +21,7 @@ import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
 
 export default function PostList(props: any) {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const [posts, setPosts] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	var videoRefs: any = {};
@@ -107,9 +107,7 @@ export default function PostList(props: any) {
 			<View style={styles.post}>
 				{item.isVideo ? (
 					<Video
-						ref={(videoRef) => {
-							videoRefs[item.id] = videoRef;
-						}}
+						ref={(videoRef) => (videoRefs[item.id] = videoRef)}
 						style={styles.media}
 						source={{ uri: item.mediaURL }}
 						resizeMode={ResizeMode.COVER}
@@ -332,6 +330,6 @@ const styles = StyleSheet.create({
 	media: {
 		flex: 1,
 		borderRadius: 5,
-		aspectRatio: 1 / 1,
+		// aspectRatio: 1 / 1,
 	},
 });

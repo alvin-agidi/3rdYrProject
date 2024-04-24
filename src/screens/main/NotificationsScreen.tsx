@@ -26,7 +26,7 @@ import ChatScreen from "./ChatScreen";
 const Stack = createNativeStackNavigator();
 
 function Notifications() {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const notifications = useSelector(
 		(state: any) => state.userState.notifications
 	);

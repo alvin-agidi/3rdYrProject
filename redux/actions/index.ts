@@ -473,5 +473,5 @@ export function dateToAge(date: Date): string {
 		output = Math.round(age / (60 * 60 * 24 * 365)) + " year";
 	}
 
-	return output + (output.substring(0, 2) == "1 " ? "" : "s");
+	return output + (output.substring(0, 2) == "1 " ? "" : "s") + "ago";
 }

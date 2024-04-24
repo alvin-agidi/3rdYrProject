@@ -17,7 +17,7 @@ import { NoResults } from "./NoResults";
 import { dateToAge } from "../../redux/actions";
 
 export function PostSummaryList(props: any) {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 
 	const renderItem = useCallback(
 		({ item: post }) => (

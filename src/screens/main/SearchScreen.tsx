@@ -36,7 +36,7 @@ import UserSummary from "../../components/UserSummary";
 const Stack = createNativeStackNavigator();
 
 function Search() {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const [users, setUsers] = useState<any[]>([]);
 	const [posts, setPosts] = useState<any[]>([]);
 	const [filteredPosts, setFilteredPosts] = useState<any[]>([]);

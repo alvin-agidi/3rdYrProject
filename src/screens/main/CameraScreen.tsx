@@ -15,7 +15,7 @@ import globalStyles from "../../globalStyles";
 const Stack = createNativeStackNavigator();
 
 function CameraComponent() {
-	const navigation = useNavigation();
+	const navigation = useNavigation<any>();
 	const cameraRef = useRef();
 	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
 	const [isVideoMode, setVideoMode] = useState(true);
