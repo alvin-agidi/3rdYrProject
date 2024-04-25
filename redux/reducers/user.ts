@@ -7,6 +7,7 @@ import {
 	NOTIFICATIONS_STATE_CHANGE,
 	CLIENTS_STATE_CHANGE,
 	PTS_STATE_CHANGE,
+	FOLLOWING_POSTS_STATE_CHANGE,
 } from "../constants";
 
 const initialState = {
@@ -35,6 +36,11 @@ export const userState = (state = initialState, action: any) => {
 			return {
 				...state,
 				following: action.following,
+			};
+		case FOLLOWING_POSTS_STATE_CHANGE:
+			return {
+				...state,
+				followingPosts: action.posts,
 			};
 		case FOLLOWERS_STATE_CHANGE:
 			return {

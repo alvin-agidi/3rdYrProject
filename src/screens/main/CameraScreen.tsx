@@ -11,6 +11,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import PublishPostScreen from "./PublishPostScreen";
 import { PressableButton } from "../../components/PressableButton";
 import globalStyles from "../../globalStyles";
+import { NoResults } from "../../components/NoResults";
 
 const Stack = createNativeStackNavigator();
 
@@ -58,21 +59,14 @@ function CameraComponent() {
 		hasMicrophonePermission === undefined
 	) {
 		return (
-			<View style={globalStyles.noResults}>
-				<Icon name="camera-outline" size={80} color="white" />
-				<Text style={globalStyles.noResultsText}>
-					Requesting camera permissions
-				</Text>
-			</View>
+			<NoResults
+				icon="camera-outline"
+				text="Requesting camera permissions"
+			/>
 		);
 	} else if (!hasCameraPermission) {
 		return (
-			<View style={globalStyles.noResults}>
-				<Icon name="camera-off-outline" size={80} color="white" />
-				<Text style={globalStyles.noResultsText}>
-					No camera permissions
-				</Text>
-			</View>
+			<NoResults icon="camera-off-outline" text="No camera permissions" />
 		);
 	}
 
@@ -111,7 +105,7 @@ function CameraComponent() {
 		ImagePicker.launchImageLibraryAsync({
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
-			aspect: [1, 1],
+			// aspect: [1, 1],
 			quality: 0.6,
 		}).then((media: any) => {
 			if (!media.canceled) {

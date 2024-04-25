@@ -42,29 +42,39 @@ export async function getAllUids(): Promise<string[]> {
 	});
 }
 
-export function getFollowing(uid: string): Promise<string[]> {
+export function getFollowing(
+	uid: string,
+	setFollowing?: any
+): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
 			.collection("users")
 			.doc(uid)
 			.collection("following")
-			.get()
-			.then((snapshot) => {
-				resolve(snapshot.docs.map((doc) => doc.id));
+			.onSnapshot((snapshot) => {
+				const following = snapshot.docs.map((doc) => doc.id);
+				if (setFollowing) setFollowing(following);
+				resolve(following);
 			});
 	});
 }
 
-export function getFollowers(uid: string): Promise<string[]> {
+export function getFollowers(
+	uid: string,
+	setFollowers?: any
+): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
 			.collection("users")
 			.doc(uid)
 			.collection("followers")
-			.get()
-			.then((snapshot) => resolve(snapshot.docs.map((doc) => doc.id)));
+			.onSnapshot((snapshot) => {
+				const followers = snapshot.docs.map((doc) => doc.id);
+				if (setFollowers) setFollowers(followers);
+				resolve(followers);
+			});
 	});
 }
 
@@ -127,8 +137,12 @@ function addLikeInfo(post: any) {
 	post.likeCount = post.likes.length;
 }
 
-function sortByDate(list: any[]) {
-	list.sort((x: any, y: any) => y.createdAt.localeCompare(x.createdAt));
+export function sortDateAsc(a: any, b: any) {
+	return b.createdAt - a.createdAt;
+}
+
+export function sortDateDesc(a: any, b: any) {
+	return a.createdAt - b.createdAt;
 }
 
 export function getPost(uid: string, postID: string, setPosts: any) {
@@ -138,8 +152,7 @@ export function getPost(uid: string, postID: string, setPosts: any) {
 		.doc(uid)
 		.collection("posts")
 		.doc(postID)
-		.get()
-		.then((doc) => {
+		.onSnapshot((doc) => {
 			var post: any = doc.data();
 			post!.id = doc.id;
 			post!.createdAt = dateToAge(post!.createdAt.toDate());
@@ -275,12 +288,19 @@ export function fetchFollowers(uid: string) {
 
 export function fetchFollowing(uid: string) {
 	return async (dispatch: any) => {
-		const following: string[] = await getFollowing(uid);
-		dispatch({
-			type: FOLLOWING_STATE_CHANGE,
-			following,
-		});
-		following.forEach((uid) => dispatch(fetchFollowingUserPosts(uid)));
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("following")
+			.onSnapshot((snapshot) => {
+				const following = snapshot.docs.map((doc) => doc.id);
+				dispatch({
+					type: FOLLOWING_STATE_CHANGE,
+					following: following,
+				});
+				dispatch(fetchFollowingPosts(following));
+			});
 	};
 }
 
@@ -301,18 +321,18 @@ export function fetchFollowingUserPosts(uid: string) {
 						var posts = snapshot.docs.map((doc: any) => {
 							var data = doc.data();
 							data.id = doc.id;
+							data.createdAt = (
+								data.createdAt ??
+								firebase.firestore.Timestamp.now()
+							).toDate();
 							data.user = user;
 							return data;
 						});
-						sortByDate(posts);
-						posts.forEach((post: any) => {
-							post.createdAt = dateToAge(
-								(
-									post.createdAt ??
-									firebase.firestore.Timestamp.now()
-								).toDate()
-							);
-						});
+						posts.sort(sortDateAsc);
+						posts.forEach(
+							(post: any) =>
+								(post.createdAt = dateToAge(post.createdAt))
+						);
 						Promise.all([
 							...posts.map((post: any) =>
 								fetchPostLikes(post.user.uid, post.id).then(
@@ -346,6 +366,48 @@ export function fetchFollowingUserPosts(uid: string) {
 					});
 				}
 			});
+	};
+}
+
+export function fetchFollowingPosts(uids: string[]) {
+	return async (dispatch: any) => {
+		const posts: any[] = (
+			await Promise.all(
+				uids.map(async (uid) => {
+					const user = await getUser(uid);
+					return await firebase
+						.firestore()
+						.collection("users")
+						.doc(uid)
+						.collection("posts")
+						.get()
+						.then((snapshot) => {
+							return snapshot.docs.map((doc) => {
+								var data = doc.data();
+								data!.id = doc.id;
+								data!.uid = uid;
+								data!.user = user;
+								data!.createdAt = (
+									data.createdAt ??
+									firebase.firestore.Timestamp.now()
+								).toDate();
+								return data;
+							});
+						})
+						.catch(() => {
+							return [];
+						});
+				})
+			)
+		).flat();
+		posts.sort(sortDateAsc);
+		posts.forEach(
+			(post: any) => (post.createdAt = dateToAge(post.createdAt))
+		);
+		dispatch({
+			type: FOLLOWING_POSTS_STATE_CHANGE,
+			posts,
+		});
 	};
 }
 
@@ -473,5 +535,5 @@ export function dateToAge(date: Date): string {
 		output = Math.round(age / (60 * 60 * 24 * 365)) + " year";
 	}
 
-	return output + (output.substring(0, 2) == "1 " ? "" : "s") + "ago";
+	return output + (output.substring(0, 2) == "1 " ? "" : "s") + " ago";
 }

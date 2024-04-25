@@ -40,3 +40,4 @@ firebase-debug.log
 firestore-debug.log
 ui-debug.log
 src/config.ts
+tests/components/__snapshots__/Toggle.test.jsx.snap

@@ -16,7 +16,7 @@ import { TextField } from "../../components/TextField";
 import { NoResults } from "../../components/NoResults";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import UserSummary from "../../components/UserSummary";
-import { dateToAge, getMessages } from "../../../redux/actions";
+import { getMessages } from "../../../redux/actions";
 
 export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
@@ -45,9 +45,11 @@ export default function ChatScreen(props: any) {
 	}
 
 	useEffect(() => {
-		setIsLoading(true);
-		if (chatID) getMessages(chatID, setMessages);
-		setIsLoading(false);
+		async () => {
+			setIsLoading(true);
+			if (chatID) await getMessages(chatID, setMessages);
+			setIsLoading(false);
+		};
 	}, [chatID]);
 
 	useEffect(() => {

@@ -27,9 +27,7 @@ export default function RegisterScreen() {
 					.doc(firebase.auth().currentUser!.uid)
 					.set({ email, username, isPT });
 			})
-			.catch((result: any) => {
-				console.log(result);
-			});
+			.catch((result: any) => console.log(result));
 	}
 
 	return (

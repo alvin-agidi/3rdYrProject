@@ -26,6 +26,8 @@ import {
 	fetchPostExercises,
 	generateThumbnail,
 	getAllUids,
+	sortDateAsc,
+	sortDateDesc,
 } from "../../../redux/actions";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
@@ -142,14 +144,6 @@ function Search() {
 				postExercises.includes(exercise)
 			);
 		});
-	}
-
-	function sortDateAsc(a: any, b: any) {
-		return b.createdAt - a.createdAt;
-	}
-
-	function sortDateDesc(a: any, b: any) {
-		return a.createdAt - b.createdAt;
 	}
 
 	function sortFilteredPosts() {

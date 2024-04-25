@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
 	View,
 	Text,
@@ -26,11 +26,8 @@ export default function PostList(props: any) {
 	const [isLoading, setIsLoading] = useState(false);
 	var videoRefs: any = {};
 	const following = useSelector((state: any) => state.userState.following);
-	const followingLoaded = useSelector(
-		(state: any) => state.followingState.followingLoaded
-	);
 	const followingPosts = useSelector(
-		(state: any) => state.followingState.followingPosts
+		(state: any) => state.userState.followingPosts
 	);
 	const clients = useSelector((state: any) => state.userState.clients);
 	const PTs = useSelector((state: any) => state.userState.PTs);
@@ -42,17 +39,19 @@ export default function PostList(props: any) {
 			props.route.params.uid &&
 			props.route.params.postID
 		) {
-			setIsLoading(true);
-			getPost(
-				props.route.params.uid,
-				props.route.params.postID,
-				setPosts
-			);
-			setIsLoading(false);
-		} else if (followingLoaded === following.length) {
+			(async () => {
+				setIsLoading(true);
+				await getPost(
+					props.route.params.uid,
+					props.route.params.postID,
+					setPosts
+				);
+				setIsLoading(false);
+			})();
+		} else {
 			setPosts(followingPosts);
 		}
-	}, [following, followingLoaded, followingPosts]);
+	}, [following, followingPosts]);
 
 	function toggleLike(userID: string, postID: string, isLiked: boolean) {
 		if (isLiked) {
@@ -191,7 +190,7 @@ export default function PostList(props: any) {
 									size={30}
 								/>
 
-								<Text style={styles.postIconText}>
+								<Text style={globalStyles.bold}>
 									{item.likeCount} like
 									{item.likeCount != 1 ? "s" : ""}
 								</Text>
@@ -255,7 +254,11 @@ export default function PostList(props: any) {
 			<FlatList
 				horizontal={false}
 				numColumns={1}
-				contentContainerStyle={{ gap: 5, flexGrow: 1 }}
+				contentContainerStyle={{
+					gap: 5,
+					flexGrow: 1,
+					paddingBottom: 10,
+				}}
 				data={posts}
 				renderItem={renderItem}
 				style={styles.postList}
@@ -267,11 +270,9 @@ export default function PostList(props: any) {
 
 const styles = StyleSheet.create({
 	postList: {
-		flex: 1,
 		padding: 5,
 		backgroundColor: "lightgrey",
 		borderRadius: 10,
-		gap: 5,
 	},
 	post: {
 		flex: 1,
@@ -292,7 +293,6 @@ const styles = StyleSheet.create({
 	postBanner: {
 		borderRadius: 5,
 		paddingHorizontal: 5,
-		flex: 1,
 		backgroundColor: "whitesmoke",
 		alignItems: "center",
 		justifyContent: "flex-end",
@@ -300,7 +300,6 @@ const styles = StyleSheet.create({
 		gap: 5,
 	},
 	postRoutineBox: {
-		flex: 1,
 		gap: 5,
 		padding: 5,
 	},
@@ -317,19 +316,9 @@ const styles = StyleSheet.create({
 		padding: 5,
 		fontWeight: "bold",
 	},
-	postIconText: {
-		fontSize: 15,
-		fontWeight: "bold",
-	},
-
-	postExercise: {
-		fontSize: 15,
-		justifyContent: "space-evenly",
-		flexDirection: "row",
-	},
 	media: {
 		flex: 1,
 		borderRadius: 5,
-		// aspectRatio: 1 / 1,
+		aspectRatio: 1,
 	},
 });

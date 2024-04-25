@@ -74,21 +74,25 @@ export default function Profile(props: any) {
 		});
 	}
 
-	useEffect(() => {
-		setIsCurrentUser(
-			props.route.params.uid === firebase.auth().currentUser!.uid
-		);
-	}, [props.route.params.uid]);
-
-	useEffect(() => {
+	function fetchFollows() {
 		if (isCurrentUser) {
 			setFollowing(currentUserFollowing);
 			setFollowers(currentUserFollowers);
 		} else {
-			setFollowing(getFollowing(props.route.params.uid));
-			setFollowers(getFollowers(props.route.params.uid));
+			getFollowing(props.route.params.uid, setFollowing);
+			getFollowers(props.route.params.uid, setFollowers);
 		}
-	}, [isCurrentUser]);
+	}
+
+	useEffect(() => {
+		setIsCurrentUser(
+			props.route.params.uid === firebase.auth().currentUser!.uid
+		);
+		fetchFollows();
+		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
+		setIsClient(currentUserClients.includes(props.route.params.uid));
+		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));
+	}, [props.route.params.uid]);
 
 	useEffect(() => {
 		(async () => {
@@ -96,25 +100,7 @@ export default function Profile(props: any) {
 			await fetchPosts();
 			setIsLoading(false);
 		})();
-	}, [currentUserPosts, isCurrentUser]);
-
-	useEffect(() => {
-		if (isCurrentUser) {
-			setFollowing(currentUserFollowing);
-			setFollowers(currentUserFollowers);
-		} else {
-			setFollowing(getFollowing(props.route.params.uid));
-			setFollowers(getFollowers(props.route.params.uid));
-		}
-		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
-		setIsClient(currentUserClients.includes(props.route.params.uid));
-		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));
-	}, [
-		currentUserFollowing,
-		currentUserFollowers,
-		currentUserClients,
-		currentUserPTs,
-	]);
+	}, [currentUserPosts]);
 
 	function toggleFollow() {
 		if (isFollowing) {

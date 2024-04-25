@@ -45,18 +45,18 @@ export default function Comments(props: any) {
 	}
 
 	useEffect(() => {
-		(async () => {
-			if (props.route.params.postID !== postID) {
+		if (props.route.params.postID !== postID) {
+			(async () => {
 				setIsLoading(true);
-				getComments(
+				await getComments(
 					props.route.params.uid,
 					props.route.params.postID,
 					setComments
 				);
 				setIsLoading(false);
 				setPostID(props.route.params.postID);
-			}
-		})();
+			})();
+		}
 	}, [props.route.params.postID]);
 
 	const renderItem = useCallback(

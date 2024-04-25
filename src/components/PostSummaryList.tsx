@@ -88,7 +88,7 @@ export function PostSummaryList(props: any) {
 
 const styles = StyleSheet.create({
 	image: {
-		aspectRatio: 1 / 1,
+		aspectRatio: 1,
 		borderRadius: 5,
 		width: 100,
 	},
