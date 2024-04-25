@@ -187,16 +187,14 @@ export async function getPosts(uid: string): Promise<any[]> {
 					snapshot.docs.map((doc) => {
 						const data = doc.data();
 						data.id = doc.id;
+						data.thumbnailURI = "";
 						data.createdAt = dateToAge(
 							(
 								data.createdAt ??
 								firebase.firestore.Timestamp.now()
 							).toDate()
 						);
-						return {
-							...data,
-							thumbnailURI: "",
-						};
+						return data;
 					})
 				);
 			});
@@ -260,14 +258,14 @@ export function fetchUserPosts(uid: string) {
 			.orderBy("createdAt", "desc")
 			.onSnapshot((snapshot) => {
 				var posts = snapshot.docs.map((doc) => {
-					const id = doc.id;
-					const data = doc.data();
-					var createdAt = dateToAge(
+					const post = doc.data();
+					post.id = doc.id;
+					post.createdAt = dateToAge(
 						(
-							data.createdAt ?? firebase.firestore.Timestamp.now()
+							post.createdAt ?? firebase.firestore.Timestamp.now()
 						).toDate()
 					);
-					return { id, ...data, createdAt };
+					return post;
 				});
 				dispatch({
 					type: USER_POSTS_STATE_CHANGE,
@@ -304,71 +302,6 @@ export function fetchFollowing(uid: string) {
 	};
 }
 
-export function fetchFollowingUserPosts(uid: string) {
-	return (dispatch: any) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.doc(uid)
-			.collection("posts")
-			.onSnapshot((snapshot: any) => {
-				if (snapshot.docs && snapshot.docs.length) {
-					uid =
-						snapshot.docs[0]._delegate._document.key.path
-							.segments[6];
-					// uid = snapshot.docs[0].ref.path.split("/")[1];
-					getUser(uid).then((user: any) => {
-						var posts = snapshot.docs.map((doc: any) => {
-							var data = doc.data();
-							data.id = doc.id;
-							data.createdAt = (
-								data.createdAt ??
-								firebase.firestore.Timestamp.now()
-							).toDate();
-							data.user = user;
-							return data;
-						});
-						posts.sort(sortDateAsc);
-						posts.forEach(
-							(post: any) =>
-								(post.createdAt = dateToAge(post.createdAt))
-						);
-						Promise.all([
-							...posts.map((post: any) =>
-								fetchPostLikes(post.user.uid, post.id).then(
-									(likes) => {
-										post.likes = likes;
-									}
-								)
-							),
-							...posts.map((post: any) => {
-								if (post.exercisesDetected) {
-									return fetchPostExercises(
-										post.user.uid,
-										post.id
-									).then((exercises) => {
-										post.exercises = exercises;
-									});
-								}
-							}),
-						]).then(() => {
-							posts.map(addLikeInfo);
-							dispatch({
-								type: FOLLOWING_POSTS_STATE_CHANGE,
-								posts,
-							});
-						});
-					});
-				} else {
-					dispatch({
-						type: FOLLOWING_POSTS_STATE_CHANGE,
-						posts: [],
-					});
-				}
-			});
-	};
-}
-
 export function fetchFollowingPosts(uids: string[]) {
 	return async (dispatch: any) => {
 		const posts: any[] = (
@@ -393,17 +326,17 @@ export function fetchFollowingPosts(uids: string[]) {
 								).toDate();
 								return data;
 							});
-						})
-						.catch(() => {
-							return [];
 						});
 				})
 			)
 		).flat();
 		posts.sort(sortDateAsc);
-		posts.forEach(
-			(post: any) => (post.createdAt = dateToAge(post.createdAt))
-		);
+		for (const post of posts) {
+			post.likes = await fetchPostLikes(post.uid, post.id);
+			post.exercises = await fetchPostExercises(post.uid, post.id);
+			post.createdAt = dateToAge(post.createdAt);
+			addLikeInfo(post);
+		}
 		dispatch({
 			type: FOLLOWING_POSTS_STATE_CHANGE,
 			posts,
