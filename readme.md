@@ -19,7 +19,7 @@
 
 Note without the Recognition Model Set-up the exercise recognition does not work in the app.
 
-Video dataset link: https://www.kaggle.com/datasets/hasyimabdillah/workoutfitness-video
+Video dataset for tests link: https://www.kaggle.com/datasets/hasyimabdillah/workoutfitness-video
 
 ## Recognition Model Set-up for Tests
 1. Open file "3YrProjectDetectorTests.ipynb" in Google Colab.
