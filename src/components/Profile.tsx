@@ -283,21 +283,21 @@ export default function Profile(props: any) {
 			{!isCurrentUser ? (
 				<PressableButton
 					onPress={toggleFollow}
-					backgroundColor={isFollowing ? "grey" : "deepskyblue"}
+					backgroundColor={isFollowing ? "lightgrey" : "deepskyblue"}
 					text={isFollowing ? "Unfollow" : "Follow"}
 				/>
 			) : null}
 			{currentUser.isPT && !isCurrentUser ? (
 				<PressableButton
 					onPress={toggleIsClient}
-					backgroundColor={isClient ? "grey" : "deepskyblue"}
+					backgroundColor={isClient ? "lightgrey" : "deepskyblue"}
 					text={isClient ? "Remove as client" : "Add as client"}
 				/>
 			) : null}
 			{isMyPT ? (
 				<PressableButton
 					onPress={toggleIsMyPT}
-					backgroundColor={isMyPT ? "grey" : "deepskyblue"}
+					backgroundColor={isMyPT ? "lightgrey" : "deepskyblue"}
 					text="Remove as my PT"
 				/>
 			) : null}

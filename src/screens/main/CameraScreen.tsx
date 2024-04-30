@@ -197,6 +197,7 @@ function CameraComponent() {
 				<Icon
 					name="camera-flip-outline"
 					size={50}
+					color="grey"
 					onPress={switchCameraDirection}
 				/>
 				{isVideoMode ? (
@@ -207,15 +208,21 @@ function CameraComponent() {
 								: "radiobox-marked"
 						}
 						size={80}
-						color={isRecording ? "red" : "black"}
+						color={isRecording ? "red" : "deepskyblue"}
 						onPress={isRecording ? stopVideo : startVideo}
 					/>
 				) : (
-					<Icon name="circle-outline" size={80} onPress={takePhoto} />
+					<Icon
+						name="circle-outline"
+						size={80}
+						color={"deepskyblue"}
+						onPress={takePhoto}
+					/>
 				)}
 				<Icon
 					name={isVideoMode ? "camera-outline" : "video-outline"}
 					size={50}
+					color="grey"
 					onPress={switchVideoMode}
 				/>
 			</View>

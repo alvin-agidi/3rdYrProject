@@ -44,7 +44,7 @@ export async function getAllUids(): Promise<string[]> {
 
 export function getFollowing(
 	uid: string,
-	setFollowing?: any
+	setFollowing?: Function
 ): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
@@ -62,7 +62,7 @@ export function getFollowing(
 
 export function getFollowers(
 	uid: string,
-	setFollowers?: any
+	setFollowers?: Function
 ): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
@@ -78,7 +78,11 @@ export function getFollowers(
 	});
 }
 
-export function getComments(uid: string, postID: string, setComments: any) {
+export function getComments(
+	uid: string,
+	postID: string,
+	setComments: Function
+) {
 	firebase
 		.firestore()
 		.collection("users")
@@ -110,7 +114,7 @@ export function getComments(uid: string, postID: string, setComments: any) {
 		});
 }
 
-export function getMessages(chatID: string, setMessages: any) {
+export function getMessages(chatID: string, setMessages: Function) {
 	firebase
 		.firestore()
 		.collection("chats")
@@ -145,7 +149,7 @@ export function sortDateDesc(a: any, b: any) {
 	return a.createdAt - b.createdAt;
 }
 
-export function getPost(uid: string, postID: string, setPosts: any) {
+export function getPost(uid: string, postID: string, setPosts: Function) {
 	firebase
 		.firestore()
 		.collection("users")
