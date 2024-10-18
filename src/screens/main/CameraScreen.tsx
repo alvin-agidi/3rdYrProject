@@ -1,4 +1,4 @@
-import { Camera, CameraType, AutoFocus } from "expo-camera";
+import { CameraView, Camera } from "expo-camera";
 import { StyleSheet, Text, View, Image } from "react-native";
 import { Component, useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
@@ -18,7 +18,7 @@ const Stack = createNativeStackNavigator();
 function CameraComponent() {
 	const navigation = useNavigation<any>();
 	const cameraRef = useRef();
-	const [cameraDirection, setCameraDirection] = useState(CameraType.back);
+	const [cameraDirection, setCameraDirection] = useState("back");
 	const [isVideoMode, setVideoMode] = useState(true);
 	const [hasCameraPermission, setHasCameraPermission] = useState(false);
 	const [hasMicrophonePermission, setHasMicrophonePermission] =
@@ -116,7 +116,7 @@ function CameraComponent() {
 
 	function switchCameraDirection() {
 		setCameraDirection((direction) =>
-			direction === CameraType.back ? CameraType.front : CameraType.back
+			direction === "back" ? "front" : "back"
 		);
 	}
 
@@ -186,11 +186,10 @@ function CameraComponent() {
 	return (
 		<View style={globalStyles.container}>
 			<View style={styles.cameraBox}>
-				<Camera
+				<CameraView
 					style={styles.camera}
 					ref={cameraRef}
 					type={cameraDirection}
-					autoFocus={AutoFocus.on}
 				/>
 			</View>
 			<View style={styles.iconBox}>
