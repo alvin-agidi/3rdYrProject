@@ -267,6 +267,10 @@ export default function Profile(props: any) {
 						{currentUserClients.length !== 1 ? "s" : ""}
 					</Text>
 				) : null}
+				<Text style={styles.info}>
+					{posts.length} post
+					{posts.length !== 1 ? "s" : ""}
+				</Text>
 			</View>
 			{isCurrentUser && currentUser.isPT && currentUserClients.length ? (
 				<PressableButton
