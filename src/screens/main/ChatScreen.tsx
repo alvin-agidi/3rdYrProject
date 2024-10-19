@@ -16,12 +16,11 @@ import { TextField } from "../../components/TextField";
 import { NoResults } from "../../components/NoResults";
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import UserSummary from "../../components/UserSummary";
-import { getMessages } from "../../../redux/actions";
+import { fetchMessages } from "../../../redux/actions";
 
 export default function ChatScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
 	const [text, setText] = useState("");
-	const [chatID, setChatID] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 
 	function sendMessage() {
@@ -29,7 +28,7 @@ export default function ChatScreen(props: any) {
 			firebase
 				.firestore()
 				.collection("chats")
-				.doc(chatID)
+				.doc(props.route.params.chatID)
 				.collection("messages")
 				.add({
 					text,
@@ -39,22 +38,11 @@ export default function ChatScreen(props: any) {
 		}
 	}
 
-	function fetchChatID() {
-		var ids = [firebase.auth().currentUser!.uid, props.route.params.uid];
-		setChatID(ids.sort().join(""));
-	}
-
 	useEffect(() => {
-		async () => {
-			setIsLoading(true);
-			if (chatID) await getMessages(chatID, setMessages);
-			setIsLoading(false);
-		};
-	}, [chatID]);
-
-	useEffect(() => {
-		fetchChatID();
-	}, [props.route.params.uid]);
+		setIsLoading(true);
+		fetchMessages(props.route.params.chatID, setMessages);
+		setIsLoading(false);
+	}, []);
 
 	const renderItem = useCallback(
 		({ item }) => (

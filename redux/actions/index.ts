@@ -8,6 +8,7 @@ import {
 	NOTIFICATIONS_STATE_CHANGE,
 	CLIENTS_STATE_CHANGE,
 	PTS_STATE_CHANGE,
+	CHATS_STATE_CHANGE,
 } from "../constants";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
@@ -21,7 +22,7 @@ export function clearData() {
 	};
 }
 
-export async function getUser(uid: string) {
+export async function fetchUser(uid: string) {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
@@ -32,7 +33,7 @@ export async function getUser(uid: string) {
 	});
 }
 
-export async function getAllUids(): Promise<string[]> {
+export async function fetchAllUids(): Promise<string[]> {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
@@ -42,7 +43,7 @@ export async function getAllUids(): Promise<string[]> {
 	});
 }
 
-export function getFollowing(
+export function fetchFollowing(
 	uid: string,
 	setFollowing?: Function
 ): Promise<string[]> {
@@ -60,7 +61,7 @@ export function getFollowing(
 	});
 }
 
-export function getFollowers(
+export function fetchFollowers(
 	uid: string,
 	setFollowers?: Function
 ): Promise<string[]> {
@@ -78,7 +79,7 @@ export function getFollowers(
 	});
 }
 
-export function getComments(
+export function fetchComments(
 	uid: string,
 	postID: string,
 	setComments: Function
@@ -104,7 +105,7 @@ export function getComments(
 			});
 			Promise.all(
 				comments.map((comment: any) =>
-					getUser(comment.createdBy).then((creator) => {
+					fetchUser(comment.createdBy).then((creator) => {
 						comment.creator = creator;
 					})
 				)
@@ -113,8 +114,49 @@ export function getComments(
 			});
 		});
 }
+async function createChat() {
+	return new Promise(async (resolve) => {
+		const doc = firebase.firestore().collection("chats").doc();
+		doc.set({});
+		resolve(doc.id);
+	});
+}
 
-export function getMessages(chatID: string, setMessages: Function) {
+export async function fetchChat(
+	uid1: string,
+	uid2: string,
+	setChatID: Function
+) {
+	var doc = await firebase
+		.firestore()
+		.collection("users")
+		.doc(uid1)
+		.collection("chats")
+		.doc(uid2)
+		.get();
+	if (doc.exists) {
+		setChatID(doc.data()?.chatID);
+	} else {
+		const chatID = await createChat();
+		await firebase
+			.firestore()
+			.collection("users")
+			.doc(uid1)
+			.collection("chats")
+			.doc(uid2)
+			.set({ chatID });
+		await firebase
+			.firestore()
+			.collection("users")
+			.doc(uid2)
+			.collection("chats")
+			.doc(uid1)
+			.set({ chatID });
+		setChatID(chatID);
+	}
+}
+
+export async function fetchMessages(chatID: string, setMessages: Function) {
 	firebase
 		.firestore()
 		.collection("chats")
@@ -149,7 +191,7 @@ export function sortDateDesc(a: any, b: any) {
 	return a.createdAt - b.createdAt;
 }
 
-export function getPost(uid: string, postID: string, setPosts: Function) {
+export function fetchPost(uid: string, postID: string, setPosts: Function) {
 	firebase
 		.firestore()
 		.collection("users")
@@ -164,7 +206,7 @@ export function getPost(uid: string, postID: string, setPosts: Function) {
 				fetchPostLikes(uid, postID).then((likes) => {
 					post!.likes = likes;
 				}),
-				getUser(uid).then((user) => {
+				fetchUser(uid).then((user) => {
 					post!.user = user;
 				}),
 				fetchPostExercises(uid, postID).then((exercises) => {
@@ -177,7 +219,7 @@ export function getPost(uid: string, postID: string, setPosts: Function) {
 		});
 }
 
-export async function getPosts(uid: string): Promise<any[]> {
+export async function fetchPosts(uid: string): Promise<any[]> {
 	return new Promise((resolve) => {
 		firebase
 			.firestore()
@@ -205,54 +247,16 @@ export async function getPosts(uid: string): Promise<any[]> {
 	});
 }
 
-// function fetchChatID() {
-// 	return new Promise((resolve) => {
-// 		firebase
-// 			.firestore()
-// 			.collection("users")
-// 			.doc(firebase.auth().currentUser!.uid)
-// 			.collection("chats")
-// 			.doc(props.route.params.uid)
-// 			.get()
-// 			.then((doc) => {
-// 				resolve(setChatID(doc!.data()!.chatID));
-// 			})
-// 			.catch(() => {
-// 				firebase
-// 					.firestore()
-// 					.collection("chats")
-// 					.add({})
-// 					.then((doc) => {
-// 						resolve(setChatID(doc.id));
-// 						firebase
-// 							.firestore()
-// 							.collection("users")
-// 							.doc(firebase.auth().currentUser!.uid)
-// 							.collection("chats")
-// 							.doc(props.route.params.uid)
-// 							.set({ chatID: doc.id });
-// 						firebase
-// 							.firestore()
-// 							.collection("users")
-// 							.doc(props.route.params.uid)
-// 							.collection("chats")
-// 							.doc(firebase.auth().currentUser!.uid)
-// 							.set({ chatID: doc.id });
-// 					});
-// 			});
-// 	});
-// }
-
-export function fetchUser(uid: string) {
+export function dispatchUser(uid: string) {
 	return async (dispatch: any) => {
 		dispatch({
 			type: USER_STATE_CHANGE,
-			currentUser: await getUser(uid),
+			currentUser: await fetchUser(uid),
 		});
 	};
 }
 
-export function fetchUserPosts(uid: string) {
+export function dispatchUserPosts(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
@@ -279,16 +283,16 @@ export function fetchUserPosts(uid: string) {
 	};
 }
 
-export function fetchFollowers(uid: string) {
+export function dispatchFollowers(uid: string) {
 	return async (dispatch: any) => {
 		dispatch({
 			type: FOLLOWERS_STATE_CHANGE,
-			followers: await getFollowers(uid),
+			followers: await fetchFollowers(uid),
 		});
 	};
 }
 
-export function fetchFollowing(uid: string) {
+export function dispatchFollowing(uid: string) {
 	return async (dispatch: any) => {
 		firebase
 			.firestore()
@@ -301,17 +305,17 @@ export function fetchFollowing(uid: string) {
 					type: FOLLOWING_STATE_CHANGE,
 					following: following,
 				});
-				dispatch(fetchFollowingPosts(following));
+				dispatch(dispatchFollowingPosts(following));
 			});
 	};
 }
 
-export function fetchFollowingPosts(uids: string[]) {
+export function dispatchFollowingPosts(uids: string[]) {
 	return async (dispatch: any) => {
 		const posts: any[] = (
 			await Promise.all(
 				uids.map(async (uid) => {
-					const user = await getUser(uid);
+					const user = await fetchUser(uid);
 					return await firebase
 						.firestore()
 						.collection("users")
@@ -381,7 +385,7 @@ export function fetchPostExercises(uid: string, postID: string) {
 	});
 }
 
-export function fetchNotifications(uid: string) {
+export function dispatchNotifications(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
@@ -408,7 +412,7 @@ export function fetchNotifications(uid: string) {
 	};
 }
 
-export function fetchClients(uid: string) {
+export function dispatchClients(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
@@ -424,7 +428,7 @@ export function fetchClients(uid: string) {
 	};
 }
 
-export function fetchPTs(uid: string) {
+export function dispatchPTs(uid: string) {
 	return (dispatch: any) => {
 		firebase
 			.firestore()
@@ -435,6 +439,27 @@ export function fetchPTs(uid: string) {
 				dispatch({
 					type: PTS_STATE_CHANGE,
 					PTs: snapshot.docs.map((doc) => doc.id),
+				});
+			});
+	};
+}
+
+export function dispatchChats(uid: string) {
+	return async (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("chats")
+			.onSnapshot((snapshot) => {
+				const chats = snapshot.docs.map((doc) => {
+					const data = doc.data();
+					data.uid = doc.id;
+					return data;
+				});
+				dispatch({
+					type: CHATS_STATE_CHANGE,
+					chats,
 				});
 			});
 	};

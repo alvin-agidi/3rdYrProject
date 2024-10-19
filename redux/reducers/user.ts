@@ -7,6 +7,7 @@ import {
 	NOTIFICATIONS_STATE_CHANGE,
 	CLIENTS_STATE_CHANGE,
 	PTS_STATE_CHANGE,
+	CHATS_STATE_CHANGE,
 	FOLLOWING_POSTS_STATE_CHANGE,
 } from "../constants";
 
@@ -18,6 +19,7 @@ const initialState = {
 	notifications: [],
 	PTs: [],
 	clients: [],
+	chats: [],
 };
 
 export const userState = (state = initialState, action: any) => {
@@ -61,6 +63,11 @@ export const userState = (state = initialState, action: any) => {
 			return {
 				...state,
 				clients: action.clients,
+			};
+		case CHATS_STATE_CHANGE:
+			return {
+				...state,
+				chats: action.chats,
 			};
 		case CLEAR_DATA:
 			return initialState;
