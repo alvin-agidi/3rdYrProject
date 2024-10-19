@@ -4,7 +4,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import CommentsScreen from "../../components/Comments";
+import CommentsScreen from "./CommentsScreen";
 import PostList from "../../components/PostList";
 import UserList from "../../components/UserList";
 import Profile from "../../components/Profile";

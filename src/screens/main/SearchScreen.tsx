@@ -18,7 +18,7 @@ import { TextSelect } from "../../components/TextSelect";
 import globalStyles from "../../globalStyles";
 import Profile from "../../components/Profile";
 import PostList from "../../components/PostList";
-import Comments from "../../components/Comments";
+import Comments from "./CommentsScreen";
 import UserList from "../../components/UserList";
 import { PostSummaryList } from "../../components/PostSummaryList";
 import {

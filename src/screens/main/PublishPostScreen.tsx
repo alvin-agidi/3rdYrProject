@@ -97,10 +97,7 @@ export default function PublishPost(props: any) {
 										.doc(firebase.auth().currentUser!.uid)
 										.collection("posts")
 										.doc(doc.id)
-										.set(
-											{ exercisesDetected: true },
-											{ merge: true }
-										);
+										.update({ exercisesDetected: true });
 								}
 								for (const exercise of exercises) {
 									firebase

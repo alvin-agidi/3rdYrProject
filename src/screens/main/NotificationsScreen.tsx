@@ -16,7 +16,7 @@ import { useNavigation } from "@react-navigation/native";
 import Profile from "../../components/Profile";
 import PostList from "../../components/PostList";
 import { useSelector } from "react-redux";
-import Comments from "../../components/Comments";
+import Comments from "./CommentsScreen";
 import UserList from "../../components/UserList";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
