@@ -1,11 +1,5 @@
 import React, { useCallback } from "react";
-import {
-	FlatList,
-	View,
-	StyleSheet,
-	Text,
-	TouchableOpacity,
-} from "react-native";
+import { FlatList, View, StyleSheet, TouchableOpacity } from "react-native";
 import globalStyles from "../../globalStyles";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import "firebase/compat/auth";
@@ -15,28 +9,18 @@ import { useNavigation } from "@react-navigation/native";
 import Profile from "../../components/Profile";
 import PostList from "../../components/PostList";
 import { useSelector } from "react-redux";
-import Comments from "../../components/Comments";
+import Comments from "./CommentsScreen";
 import UserList from "../../components/UserList";
-import firebase from "firebase/compat/app";
-import "firebase/compat/firestore";
 import { NoResults } from "../../components/NoResults";
 import MessagesScreen from "./MessagesScreen";
 import UserSummary from "../../components/UserSummary";
+import MessageList from "../../components/MessageList";
 
 const Stack = createNativeStackNavigator();
 
 function Chats() {
 	const navigation = useNavigation<any>();
 	const chats = useSelector((state: any) => state.userState.chats);
-
-	function hideChat(id: string): void {
-		firebase
-			.firestore()
-			.collection("users")
-			.doc(firebase.auth().currentUser!.uid)
-			.collection("chat")
-			.doc(id);
-	}
 
 	const ListEmptyComponent = useCallback(
 		() => <NoResults icon="chat-remove-outline" text="No chats" />,
@@ -55,6 +39,12 @@ function Chats() {
 				style={styles.chat}
 			>
 				<UserSummary uid={item.uid} />
+				<MessageList
+					chatID={item.chatID}
+					uid={item.uid}
+					limit={1}
+					order="desc"
+				/>
 			</TouchableOpacity>
 		),
 		[]
@@ -62,6 +52,10 @@ function Chats() {
 
 	return (
 		<View style={globalStyles.container}>
+			{/* <PressableButton
+				text={"New chat"}
+				onPress={navigation.navigate("Search")}
+			/> */}
 			<FlatList
 				horizontal={false}
 				numColumns={1}
@@ -95,6 +89,7 @@ export default function ChatsScreen() {
 			<Stack.Screen name="Post" component={PostList} />
 			<Stack.Screen name="Comments" component={Comments} />
 			<Stack.Screen name="Messages" component={MessagesScreen} />
+			{/* <Stack.Screen name="Search" component={SearchScreen} /> */}
 			<Stack.Screen
 				name="Your Clients"
 				component={UserList}
