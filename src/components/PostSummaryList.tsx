@@ -14,7 +14,6 @@ import { Label } from "./Label";
 import { useNavigation } from "@react-navigation/native";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
-import { dateToAge } from "../../redux/actions";
 
 export function PostSummaryList(props: any) {
 	const navigation = useNavigation<any>();

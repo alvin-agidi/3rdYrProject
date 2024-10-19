@@ -3,13 +3,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { useDispatch } from "react-redux";
 import {
-	fetchUser,
-	fetchUserPosts,
-	fetchFollowing,
-	fetchFollowers,
-	fetchNotifications,
-	fetchClients,
-	fetchPTs,
+	dispatchUser,
+	dispatchUserPosts,
+	dispatchFollowing,
+	dispatchFollowers,
+	dispatchNotifications,
+	dispatchClients,
+	dispatchPTs,
+	dispatchChats,
 	clearData,
 } from "../../../redux/actions";
 import SearchScreen from "./SearchScreen";
@@ -17,8 +18,10 @@ import FeedScreen from "./FeedScreen";
 import CameraScreen from "./CameraScreen";
 import ProfileScreen from "./ProfileScreen";
 import NotificationsScreen from "./NotificationsScreen";
+import ChatsScreen from "./ChatsScreen";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
+import { Dispatch } from "redux";
 
 const Tab = createBottomTabNavigator();
 
@@ -27,13 +30,14 @@ export default function Main() {
 
 	useEffect(() => {
 		dispatch(clearData());
-		dispatch(fetchUser(firebase.auth().currentUser!.uid));
-		dispatch(fetchUserPosts(firebase.auth().currentUser!.uid));
-		dispatch(fetchFollowing(firebase.auth().currentUser!.uid));
-		dispatch(fetchFollowers(firebase.auth().currentUser!.uid));
-		dispatch(fetchNotifications(firebase.auth().currentUser!.uid));
-		dispatch(fetchClients(firebase.auth().currentUser!.uid));
-		dispatch(fetchPTs(firebase.auth().currentUser!.uid));
+		dispatch(dispatchUser(firebase.auth().currentUser!.uid));
+		dispatch(dispatchUserPosts(firebase.auth().currentUser!.uid));
+		dispatch(dispatchFollowing(firebase.auth().currentUser!.uid));
+		dispatch(dispatchFollowers(firebase.auth().currentUser!.uid));
+		dispatch(dispatchNotifications(firebase.auth().currentUser!.uid));
+		dispatch(dispatchClients(firebase.auth().currentUser!.uid));
+		dispatch(dispatchPTs(firebase.auth().currentUser!.uid));
+		dispatch(dispatchChats(firebase.auth().currentUser!.uid));
 	}, [dispatch]);
 
 	return (
@@ -89,6 +93,17 @@ export default function Main() {
 						<Icon name="bell-outline" color={color} size={size} />
 					),
 					tabBarLabel: "Notifications",
+					headerShown: false,
+				}}
+			/>
+			<Tab.Screen
+				name="ChatsScreen"
+				component={ChatsScreen}
+				options={{
+					tabBarIcon: ({ color, size = 25 }) => (
+						<Icon name="chat-outline" color={color} size={size} />
+					),
+					tabBarLabel: "Chats",
 					headerShown: false,
 				}}
 			/>

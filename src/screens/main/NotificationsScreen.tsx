@@ -137,10 +137,6 @@ const styles = StyleSheet.create({
 		borderRadius: 10,
 		gap: 5,
 	},
-	title: {
-		fontSize: 15,
-		fontWeight: "bold",
-	},
 	notification: {
 		padding: 5,
 		borderRadius: 5,

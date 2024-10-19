@@ -25,7 +25,7 @@ import {
 	dateToAge,
 	fetchPostExercises,
 	generateThumbnail,
-	getAllUids,
+	fetchAllUids,
 	sortDateAsc,
 	sortDateDesc,
 } from "../../../redux/actions";
@@ -79,7 +79,7 @@ function Search() {
 			if (!queryString && !selectedExercises.length) return resolve();
 			setIsLoading(true);
 
-			const uids: string[] = await getAllUids();
+			const uids: string[] = await fetchAllUids();
 
 			var posts: any[] = (
 				await Promise.all(

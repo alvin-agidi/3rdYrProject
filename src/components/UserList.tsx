@@ -6,8 +6,8 @@ import { PressableButton } from "./PressableButton";
 import {
 	fetchPostExercises,
 	generateThumbnail,
-	getPosts,
-	getUser,
+	fetchPosts,
+	fetchUser,
 } from "../../redux/actions";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { PostSummaryList } from "./PostSummaryList";
@@ -18,9 +18,9 @@ export default function UserList(props: any) {
 	const [users, setUsers] = useState<any>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
-	async function fetchPosts(uid: string) {
+	async function getPosts(uid: string) {
 		return new Promise(async (resolve) => {
-			const posts: any[] = (await getPosts(uid)).slice(0, 3);
+			const posts: any[] = (await fetchPosts(uid)).slice(0, 3);
 			Promise.all([
 				...posts.map((post: any) =>
 					fetchPostExercises(uid, post.id).then((exercises) => {
@@ -40,9 +40,9 @@ export default function UserList(props: any) {
 		});
 	}
 
-	async function fetchUser(uid: string) {
-		const user: any = await getUser(uid);
-		user.posts = await fetchPosts(uid);
+	async function getUser(uid: string) {
+		const user: any = await fetchUser(uid);
+		user.posts = await getPosts(uid);
 		return user;
 	}
 
@@ -51,9 +51,7 @@ export default function UserList(props: any) {
 			setIsLoading(true);
 			setUsers(
 				await Promise.all(
-					props.route.params.users.map((uid: string) =>
-						fetchUser(uid)
-					)
+					props.route.params.users.map((uid: string) => getUser(uid))
 				)
 			);
 			setIsLoading(false);

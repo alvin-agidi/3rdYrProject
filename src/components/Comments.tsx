@@ -17,7 +17,7 @@ import { TextField } from "./TextField";
 import { useNavigation } from "@react-navigation/native";
 import { NoResults } from "./NoResults";
 import { LoadingIndicator } from "./LoadingIndicator";
-import { getComments } from "../../redux/actions";
+import { fetchComments } from "../../redux/actions";
 
 export default function Comments(props: any) {
 	const navigation = useNavigation<any>();
@@ -48,7 +48,7 @@ export default function Comments(props: any) {
 		if (props.route.params.postID !== postID) {
 			(async () => {
 				setIsLoading(true);
-				await getComments(
+				await fetchComments(
 					props.route.params.uid,
 					props.route.params.postID,
 					setComments

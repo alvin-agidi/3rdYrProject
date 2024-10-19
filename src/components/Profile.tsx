@@ -14,9 +14,10 @@ import { PressableButton } from "./PressableButton";
 import { useNavigation } from "@react-navigation/native";
 import {
 	generateThumbnail,
-	getFollowers,
-	getFollowing,
-	getPosts,
+	fetchFollowers,
+	fetchFollowing,
+	fetchPosts,
+	fetchChat,
 } from "../../redux/actions";
 import { useSelector } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
@@ -34,6 +35,7 @@ export default function Profile(props: any) {
 	const [isClient, setIsClient] = useState(false);
 	const [isCurrentUser, setIsCurrentUser] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
+	const [chatID, setChatID] = useState<string>();
 	const currentUser = useSelector(
 		(state: any) => state.userState.currentUser
 	);
@@ -49,10 +51,10 @@ export default function Profile(props: any) {
 	);
 	const currentUserPTs = useSelector((state: any) => state.userState.PTs);
 
-	async function fetchPosts() {
+	async function getPosts() {
 		const posts = isCurrentUser
 			? currentUserPosts
-			: await getPosts(props.route.params.uid);
+			: await fetchPosts(props.route.params.uid);
 		Promise.all(
 			posts.map((post: any) => {
 				if (post.isVideo && !post.thumbnailURI) {
@@ -73,14 +75,13 @@ export default function Profile(props: any) {
 			setPosts(posts);
 		});
 	}
-
 	function fetchFollows() {
 		if (isCurrentUser) {
 			setFollowing(currentUserFollowing);
 			setFollowers(currentUserFollowers);
 		} else {
-			getFollowing(props.route.params.uid, setFollowing);
-			getFollowers(props.route.params.uid, setFollowers);
+			fetchFollowing(props.route.params.uid, setFollowing);
+			fetchFollowers(props.route.params.uid, setFollowers);
 		}
 	}
 
@@ -92,12 +93,18 @@ export default function Profile(props: any) {
 		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
 		setIsClient(currentUserClients.includes(props.route.params.uid));
 		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));
+		if (!isCurrentUser)
+			fetchChat(
+				firebase.auth().currentUser!.uid,
+				props.route.params.uid,
+				setChatID
+			);
 	}, [props.route.params.uid]);
 
 	useEffect(() => {
 		(async () => {
 			setIsLoading(true);
-			await fetchPosts();
+			await getPosts();
 			setIsLoading(false);
 		})();
 	}, [currentUserPosts]);
@@ -310,6 +317,7 @@ export default function Profile(props: any) {
 					onPress={() =>
 						navigation.navigate("Chat", {
 							uid: props.route.params.uid,
+							chatID,
 						})
 					}
 					text="Message"

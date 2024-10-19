@@ -5,7 +5,7 @@ import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import { Label } from "./Label";
 import { useSelector } from "react-redux";
-import { getUser } from "../../redux/actions";
+import { fetchUser } from "../../redux/actions";
 
 export default function UserSummary(props: any) {
 	const [user, setUser] = useState<any>();
@@ -16,16 +16,16 @@ export default function UserSummary(props: any) {
 	const clients = useSelector((state: any) => state.userState.clients);
 	const PTs = useSelector((state: any) => state.userState.PTs);
 
-	async function fetchUser(): Promise<void> {
+	async function getUser(): Promise<void> {
 		if (props.uid === firebase.auth().currentUser!.uid) {
 			setUser(currentUser);
 		} else {
-			setUser(await getUser(props.uid));
+			setUser(await fetchUser(props.uid));
 		}
 	}
 
 	useEffect(() => {
-		fetchUser();
+		getUser();
 	}, [props.uid, currentUser]);
 
 	return user ? (

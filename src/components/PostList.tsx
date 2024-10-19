@@ -13,7 +13,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
-import { getPost } from "../../redux/actions";
+import { fetchPost } from "../../redux/actions";
 import globalStyles from "../globalStyles";
 import { Label } from "./Label";
 import { useSelector } from "react-redux";
@@ -41,7 +41,7 @@ export default function PostList(props: any) {
 		) {
 			(async () => {
 				setIsLoading(true);
-				await getPost(
+				await fetchPost(
 					props.route.params.uid,
 					props.route.params.postID,
 					setPosts
