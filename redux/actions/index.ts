@@ -114,10 +114,11 @@ export function fetchComments(
 			});
 		});
 }
-async function createChat() {
+
+async function createChat(users: string[], isGroupChat: boolean) {
 	return new Promise(async (resolve) => {
 		const doc = firebase.firestore().collection("chats").doc();
-		doc.set({});
+		doc.set({ users, isGroupChat });
 		resolve(doc.id);
 	});
 }
@@ -137,45 +138,53 @@ export async function fetchChat(
 	if (doc.exists) {
 		setChatID(doc.data()?.chatID);
 	} else {
-		const chatID = await createChat();
+		const chatID = await createChat([uid1, uid2], false);
 		await firebase
 			.firestore()
 			.collection("users")
 			.doc(uid1)
 			.collection("chats")
 			.doc(uid2)
-			.set({ chatID });
+			.set({ chatID, lastReadAt: firebase.firestore.Timestamp.now() });
 		await firebase
 			.firestore()
 			.collection("users")
 			.doc(uid2)
 			.collection("chats")
 			.doc(uid1)
-			.set({ chatID });
+			.set({ chatID, lastReadAt: firebase.firestore.Timestamp.now() });
 		setChatID(chatID);
 	}
 }
 
-export async function fetchMessages(chatID: string, setMessages: Function) {
-	firebase
+export async function fetchMessages(
+	chatID: string,
+	limit: number,
+	order: string,
+	setMessages: Function
+) {
+	var query = firebase
 		.firestore()
 		.collection("chats")
 		.doc(chatID)
 		.collection("messages")
-		.orderBy("createdAt", "asc")
-		.onSnapshot((snapshot) => {
-			const messages = snapshot.docs.map((doc) => {
-				const data = doc.data();
-				data.id = doc.id;
-				data.createdAt = dateToAge(
-					(
-						data.createdAt ?? firebase.firestore.Timestamp.now()
-					).toDate()
-				);
-				return data;
-			});
-			setMessages(messages);
+		.orderBy("createdAt", order);
+
+	if (limit) {
+		query = query.limit(limit);
+	}
+
+	query.onSnapshot((snapshot) => {
+		const messages = snapshot.docs.map((doc) => {
+			var data = doc.data();
+			data.id = doc.id;
+			data.createdAt = dateToAge(
+				(data.createdAt ?? firebase.firestore.Timestamp.now()).toDate()
+			);
+			return data;
 		});
+		setMessages(messages);
+	});
 }
 
 function addLikeInfo(post: any) {
@@ -249,10 +258,16 @@ export async function fetchPosts(uid: string): Promise<any[]> {
 
 export function dispatchUser(uid: string) {
 	return async (dispatch: any) => {
-		dispatch({
-			type: USER_STATE_CHANGE,
-			currentUser: await fetchUser(uid),
-		});
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.onSnapshot((doc) =>
+				dispatch({
+					type: USER_STATE_CHANGE,
+					currentUser: { uid, ...doc.data() },
+				})
+			);
 	};
 }
 
@@ -285,10 +300,17 @@ export function dispatchUserPosts(uid: string) {
 
 export function dispatchFollowers(uid: string) {
 	return async (dispatch: any) => {
-		dispatch({
-			type: FOLLOWERS_STATE_CHANGE,
-			followers: await fetchFollowers(uid),
-		});
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("followers")
+			.onSnapshot((snapshot) => {
+				dispatch({
+					type: FOLLOWERS_STATE_CHANGE,
+					followers: snapshot.docs.map((doc) => doc.id),
+				});
+			});
 	};
 }
 
@@ -453,8 +475,13 @@ export function dispatchChats(uid: string) {
 			.collection("chats")
 			.onSnapshot((snapshot) => {
 				const chats = snapshot.docs.map((doc) => {
-					const data = doc.data();
+					var data = doc.data();
 					data.uid = doc.id;
+					data.lastReadAt = (
+						data.lastReadAt ?? firebase.firestore.Timestamp.now()
+					)
+						.toDate()
+						.toString();
 					return data;
 				});
 				dispatch({
