@@ -315,7 +315,7 @@ export default function Profile(props: any) {
 			{!isCurrentUser ? (
 				<PressableButton
 					onPress={() =>
-						navigation.navigate("Chat", {
+						navigation.navigate("Messages", {
 							uid: props.route.params.uid,
 							chatID,
 						})

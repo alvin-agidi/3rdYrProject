@@ -32,7 +32,7 @@ import {
 import { LoadingIndicator } from "../../components/LoadingIndicator";
 import { exercises } from "../../config";
 import { NoResults } from "../../components/NoResults";
-import ChatScreen from "./ChatScreen";
+import MessagesScreen from "./MessagesScreen";
 import UserSummary from "../../components/UserSummary";
 
 const Stack = createNativeStackNavigator();
@@ -277,7 +277,7 @@ export default function SearchScreen() {
 			<Stack.Screen name="Profile" component={Profile} />
 			<Stack.Screen name="Post" component={PostList} />
 			<Stack.Screen name="Comments" component={Comments} />
-			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen name="Messages" component={MessagesScreen} />
 			<Stack.Screen
 				name="Your Clients"
 				component={UserList}

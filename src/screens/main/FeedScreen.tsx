@@ -11,7 +11,7 @@ import * as Notifications from "expo-notifications";
 import { isDevice } from "expo-device";
 import Profile from "../../components/Profile";
 import UserList from "../../components/UserList";
-import ChatScreen from "./ChatScreen";
+import MessagesScreen from "./MessagesScreen";
 const appConfig = require("../../../app.json");
 
 const Stack = createNativeStackNavigator();
@@ -76,7 +76,7 @@ export default function FeedScreen() {
 			<Stack.Screen name="Comments" component={Comments} />
 			<Stack.Screen name="Profile" component={Profile} />
 			<Stack.Screen name="Post" component={PostList} />
-			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen name="Messages" component={MessagesScreen} />
 			<Stack.Screen
 				name="Your Clients"
 				component={UserList}

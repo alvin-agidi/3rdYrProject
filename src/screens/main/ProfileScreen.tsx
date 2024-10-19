@@ -8,7 +8,7 @@ import CommentsScreen from "../../components/Comments";
 import PostList from "../../components/PostList";
 import UserList from "../../components/UserList";
 import Profile from "../../components/Profile";
-import ChatScreen from "./ChatScreen";
+import MessagesScreen from "./MessagesScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +32,7 @@ export default function ProfileScreen() {
 			<Stack.Screen name="Profile" component={Profile} />
 			<Stack.Screen name="Post" component={PostList} />
 			<Stack.Screen name="Comments" component={CommentsScreen} />
-			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen name="Messages" component={MessagesScreen} />
 			<Stack.Screen
 				name="Your Clients"
 				component={UserList}

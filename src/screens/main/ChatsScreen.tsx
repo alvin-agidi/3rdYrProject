@@ -1,4 +1,4 @@
-import React, { useCallback, Component, useEffect, useState } from "react";
+import React, { useCallback } from "react";
 import {
 	FlatList,
 	View,
@@ -7,7 +7,6 @@ import {
 	TouchableOpacity,
 } from "react-native";
 import globalStyles from "../../globalStyles";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import "firebase/compat/auth";
 import "firebase/compat/database";
@@ -21,7 +20,7 @@ import UserList from "../../components/UserList";
 import firebase from "firebase/compat/app";
 import "firebase/compat/firestore";
 import { NoResults } from "../../components/NoResults";
-import ChatScreen from "./ChatScreen";
+import MessagesScreen from "./MessagesScreen";
 import UserSummary from "../../components/UserSummary";
 
 const Stack = createNativeStackNavigator();
@@ -30,7 +29,7 @@ function Chats() {
 	const navigation = useNavigation<any>();
 	const chats = useSelector((state: any) => state.userState.chats);
 
-	function dismissChat(id: string): void {
+	function hideChat(id: string): void {
 		firebase
 			.firestore()
 			.collection("users")
@@ -48,7 +47,7 @@ function Chats() {
 		({ item }) => (
 			<TouchableOpacity
 				onPress={() =>
-					navigation.navigate("Chat", {
+					navigation.navigate("Messages", {
 						chatID: item.chatID,
 						uid: item.uid,
 					})
@@ -95,7 +94,7 @@ export default function ChatsScreen() {
 			<Stack.Screen name="Profile" component={Profile} />
 			<Stack.Screen name="Post" component={PostList} />
 			<Stack.Screen name="Comments" component={Comments} />
-			<Stack.Screen name="Chat" component={ChatScreen} />
+			<Stack.Screen name="Messages" component={MessagesScreen} />
 			<Stack.Screen
 				name="Your Clients"
 				component={UserList}

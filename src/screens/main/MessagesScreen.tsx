@@ -18,7 +18,7 @@ import { LoadingIndicator } from "../../components/LoadingIndicator";
 import UserSummary from "../../components/UserSummary";
 import { fetchMessages } from "../../../redux/actions";
 
-export default function ChatScreen(props: any) {
+export default function MessagesScreen(props: any) {
 	const [messages, setMessages] = useState<any>([]);
 	const [text, setText] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
