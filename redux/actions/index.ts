@@ -118,7 +118,11 @@ export function fetchComments(
 async function createChat(users: string[], isGroupChat: boolean) {
 	return new Promise(async (resolve) => {
 		const doc = firebase.firestore().collection("chats").doc();
-		doc.set({ users, isGroupChat });
+		doc.set({
+			users,
+			isGroupChat,
+			lastActiveAt: firebase.firestore.FieldValue.serverTimestamp(),
+		});
 		resolve(doc.id);
 	});
 }
@@ -473,20 +477,46 @@ export function dispatchChats(uid: string) {
 			.collection("users")
 			.doc(uid)
 			.collection("chats")
-			.onSnapshot((snapshot) => {
-				const chats = snapshot.docs.map((doc) => {
-					var data = doc.data();
-					data.uid = doc.id;
-					data.lastReadAt = (
-						data.lastReadAt ?? firebase.firestore.Timestamp.now()
-					)
-						.toDate()
-						.toString();
-					return data;
-				});
+			.onSnapshot(async (snapshot) => {
+				const chats = await Promise.all(
+					snapshot.docs.map(async (doc) => {
+						var chatDoc = await firebase
+							.firestore()
+							.collection("chats")
+							.doc(doc.data().chatID)
+							.get();
+						var chat = chatDoc.data();
+						chat!.uid = doc.id;
+						chat!.lastActiveAt =
+							chat!.lastActiveAt ??
+							firebase.firestore.Timestamp.now();
+						chat!.chatID = chatDoc.id;
+						return chat;
+					})
+				);
 				dispatch({
 					type: CHATS_STATE_CHANGE,
 					chats,
+				});
+			});
+	};
+}
+
+export function dispatchChat(uid: string) {
+	return async (dispatch: any) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.doc(uid)
+			.collection("chats")
+			.get()
+			.then((snapshot) => {
+				snapshot.docs.forEach((doc) => {
+					firebase
+						.firestore()
+						.collection("chats")
+						.doc(doc.data().chatID)
+						.onSnapshot(dispatch(dispatchChats(uid)));
 				});
 			});
 	};

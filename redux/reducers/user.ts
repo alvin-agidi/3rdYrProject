@@ -67,7 +67,15 @@ export const userState = (state = initialState, action: any) => {
 		case CHATS_STATE_CHANGE:
 			return {
 				...state,
-				chats: action.chats,
+				chats: action.chats
+					.sort(
+						(chat1: any, chat2: any) =>
+							chat2.lastActiveAt - chat1.lastActiveAt
+					)
+					.map((chat: any) => {
+						chat.lastActiveAt = chat.lastActiveAt.toJSON();
+						return chat;
+					}),
 			};
 		case CLEAR_DATA:
 			return initialState;

@@ -25,6 +25,14 @@ export default function MessageScreen(props: any) {
 					createdBy: firebase.auth().currentUser!.uid,
 					createdAt: firebase.firestore.FieldValue.serverTimestamp(),
 				});
+			firebase
+				.firestore()
+				.collection("chats")
+				.doc(props.route.params.chatID)
+				.update({
+					lastActiveAt:
+						firebase.firestore.FieldValue.serverTimestamp(),
+				});
 		}
 	}
 

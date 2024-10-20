@@ -11,6 +11,7 @@ import {
 	dispatchClients,
 	dispatchPTs,
 	dispatchChats,
+	dispatchChat,
 	clearData,
 } from "../../../redux/actions";
 import SearchScreen from "./SearchScreen";
@@ -38,6 +39,7 @@ export default function Main() {
 		dispatch(dispatchClients(firebase.auth().currentUser!.uid));
 		dispatch(dispatchPTs(firebase.auth().currentUser!.uid));
 		dispatch(dispatchChats(firebase.auth().currentUser!.uid));
+		dispatch(dispatchChat(firebase.auth().currentUser!.uid));
 	}, [dispatch]);
 
 	return (

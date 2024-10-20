@@ -93,7 +93,7 @@ export default function Profile(props: any) {
 		setIsMyPT(currentUserPTs.includes(props.route.params.uid));
 		setIsClient(currentUserClients.includes(props.route.params.uid));
 		setIsFollowing(currentUserFollowing.includes(props.route.params.uid));
-		if (!isCurrentUser)
+		if (props.route.params.uid !== firebase.auth().currentUser!.uid)
 			fetchChat(
 				firebase.auth().currentUser!.uid,
 				props.route.params.uid,
