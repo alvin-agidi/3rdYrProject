@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/core";
 import SignInScreen from "./SignInScreen";
@@ -6,6 +6,7 @@ import RegisterScreen from "./RegisterScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import globalStyles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
+import ResetPasswordScreen from "./ResetPasswordScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -42,6 +43,10 @@ export default function LandingScreen() {
 			/>
 			<Stack.Screen name="Register" component={RegisterScreen} />
 			<Stack.Screen name="Sign in" component={SignInScreen} />
+			<Stack.Screen
+				name="Reset password"
+				component={ResetPasswordScreen}
+			/>
 		</Stack.Navigator>
 	);
 }
