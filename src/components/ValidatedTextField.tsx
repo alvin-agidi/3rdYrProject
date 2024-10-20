@@ -43,8 +43,8 @@ export function ValidatedTextField(props: any): JSX.Element {
 						borderColor: color,
 					}}
 					onEndEditing={() => {
-						setColor("skyblue");
 						isValid();
+						setColor("skyblue");
 					}}
 					onChangeText={onChangeText}
 					onFocus={() => setColor("deepskyblue")}

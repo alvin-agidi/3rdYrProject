@@ -5,23 +5,42 @@ import "firebase/compat/auth";
 import "firebase/compat/database";
 import styles from "../../globalStyles";
 import { PressableButton } from "../../components/PressableButton";
+import { useNavigation } from "@react-navigation/native";
 import { ValidatedTextField } from "../../components/ValidatedTextField";
 import globalStyles from "../../globalStyles";
+import { DialogBox } from "../../components/DialogBox";
 
 export default function SignInScreen() {
+	const navigation = useNavigation<any>();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
 
 	function signIn() {
+		setError("");
 		firebase
 			.auth()
 			.signInWithEmailAndPassword(email, password)
-			.catch((result: any) => console.log(result));
+			.catch((e: any) => {
+				console.log(e.code);
+				if (e.code === "auth/invalid-email") {
+					setError("Email is invalid.");
+				} else if (e.code === "auth/missing-password") {
+					setError("Password is missing.");
+				} else if (e.code === "auth/invalid-credential") {
+					setError("Email/password is incorrect.");
+				} else {
+					setError(e.code);
+				}
+			});
 	}
 
 	return (
 		<View style={styles.container}>
 			<Text style={globalStyles.logo}>ΛCTIV</Text>
+			{error ? (
+				<DialogBox text={error} icon="alert-circle-outline" />
+			) : null}
 			<ValidatedTextField
 				placeholder="Email"
 				inputMode="email"
@@ -40,6 +59,10 @@ export default function SignInScreen() {
 				iconName="lock-outline"
 			/>
 			<PressableButton onPress={signIn} text="Sign in" />
+			<PressableButton
+				onPress={() => navigation.navigate("Reset password")}
+				text="Forgot my password"
+			/>
 		</View>
 	);
 }

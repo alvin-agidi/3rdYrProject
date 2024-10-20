@@ -3,7 +3,6 @@ import { Platform } from "react-native";
 import { useSelector } from "react-redux";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Comments from "./CommentsScreen";
-import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import PostList from "../../components/PostList";
