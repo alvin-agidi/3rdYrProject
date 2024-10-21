@@ -162,7 +162,7 @@ function Search() {
 				}
 				style={styles.result}
 			>
-				<UserSummary uid={item.uid} />
+				<UserSummary uid={item.uid} showLabels />
 			</TouchableOpacity>
 		),
 		[]

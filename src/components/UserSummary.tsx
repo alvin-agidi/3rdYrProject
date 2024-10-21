@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, Image, StyleSheet } from "react-native";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
@@ -29,32 +29,60 @@ export default function UserSummary(props: any) {
 	}, [props.uid, currentUser]);
 
 	return user ? (
-		<View style={styles.usernameBox}>
+		<View style={styles.userSummary}>
+			<Image
+				source={{
+					uri:
+						user.profilePicURI ??
+						"https://www.gravatar.com/avatar/?d=mp",
+				}}
+				style={styles.profilePic}
+			/>
 			<Text style={styles.username}>{user.username}</Text>
-			{props.uid === firebase.auth().currentUser!.uid ? (
-				<Label text="You" />
+			{props.showLabels ? (
+				<View style={styles.labels}>
+					{props.uid === firebase.auth().currentUser!.uid ? (
+						<Label text="You" />
+					) : null}
+					{user.isPT ? (
+						PTs.includes(props.uid) ? (
+							<Label text="Your PT" />
+						) : (
+							<Label text="PT" />
+						)
+					) : null}
+					{clients.includes(props.uid) ? (
+						<Label text="Your client" />
+					) : null}
+					{following.includes(props.uid) ? (
+						<Label text="Following" />
+					) : null}
+				</View>
 			) : null}
-			{user.isPT ? (
-				PTs.includes(props.uid) ? (
-					<Label text="Your PT" />
-				) : (
-					<Label text="PT" />
-				)
-			) : null}
-			{clients.includes(props.uid) ? <Label text="Your client" /> : null}
-			{following.includes(props.uid) ? <Label text="Following" /> : null}
 		</View>
 	) : null;
 }
 
 const styles = StyleSheet.create({
-	usernameBox: {
+	userSummary: {
 		gap: 5,
 		flexDirection: "row",
+		justifyContent: "flex-start",
+		alignItems: "center",
+	},
+	labels: {
+		flex: 1,
+		gap: 5,
+		flexDirection: "row",
+		justifyContent: "flex-end",
 	},
 	username: {
-		flex: 1,
-		fontSize: 30,
+		fontSize: 20,
 		fontWeight: "bold",
+	},
+	profilePic: {
+		height: 30,
+		aspectRatio: 1,
+		borderRadius: 5,
 	},
 });

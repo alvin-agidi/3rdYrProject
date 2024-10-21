@@ -19,6 +19,7 @@ import { Label } from "./Label";
 import { useSelector } from "react-redux";
 import { LoadingIndicator } from "./LoadingIndicator";
 import { NoResults } from "./NoResults";
+import UserSummary from "./UserSummary";
 
 export default function PostList(props: any) {
 	const navigation = useNavigation<any>();
@@ -29,8 +30,6 @@ export default function PostList(props: any) {
 	const followingPosts = useSelector(
 		(state: any) => state.userState.followingPosts
 	);
-	const clients = useSelector((state: any) => state.userState.clients);
-	const PTs = useSelector((state: any) => state.userState.PTs);
 
 	useEffect(() => {
 		videoRefs = {};
@@ -129,18 +128,10 @@ export default function PostList(props: any) {
 										uid: item.user.uid,
 									});
 								}}
-								style={styles.postUsername}
+								style={styles.postUser}
 							>
-								<Text style={globalStyles.bold}>
-									{item.user.username}
-								</Text>
+								<UserSummary uid={item.user.uid} />
 							</TouchableOpacity>
-							{clients && clients.includes(item.user.uid) ? (
-								<Label text="Your client" />
-							) : null}
-							{PTs && PTs.includes(item.user.uid) ? (
-								<Label text="Your PT" />
-							) : null}
 							{item.exercisesDetected ? (
 								<TouchableOpacity
 									style={styles.postIconBox}
@@ -310,12 +301,7 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		flexDirection: "row",
 	},
-	postUsername: {
-		flex: 1,
-		fontSize: 15,
-		padding: 5,
-		fontWeight: "bold",
-	},
+
 	media: {
 		flex: 1,
 		borderRadius: 5,
