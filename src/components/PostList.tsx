@@ -301,7 +301,9 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		flexDirection: "row",
 	},
-
+	postUser: {
+		flex: 1,
+	},
 	media: {
 		flex: 1,
 		borderRadius: 5,
