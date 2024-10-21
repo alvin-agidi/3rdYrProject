@@ -1,6 +1,6 @@
-import { CameraView, Camera } from "expo-camera";
-import { StyleSheet, Text, View, Image } from "react-native";
-import { Component, useEffect, useRef, useState } from "react";
+import { CameraView, Camera, CameraType } from "expo-camera";
+import { StyleSheet, View, Image } from "react-native";
+import { useEffect, useRef, useState } from "react";
 import { shareAsync } from "expo-sharing";
 import { Video, ResizeMode } from "expo-av";
 import * as MediaLibrary from "expo-media-library";
@@ -18,7 +18,6 @@ const Stack = createNativeStackNavigator();
 function CameraComponent() {
 	const navigation = useNavigation<any>();
 	const cameraRef = useRef();
-	const [cameraDirection, setCameraDirection] = useState("back");
 	const [isVideoMode, setVideoMode] = useState(true);
 	const [hasCameraPermission, setHasCameraPermission] = useState(false);
 	const [hasMicrophonePermission, setHasMicrophonePermission] =
@@ -29,6 +28,7 @@ function CameraComponent() {
 		useState(false);
 	const [isRecording, setIsRecording] = useState(false);
 	const [media, setMedia] = useState();
+	const [facing, setFacing] = useState<CameraType>("back");
 
 	useEffect(() => {
 		(async () => {
@@ -101,23 +101,21 @@ function CameraComponent() {
 		});
 	}
 
-	function pickMedia(): void {
-		ImagePicker.launchImageLibraryAsync({
+	function openGallery(): void {
+		const options = {
 			mediaTypes: ImagePicker.MediaTypeOptions.All,
 			allowsEditing: true,
-			// aspect: [1, 1],
 			quality: 0.6,
-		}).then((media: any) => {
+		};
+		ImagePicker.launchImageLibraryAsync(options).then((media: any) => {
 			if (!media.canceled) {
 				setMedia(media.assets[0]);
 			}
 		});
 	}
 
-	function switchCameraDirection() {
-		setCameraDirection((direction) =>
-			direction === "back" ? "front" : "back"
-		);
+	function switchFacing() {
+		setFacing((facing) => (facing === "back" ? "front" : "back"));
 	}
 
 	function switchVideoMode() {
@@ -139,46 +137,57 @@ function CameraComponent() {
 	if (media) {
 		return (
 			<View style={globalStyles.container}>
-				{isVideoMode ? (
-					<Video
-						style={styles.media}
-						source={{ uri: media.uri }}
-						useNativeControls
-						resizeMode={ResizeMode.CONTAIN}
-						isLooping
-						shouldPlay
-					/>
-				) : (
-					<Image style={styles.media} source={{ uri: media.uri }} />
-				)}
-				<View style={styles.iconBox}>
-					<Icon
-						name="export-variant"
-						size={50}
-						onPress={shareMedia}
-					/>
-					{hasMediaLibraryPermission ? (
-						<Icon
-							name="content-save-outline"
-							size={50}
-							onPress={saveMedia}
+				<View style={styles.cameraBox}>
+					{isVideoMode ? (
+						<Video
+							style={styles.media}
+							source={{ uri: media.uri }}
+							useNativeControls
+							resizeMode={ResizeMode.CONTAIN}
+							isLooping
+							shouldPlay
 						/>
-					) : undefined}
-					<Icon
-						name="trash-can-outline"
-						size={50}
-						onPress={() => setMedia(undefined)}
-					/>
+					) : (
+						<Image
+							style={styles.media}
+							source={{ uri: media.uri }}
+						/>
+					)}
+					<View style={styles.iconBox}>
+						<Icon
+							name="export-variant"
+							size={50}
+							style={styles.icon}
+							onPress={shareMedia}
+						/>
+						{hasMediaLibraryPermission ? (
+							<Icon
+								name="content-save-outline"
+								size={50}
+								style={styles.icon}
+								onPress={saveMedia}
+							/>
+						) : undefined}
+						<Icon
+							name="trash-can-outline"
+							size={50}
+							style={styles.icon}
+							onPress={() => setMedia(undefined)}
+						/>
+						<Icon
+							name="arrow-right"
+							size={50}
+							style={styles.icon}
+							color="deepskyblue"
+							onPress={() =>
+								navigation.navigate("Publish Post", {
+									media,
+									isVideo: isVideoMode,
+								})
+							}
+						/>
+					</View>
 				</View>
-				<PressableButton
-					text="Create post"
-					onPress={() =>
-						navigation.navigate("Publish Post", {
-							media,
-							isVideo: isVideoMode,
-						})
-					}
-				/>
 			</View>
 		);
 	}
@@ -188,50 +197,53 @@ function CameraComponent() {
 			<View style={styles.cameraBox}>
 				<CameraView
 					style={styles.camera}
+					facing={facing}
 					ref={cameraRef}
-					type={cameraDirection}
 				/>
-			</View>
-			<View style={styles.iconBox}>
-				<Icon
-					name="camera-flip-outline"
-					size={50}
-					color="grey"
-					onPress={switchCameraDirection}
-				/>
-				{isVideoMode ? (
+				<View style={styles.iconBox}>
 					<Icon
-						name={
-							isRecording
-								? "stop-circle-outline"
-								: "radiobox-marked"
-						}
-						size={80}
-						color={isRecording ? "red" : "deepskyblue"}
-						onPress={isRecording ? stopVideo : startVideo}
+						name="camera-flip-outline"
+						size={50}
+						style={styles.icon}
+						onPress={switchFacing}
 					/>
-				) : (
+					{isVideoMode ? (
+						<Icon
+							name={
+								isRecording
+									? "stop-circle-outline"
+									: "radiobox-marked"
+							}
+							size={80}
+							style={styles.icon}
+							color={isRecording ? "red" : "deepskyblue"}
+							onPress={isRecording ? stopVideo : startVideo}
+						/>
+					) : (
+						<Icon
+							name="circle-outline"
+							size={80}
+							style={styles.icon}
+							color="deepskyblue"
+							onPress={takePhoto}
+						/>
+					)}
 					<Icon
-						name="circle-outline"
-						size={80}
-						color={"deepskyblue"}
-						onPress={takePhoto}
+						name={isVideoMode ? "camera-outline" : "video-outline"}
+						size={50}
+						style={styles.icon}
+						onPress={switchVideoMode}
 					/>
-				)}
-				<Icon
-					name={isVideoMode ? "camera-outline" : "video-outline"}
-					size={50}
-					color="grey"
-					onPress={switchVideoMode}
-				/>
+				</View>
+				{hasImagePickerPermission ? (
+					<Icon
+						name="image-outline"
+						size={50}
+						style={{ ...styles.icon, ...styles.galleryIcon }}
+						onPress={openGallery}
+					/>
+				) : undefined}
 			</View>
-
-			{hasImagePickerPermission ? (
-				<PressableButton
-					text={"Pick from gallery"}
-					onPress={pickMedia}
-				/>
-			) : undefined}
 		</View>
 	);
 }
@@ -252,18 +264,31 @@ export default function CameraScreen() {
 }
 
 const styles = StyleSheet.create({
-	camera: {
-		flex: 1,
-	},
 	cameraBox: {
 		flex: 1,
 		borderRadius: 5,
 		overflow: "hidden",
 	},
+	camera: {
+		flex: 1,
+	},
 	iconBox: {
 		flexDirection: "row",
 		alignItems: "center",
 		justifyContent: "space-around",
+		position: "absolute",
+		width: "100%",
+		bottom: 10,
+	},
+	icon: {
+		backgroundColor: "rgba(255, 255, 255, 0.35)",
+		borderRadius: 5,
+		overflow: "hidden",
+	},
+	galleryIcon: {
+		position: "absolute",
+		top: 10,
+		right: 10,
 	},
 	media: {
 		flex: 1,

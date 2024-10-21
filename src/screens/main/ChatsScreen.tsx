@@ -38,7 +38,7 @@ function Chats() {
 				}
 				style={styles.chat}
 			>
-				<UserSummary uid={item.uid} />
+				<UserSummary uid={item.uid} showLabels />
 				<MessageList
 					chatID={item.chatID}
 					uid={item.uid}

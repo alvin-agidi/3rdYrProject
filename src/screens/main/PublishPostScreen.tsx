@@ -6,6 +6,7 @@ import {
 	Platform,
 	View,
 } from "react-native";
+import { uploadMedia } from "../../../redux/actions";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/storage";
@@ -36,35 +37,7 @@ export default function PublishPost(props: any) {
 	const navigation = useNavigation<any>();
 	const [caption, setCaption] = useState("");
 	const isVideo = props.route.params.isVideo;
-	const mediaUri = props.route.params.media.uri;
-
-	async function uploadMedia(): Promise<void> {
-		const response = await fetch(mediaUri);
-		const blob = await response.blob();
-		const childPath = `${
-			firebase.auth().currentUser!.uid
-		}/posts/${Math.random().toString(36)}`;
-		const task = firebase.storage().ref().child(childPath).put(blob);
-
-		const taskProgress = (snapshot: any) => {
-			console.log(`Transferred = ${snapshot.bytesTransferred}`);
-		};
-		const taskError = (error: any) => {
-			console.log(error);
-		};
-		const taskCompleted = () => {
-			task.snapshot.ref.getDownloadURL().then(async (downloadURL) => {
-				savePostData(downloadURL);
-			});
-		};
-
-		task.on(
-			firebase.storage.TaskEvent.STATE_CHANGED,
-			taskProgress,
-			taskError,
-			taskCompleted
-		);
-	}
+	const mediaURI = props.route.params.media.uri;
 
 	function savePostData(mediaURL: string): void {
 		navigation.popToTop();
@@ -126,14 +99,14 @@ export default function PublishPost(props: any) {
 				{isVideo ? (
 					<Video
 						style={styles.media}
-						source={{ uri: mediaUri }}
+						source={{ uri: mediaURI }}
 						useNativeControls
 						resizeMode={ResizeMode.CONTAIN}
 						isLooping
 						shouldPlay
 					/>
 				) : (
-					<Image source={{ uri: mediaUri }} style={styles.media} />
+					<Image source={{ uri: mediaURI }} style={styles.media} />
 				)}
 				<TextField
 					placeholder="Write a caption"
@@ -144,7 +117,16 @@ export default function PublishPost(props: any) {
 					style={globalStyles.textInput}
 					iconName="comment-outline"
 					buttonText="Publish"
-					onPressButton={uploadMedia}
+					onPressButton={async () =>
+						savePostData(
+							await uploadMedia(
+								mediaURI,
+								`${
+									firebase.auth().currentUser!.uid
+								}/posts/${Math.random().toString(36)}`
+							)
+						)
+					}
 				/>
 			</KeyboardAvoidingView>
 		</View>
@@ -155,5 +137,10 @@ const styles = StyleSheet.create({
 	media: {
 		flex: 1,
 		borderRadius: 5,
+	},
+	icon: {
+		backgroundColor: "rgba(255, 255, 255, 0.35)",
+		borderRadius: 5,
+		overflow: "hidden",
 	},
 });

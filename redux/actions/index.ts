@@ -14,6 +14,7 @@ import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import "firebase/compat/database";
 import "firebase/compat/firestore";
+import { getStorage, ref, deleteObject } from "firebase/storage";
 import * as VideoThumbnails from "expo-video-thumbnails";
 
 export function clearData() {
@@ -520,6 +521,40 @@ export function dispatchChat(uid: string) {
 				});
 			});
 	};
+}
+
+export async function uploadMedia(
+	mediaURI: string,
+	childPath: string
+): Promise<string> {
+	return new Promise(async (resolve) => {
+		const response = await fetch(mediaURI);
+		const blob = await response.blob();
+		const task = firebase.storage().ref().child(childPath).put(blob);
+
+		function taskProgress(snapshot: any) {
+			console.log(`Transferred = ${snapshot.bytesTransferred}`);
+		}
+		function taskError(error: any) {
+			console.log(error);
+		}
+		async function taskCompleted() {
+			resolve(await task.snapshot.ref.getDownloadURL());
+		}
+
+		task.on(
+			firebase.storage.TaskEvent.STATE_CHANGED,
+			taskProgress,
+			taskError,
+			taskCompleted
+		);
+	});
+}
+
+export async function deleteMedia(mediaURI: string) {
+	const storage = getStorage();
+	const storageRef = ref(storage, mediaURI);
+	deleteObject(storageRef).catch((error: string) => console.log(error));
 }
 
 export function generateThumbnail(mediaURL: any) {
