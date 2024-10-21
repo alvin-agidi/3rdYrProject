@@ -23,6 +23,7 @@ import ChatsScreen from "./ChatsScreen";
 import firebase from "firebase/compat/app";
 import "firebase/compat/auth";
 import { Dispatch } from "redux";
+import SettingsScreen from "./SettingsScreen.";
 
 const Tab = createBottomTabNavigator();
 
@@ -121,6 +122,16 @@ export default function Main() {
 						/>
 					),
 					headerShown: false,
+				}}
+			/>
+			<Tab.Screen
+				name="Settings"
+				component={SettingsScreen}
+				options={{
+					tabBarIcon: ({ color, size = 25 }) => (
+						<Icon name="cog-outline" color={color} size={size} />
+					),
+					tabBarLabel: "Settings",
 				}}
 			/>
 		</Tab.Navigator>
