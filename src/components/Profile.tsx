@@ -217,10 +217,6 @@ export default function Profile(props: any) {
 		}
 	}
 
-	function signOut() {
-		firebase.auth().signOut();
-	}
-
 	const renderItem = useCallback(
 		({ item }) => (
 			<TouchableOpacity
@@ -255,7 +251,7 @@ export default function Profile(props: any) {
 
 	return (
 		<View style={globalStyles.container}>
-			<UserSummary uid={props.route.params.uid} />
+			<UserSummary uid={props.route.params.uid} showLabels />
 			<View style={styles.infoBox}>
 				<Text style={styles.info}>
 					{followers.length} follower
@@ -268,7 +264,7 @@ export default function Profile(props: any) {
 						{currentUserPTs.length !== 1 ? "s" : ""}
 					</Text>
 				) : null}
-				{isCurrentUser && currentUser.isPT ? (
+				{isCurrentUser && currentUser && currentUser.isPT ? (
 					<Text style={styles.info}>
 						{currentUserClients.length} client
 						{currentUserClients.length !== 1 ? "s" : ""}
@@ -279,7 +275,10 @@ export default function Profile(props: any) {
 					{posts.length !== 1 ? "s" : ""}
 				</Text>
 			</View>
-			{isCurrentUser && currentUser.isPT && currentUserClients.length ? (
+			{isCurrentUser &&
+			currentUser &&
+			currentUser.isPT &&
+			currentUserClients.length ? (
 				<PressableButton
 					onPress={() => navigation.navigate("Your Clients")}
 					text="View your clients"
@@ -298,7 +297,7 @@ export default function Profile(props: any) {
 					text={isFollowing ? "Unfollow" : "Follow"}
 				/>
 			) : null}
-			{currentUser.isPT && !isCurrentUser ? (
+			{!isCurrentUser && currentUser && currentUser.isPT ? (
 				<PressableButton
 					onPress={toggleIsClient}
 					backgroundColor={isClient ? "lightgrey" : "deepskyblue"}
@@ -333,9 +332,6 @@ export default function Profile(props: any) {
 				renderItem={renderItem}
 				ListEmptyComponent={ListEmptyComponent}
 			/>
-			{isCurrentUser ? (
-				<PressableButton onPress={signOut} text="Sign out" />
-			) : null}
 		</View>
 	);
 }
