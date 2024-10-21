@@ -43,6 +43,7 @@ function Chats() {
 					chatID={item.chatID}
 					uid={item.uid}
 					limit={1}
+					preview
 					order="desc"
 				/>
 			</TouchableOpacity>

@@ -39,7 +39,12 @@ export default function MessageList(props: any) {
 				}}
 			>
 				<View style={styles.messageText}>
-					<Text style={styles.messageText}>{item.text}</Text>
+					<Text
+						style={styles.messageText}
+						numberOfLines={props.preview ? 1 : undefined}
+					>
+						{item.text}
+					</Text>
 				</View>
 				<Text style={globalStyles.date}>{item.createdAt}</Text>
 			</View>
