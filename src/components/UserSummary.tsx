@@ -28,39 +28,40 @@ export default function UserSummary(props: any) {
 		getUser();
 	}, [props.uid, currentUser]);
 
-	return user ? (
-		<View style={styles.userSummary}>
-			<Image
-				source={{
-					uri:
-						user.profilePicURI ??
-						"https://www.gravatar.com/avatar/?d=mp",
-				}}
-				style={styles.profilePic}
-			/>
-			<Text style={styles.username}>{user.username}</Text>
-			{props.showLabels ? (
-				<View style={styles.labels}>
-					{props.uid === firebase.auth().currentUser!.uid ? (
-						<Label text="You" />
-					) : null}
-					{user.isPT ? (
-						PTs.includes(props.uid) ? (
-							<Label text="Your PT" />
-						) : (
-							<Label text="PT" />
-						)
-					) : null}
-					{clients.includes(props.uid) ? (
-						<Label text="Your client" />
-					) : null}
-					{following.includes(props.uid) ? (
-						<Label text="Following" />
-					) : null}
-				</View>
-			) : null}
-		</View>
-	) : null;
+	return (
+		user && (
+			<View style={styles.userSummary}>
+				<Image
+					source={{
+						uri:
+							user.profilePicURI ??
+							"https://www.gravatar.com/avatar/?d=mp",
+					}}
+					style={styles.profilePic}
+				/>
+				<Text style={styles.username}>{user.username}</Text>
+				{props.showLabels && (
+					<View style={styles.labels}>
+						{props.uid === firebase.auth().currentUser!.uid && (
+							<Label text="You" />
+						)}
+						{user.isPT &&
+							(PTs.includes(props.uid) ? (
+								<Label text="Your PT" />
+							) : (
+								<Label text="PT" />
+							))}
+						{clients.includes(props.uid) && (
+							<Label text="Your client" />
+						)}
+						{following.includes(props.uid) && (
+							<Label text="Following" />
+						)}
+					</View>
+				)}
+			</View>
+		)
+	);
 }
 
 const styles = StyleSheet.create({

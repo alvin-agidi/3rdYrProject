@@ -86,9 +86,7 @@ export default function SettingsScreen() {
 	return (
 		<View style={globalStyles.container}>
 			<Text style={globalStyles.logo}>ΛCTIV</Text>
-			{error ? (
-				<DialogBox text={error} icon="alert-circle-outline" />
-			) : null}
+			{error && <DialogBox text={error} icon="alert-circle-outline" />}
 			<Image
 				source={{
 					uri:

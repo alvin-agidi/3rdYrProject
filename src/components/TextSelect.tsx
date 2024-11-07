@@ -47,9 +47,7 @@ export function TextSelect(props: any): JSX.Element {
 
 	return (
 		<View style={styles.textSelect}>
-			{props.label ? (
-				<Text style={styles.label}>{props.label}</Text>
-			) : null}
+			{props.label && <Text style={styles.label}>{props.label}</Text>}
 			<FlatList
 				{...props}
 				horizontal={true}

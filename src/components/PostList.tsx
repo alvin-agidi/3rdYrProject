@@ -132,7 +132,7 @@ export default function PostList(props: any) {
 							>
 								<UserSummary uid={item.user.uid} />
 							</TouchableOpacity>
-							{item.exercisesDetected ? (
+							{item.exercisesDetected && (
 								<TouchableOpacity
 									style={styles.postIconBox}
 									onPress={() => {
@@ -145,7 +145,7 @@ export default function PostList(props: any) {
 										size={30}
 									/>
 								</TouchableOpacity>
-							) : null}
+							)}
 							<TouchableOpacity
 								style={styles.postIconBox}
 								onPress={() => {
@@ -187,7 +187,7 @@ export default function PostList(props: any) {
 								</Text>
 							</TouchableOpacity>
 						</View>
-						{item.showRoutine && item.exercisesDetected ? (
+						{item.showRoutine && item.exercisesDetected && (
 							<View style={styles.postRoutineBox}>
 								<FlatList
 									horizontal={false}
@@ -220,7 +220,7 @@ export default function PostList(props: any) {
 									)}
 								/>
 							</View>
-						) : null}
+						)}
 					</View>
 					<Text>{item.caption}</Text>
 					<Text style={globalStyles.date}>{item.createdAt}</Text>

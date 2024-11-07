@@ -255,63 +255,63 @@ export default function Profile(props: any) {
 			<View style={styles.infoBox}>
 				<Text style={styles.info}>
 					{followers.length} follower
-					{followers.length !== 1 ? "s" : ""}
+					{followers.length !== 1 && "s"}
 				</Text>
 				<Text style={styles.info}>{following.length} following</Text>
-				{isCurrentUser ? (
+				{isCurrentUser && (
 					<Text style={styles.info}>
 						{currentUserPTs.length} PT
-						{currentUserPTs.length !== 1 ? "s" : ""}
+						{currentUserPTs.length !== 1 && "s"}
 					</Text>
-				) : null}
-				{isCurrentUser && currentUser && currentUser.isPT ? (
+				)}
+				{isCurrentUser && currentUser && currentUser.isPT && (
 					<Text style={styles.info}>
 						{currentUserClients.length} client
-						{currentUserClients.length !== 1 ? "s" : ""}
+						{currentUserClients.length !== 1 && "s"}
 					</Text>
-				) : null}
+				)}
 				<Text style={styles.info}>
 					{posts.length} post
-					{posts.length !== 1 ? "s" : ""}
+					{posts.length !== 1 && "s"}
 				</Text>
 			</View>
 			{isCurrentUser &&
-			currentUser &&
-			currentUser.isPT &&
-			currentUserClients.length ? (
-				<PressableButton
-					onPress={() => navigation.navigate("Your Clients")}
-					text="View your clients"
-				/>
-			) : null}
+				currentUser &&
+				currentUser.isPT &&
+				currentUserClients.length && (
+					<PressableButton
+						onPress={() => navigation.navigate("Your Clients")}
+						text="View your clients"
+					/>
+				)}
 			{isCurrentUser && currentUserPTs.length ? (
 				<PressableButton
 					onPress={() => navigation.navigate("Your PTs")}
 					text="View your personal trainers"
 				/>
 			) : null}
-			{!isCurrentUser ? (
+			{!isCurrentUser && (
 				<PressableButton
 					onPress={toggleFollow}
 					backgroundColor={isFollowing ? "lightgrey" : "deepskyblue"}
 					text={isFollowing ? "Unfollow" : "Follow"}
 				/>
-			) : null}
-			{!isCurrentUser && currentUser && currentUser.isPT ? (
+			)}
+			{!isCurrentUser && currentUser && currentUser.isPT && (
 				<PressableButton
 					onPress={toggleIsClient}
 					backgroundColor={isClient ? "lightgrey" : "deepskyblue"}
 					text={isClient ? "Remove as client" : "Add as client"}
 				/>
-			) : null}
-			{isMyPT ? (
+			)}
+			{isMyPT && (
 				<PressableButton
 					onPress={toggleIsMyPT}
 					backgroundColor={isMyPT ? "lightgrey" : "deepskyblue"}
 					text="Remove as my PT"
 				/>
-			) : null}
-			{!isCurrentUser ? (
+			)}
+			{!isCurrentUser && (
 				<PressableButton
 					onPress={() =>
 						navigation.navigate("Messages", {
@@ -321,7 +321,7 @@ export default function Profile(props: any) {
 					}
 					text="Message"
 				/>
-			) : null}
+			)}
 			<FlatList
 				horizontal={false}
 				numColumns={3}

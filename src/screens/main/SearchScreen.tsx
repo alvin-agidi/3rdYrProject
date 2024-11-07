@@ -126,30 +126,30 @@ function Search() {
 			}
 
 			setPosts(posts);
-			setFilteredPosts(filterPosts(posts));
+			sortPosts();
 			setIsLoading(false);
 			resolve();
 		});
 	}
 
-	function filterPosts(posts: any) {
+	function filterPosts() {
 		const selectedExercisesStrings: any[] = selectedExercises.map(
 			(i: number) => exercises[i]
 		);
-		return posts.filter((post: any) => {
-			const postExercises: any[] = post.exercises.map(
-				(exercise: any) => exercise.exercise
-			);
-			return selectedExercisesStrings.every((exercise: any) =>
-				postExercises.includes(exercise)
-			);
-		});
+		setPosts((posts) =>
+			posts.filter((post: any) => {
+				const postExercises: any[] = post.exercises.map(
+					(exercise: any) => exercise.exercise
+				);
+				return selectedExercisesStrings.every((exercise: any) =>
+					postExercises.includes(exercise)
+				);
+			})
+		);
 	}
 
-	function sortFilteredPosts() {
-		setFilteredPosts((filterPosts) =>
-			filteredPosts.sort(sortFunctions[selectedSort])
-		);
+	function sortPosts() {
+		setPosts((posts) => posts.sort(sortFunctions[selectedSort]));
 	}
 
 	const renderItem = useCallback(
@@ -203,7 +203,7 @@ function Search() {
 				behavior={Platform.OS === "ios" ? "padding" : "height"}
 				keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 70}
 			>
-				{selected == 1 ? (
+				{selected == 1 && (
 					<TextSelect
 						label="Filter"
 						options={exercises}
@@ -217,26 +217,20 @@ function Search() {
 								!queryString &&
 								!selectedExercises.length
 							) {
-								setFilteredPosts([]);
-							} else if (!selectedExercises.length) {
-								setFilteredPosts(posts);
-							} else {
-								setFilteredPosts(filterPosts(posts));
+								filterPosts();
 							}
 						}}
 					/>
-				) : null}
-				{selected == 1 ? (
+				)}
+				{selected == 1 && (
 					<TextSelect
 						label="Sort"
 						options={sortOptions}
 						selected={selectedSort}
 						setSelected={setSelectedSort}
-						onPress={() => {
-							sortFilteredPosts();
-						}}
+						onPress={sortPosts}
 					/>
-				) : null}
+				)}
 				{selected == 0 ? (
 					<FlatList
 						horizontal={false}

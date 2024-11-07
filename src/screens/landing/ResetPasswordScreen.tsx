@@ -40,12 +40,8 @@ export default function ChangePasswordScreen() {
 	return (
 		<View style={styles.container}>
 			<Text style={globalStyles.logo}>ΛCTIV</Text>
-			{error ? (
-				<DialogBox text={error} icon="alert-circle-outline" />
-			) : null}
-			{text ? (
-				<DialogBox text={text} icon="alert-circle-outline" />
-			) : null}
+			{error && <DialogBox text={error} icon="alert-circle-outline" />}
+			{text && <DialogBox text={text} icon="alert-circle-outline" />}
 			<ValidatedTextField
 				placeholder="Email"
 				inputMode="email"

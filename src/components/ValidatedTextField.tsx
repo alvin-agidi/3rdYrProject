@@ -29,11 +29,11 @@ export function ValidatedTextField(props: any): JSX.Element {
 
 	return (
 		<View style={styles.container}>
-			{validationMessage ? (
+			{validationMessage && (
 				<Text style={styles.validationMessage}>
 					{validationMessage}
 				</Text>
-			) : null}
+			) }
 			<View style={styles.textField}>
 				<Icon name={props.iconName} size={30} color={color} />
 				<TextInput
