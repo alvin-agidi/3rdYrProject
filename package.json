@@ -24,7 +24,7 @@
     "@react-navigation/bottom-tabs": "^6.5.14",
     "@react-navigation/native-stack": "^6.9.20",
     "@reduxjs/toolkit": "^2.2.1",
-    "expo": "~51.0.23",
+    "expo": "~52.0.7",
     "expo-av": "~14.0.7",
     "expo-camera": "~15.0.16",
     "expo-device": "~6.0.2",
