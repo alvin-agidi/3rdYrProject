@@ -95,13 +95,14 @@ export function fetchComments(
 		.orderBy("createdAt", "desc")
 		.onSnapshot((snapshot) => {
 			const comments: any[] = snapshot.docs.map((doc) => {
-				const data = doc.data();
+				var data = doc.data();
 				data.id = doc.id;
-				data.createdAt = dateToAge(
-					(
-						data.createdAt ?? firebase.firestore.Timestamp.now()
-					).toDate()
-				);
+				data.createdAt = (
+					data.createdAt ?? firebase.firestore.Timestamp.now()
+				)
+					.toDate()
+					.getTime();
+				data.age = dateToAge(data.createdAt);
 				return data;
 			});
 			Promise.all(
@@ -183,9 +184,12 @@ export async function fetchMessages(
 		const messages = snapshot.docs.map((doc) => {
 			var data = doc.data();
 			data.id = doc.id;
-			data.createdAt = dateToAge(
-				(data.createdAt ?? firebase.firestore.Timestamp.now()).toDate()
-			);
+			data.createdAt = (
+				data.createdAt ?? firebase.firestore.Timestamp.now()
+			)
+				.toDate()
+				.getTime();
+			data.age = dateToAge(data.createdAt);
 			return data;
 		});
 		setMessages(messages);
@@ -215,7 +219,8 @@ export function fetchPost(uid: string, postID: string, setPosts: Function) {
 		.onSnapshot((doc) => {
 			var post: any = doc.data();
 			post!.id = doc.id;
-			post!.createdAt = dateToAge(post!.createdAt.toDate());
+			post!.createdAt = post!.createdAt.toDate().getTime();
+			post!.age = dateToAge(post!.createdAt);
 			Promise.all([
 				fetchPostLikes(uid, postID).then((likes) => {
 					post!.likes = likes;
@@ -245,15 +250,15 @@ export async function fetchPosts(uid: string): Promise<any[]> {
 			.then((snapshot) => {
 				return resolve(
 					snapshot.docs.map((doc) => {
-						const data = doc.data();
+						var data = doc.data();
 						data.id = doc.id;
 						data.thumbnailURI = "";
-						data.createdAt = dateToAge(
-							(
-								data.createdAt ??
-								firebase.firestore.Timestamp.now()
-							).toDate()
-						);
+						data.createdAt = (
+							data.createdAt ?? firebase.firestore.Timestamp.now()
+						)
+							.toDate()
+							.getTime();
+						data.age = dateToAge(data.createdAt);
 						return data;
 					})
 				);
@@ -288,11 +293,12 @@ export function dispatchUserPosts(uid: string) {
 				var posts = snapshot.docs.map((doc) => {
 					const post = doc.data();
 					post.id = doc.id;
-					post.createdAt = dateToAge(
-						(
-							post.createdAt ?? firebase.firestore.Timestamp.now()
-						).toDate()
-					);
+					post.createdAt = (
+						post.createdAt ?? firebase.firestore.Timestamp.now()
+					)
+						.toDate()
+						.getTime();
+					post.age = dateToAge(post!.createdAt);
 					return post;
 				});
 				dispatch({
@@ -351,15 +357,18 @@ export function dispatchFollowingPosts(uids: string[]) {
 						.get()
 						.then((snapshot) => {
 							return snapshot.docs.map((doc) => {
-								var data = doc.data();
-								data!.id = doc.id;
-								data!.uid = uid;
-								data!.user = user;
-								data!.createdAt = (
-									data.createdAt ??
+								var post = doc.data();
+								post.id = doc.id;
+								post.uid = uid;
+								post.user = user;
+								post.createdAt = (
+									post.createdAt ??
 									firebase.firestore.Timestamp.now()
-								).toDate();
-								return data;
+								)
+									.toDate()
+									.getTime();
+								post.age = dateToAge(post!.createdAt);
+								return post;
 							});
 						});
 				})
@@ -369,7 +378,6 @@ export function dispatchFollowingPosts(uids: string[]) {
 		for (const post of posts) {
 			post.likes = await fetchPostLikes(post.uid, post.id);
 			post.exercises = await fetchPostExercises(post.uid, post.id);
-			post.createdAt = dateToAge(post.createdAt);
 			addLikeInfo(post);
 		}
 		dispatch({
@@ -424,11 +432,12 @@ export function dispatchNotifications(uid: string) {
 				const notifications = snapshot.docs.map((doc) => {
 					var data = doc.data();
 					data.id = doc.id;
-					data.createdAt = dateToAge(
-						(
-							data.createdAt ?? firebase.firestore.Timestamp.now()
-						).toDate()
-					);
+					data.createdAt = (
+						data.createdAt ?? firebase.firestore.Timestamp.now()
+					)
+						.toDate()
+						.getTime();
+					data.age = dateToAge(data.createdAt);
 					return data;
 				});
 				dispatch({
@@ -566,9 +575,9 @@ export function generateThumbnail(mediaURL: any) {
 	});
 }
 
-export function dateToAge(date: Date): string {
+export function dateToAge(date: any): string {
 	const now = new Date();
-	const age = Math.abs(now.getTime() - date.getTime()) / 1000;
+	const age = Math.abs(now.getTime() - date) / 1000;
 	var output = "";
 
 	if (Math.floor(age) == 0) {

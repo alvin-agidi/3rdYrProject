@@ -41,12 +41,11 @@ function Search() {
 	const navigation = useNavigation<any>();
 	const [users, setUsers] = useState<any[]>([]);
 	const [posts, setPosts] = useState<any[]>([]);
-	const [filteredPosts, setFilteredPosts] = useState<any[]>([]);
 	const [queryString, setQueryString] = useState("");
 	const [selected, setSelected] = useState(0);
 	const searchOptions = ["Users", "Posts"];
 	const searchFunctions = [fetchUsers, fetchPosts];
-	const sortOptions = ["Date (asc.)", "Date (desc.)"];
+	const sortOptions = ["Newest first", "Oldest first"];
 	const [selectedSort, setSelectedSort] = useState(0);
 	const sortFunctions = [sortDateAsc, sortDateDesc];
 	const [selectedExercises, setSelectedExercises] = useState<any>([]);
@@ -75,7 +74,6 @@ function Search() {
 	async function fetchPosts(queryString: string): Promise<void> {
 		return new Promise(async (resolve) => {
 			setPosts([]);
-			setFilteredPosts([]);
 			if (!queryString && !selectedExercises.length) return resolve();
 			setIsLoading(true);
 
@@ -97,12 +95,13 @@ function Search() {
 									var data = doc.data();
 									data!.id = doc.id;
 									data!.uid = uid;
-									data!.createdAt = dateToAge(
-										(
-											data.createdAt ??
-											firebase.firestore.Timestamp.now()
-										).toDate()
-									);
+									data!.createdAt = (
+										data!.createdAt ??
+										firebase.firestore.Timestamp.now()
+									)
+										.toDate()
+										.getTime();
+									data!.age = dateToAge(data!.createdAt);
 									return data;
 								});
 							})
@@ -136,20 +135,27 @@ function Search() {
 		const selectedExercisesStrings: any[] = selectedExercises.map(
 			(i: number) => exercises[i]
 		);
-		setPosts((posts) =>
-			posts.filter((post: any) => {
+		setPosts((posts: any[]) => {
+			if (!queryString && !selectedExercises.length) {
+				return [];
+			}
+			return posts.filter((post: any) => {
 				const postExercises: any[] = post.exercises.map(
 					(exercise: any) => exercise.exercise
 				);
 				return selectedExercisesStrings.every((exercise: any) =>
 					postExercises.includes(exercise)
 				);
-			})
-		);
+			});
+		});
 	}
 
 	function sortPosts() {
-		setPosts((posts) => posts.sort(sortFunctions[selectedSort]));
+		setPosts((posts) => {
+			var newPosts = [...posts];
+			newPosts.sort(sortFunctions[selectedSort]);
+			return newPosts;
+		});
 	}
 
 	const renderItem = useCallback(
@@ -213,12 +219,8 @@ function Search() {
 						onPress={async () => {
 							if (!posts.length && selectedExercises.length) {
 								await fetchPosts(queryString);
-							} else if (
-								!queryString &&
-								!selectedExercises.length
-							) {
-								filterPosts();
 							}
+							filterPosts();
 						}}
 					/>
 				)}
@@ -245,10 +247,7 @@ function Search() {
 						ListEmptyComponent={ListEmptyComponent}
 					/>
 				) : (
-					<PostSummaryList
-						posts={filteredPosts}
-						isLoading={isLoading}
-					/>
+					<PostSummaryList posts={posts} isLoading={isLoading} />
 				)}
 			</KeyboardAvoidingView>
 		</View>
@@ -267,7 +266,7 @@ export default function SearchScreen() {
 				headerTitleStyle: { color: "black" },
 			}}
 		>
-			<Stack.Screen name="Search" children={(props) => <Search />} />
+			<Stack.Screen name="Search" children={() => <Search />} />
 			<Stack.Screen name="Profile" component={Profile} />
 			<Stack.Screen name="Post" component={PostList} />
 			<Stack.Screen name="Comments" component={Comments} />

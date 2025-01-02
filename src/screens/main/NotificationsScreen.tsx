@@ -56,9 +56,7 @@ function Notifications() {
 						<Text style={globalStyles.bold}>{item.title}</Text>
 						<View style={{ flex: 1 }}>
 							<Text>{item.body}</Text>
-							<Text style={globalStyles.date}>
-								{item.createdAt}
-							</Text>
+							<Text style={globalStyles.date}>{item.age}</Text>
 						</View>
 					</View>
 					<TouchableOpacity

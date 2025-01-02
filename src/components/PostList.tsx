@@ -223,7 +223,7 @@ export default function PostList(props: any) {
 						)}
 					</View>
 					<Text>{item.caption}</Text>
-					<Text style={globalStyles.date}>{item.createdAt}</Text>
+					<Text style={globalStyles.date}>{item.age}</Text>
 				</View>
 			</View>
 		),

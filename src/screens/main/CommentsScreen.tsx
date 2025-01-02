@@ -76,7 +76,7 @@ export default function Comments(props: any) {
 					</Text>
 					<Text style={styles.commentText}>{item.text}</Text>
 				</View>
-				<Text style={globalStyles.date}>{item.createdAt}</Text>
+				<Text style={globalStyles.date}>{item.age}</Text>
 			</View>
 		),
 		[]
