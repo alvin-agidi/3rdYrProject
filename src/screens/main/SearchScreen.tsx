@@ -201,6 +201,7 @@ function Search() {
 				selected={selected}
 				setSelected={setSelected}
 				onPress={() => {
+					setSelectedExercises([]);
 					searchFunctions[selected](queryString);
 				}}
 			/>
